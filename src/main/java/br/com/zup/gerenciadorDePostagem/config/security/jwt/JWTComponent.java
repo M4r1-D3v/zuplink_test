@@ -21,8 +21,7 @@ public class JWTComponent {
         Date vencimento = new Date(System.currentTimeMillis() + milissegundo);
 
         String token = Jwts.builder().setSubject(username)
-                .claim("idUsuario", id)
-                .claim("emailUsuario", username).setExpiration(vencimento)
+                .claim("idUsuario", id).setExpiration(vencimento)
                 .signWith(SignatureAlgorithm.HS512, segredo.getBytes()).compact();
 
         return token;
