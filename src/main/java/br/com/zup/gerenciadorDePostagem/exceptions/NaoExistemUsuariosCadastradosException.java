@@ -1,2 +1,3 @@
-package br.com.zup.gerenciadorDePostagem.exceptions;public class NaoExistemUsuariosCadastradosException {
+package br.com.zup.gerenciadorDePostagem.exceptions;
+public class NaoExistemUsuariosCadastradosException extends RuntimeException{
 }
