@@ -2,6 +2,7 @@ package br.com.zup.gerenciadorDePostagem.config.security;
 
 import br.com.zup.gerenciadorDePostagem.config.security.jwt.FiltroDeAutenticacaoJWT;
 import org.springframework.beans.factory.annotation.Autowired;
+import br.com.zup.gerenciadorDePostagem.config.security.jwt.FiltroAutorizacaoJWT;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -18,7 +19,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
-public class ConfiguracaoDeSeguranca  extends WebSecurityConfigurerAdapter {
+public class ConfiguracaoDeSeguranca extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private JWTComponent jwtComponent;
@@ -31,21 +32,24 @@ public class ConfiguracaoDeSeguranca  extends WebSecurityConfigurerAdapter {
         http.cors().configurationSource(configurarCORS());
 
         http.authorizeRequests()
-                .antMatchers(HttpMethod.POST,"/usuario").permitAll()
-                .antMatchers(HttpMethod.GET,"/postagem").permitAll()
+                .antMatchers(HttpMethod.POST, "/usuario").permitAll()
+                .antMatchers(HttpMethod.GET, "/postagem").permitAll()
                 .anyRequest().authenticated();
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
         http.addFilter(new FiltroDeAutenticacaoJWT(jwtComponent, authenticationManager()));
+        http.addFilter(new FiltroAutorizacaoJWT(authenticationManager(), jwtComponent, userDetailsService()));
 
     }
 
-    protected void configure (AuthenticationManagerBuilder auth) throws Exception{
+
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(detailsService).passwordEncoder(bCryptPasswordEncoder());
     }
 
     @Bean
-    CorsConfigurationSource configurarCORS(){
+    CorsConfigurationSource configurarCORS() {
         UrlBasedCorsConfigurationSource cors = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
 
@@ -53,13 +57,13 @@ public class ConfiguracaoDeSeguranca  extends WebSecurityConfigurerAdapter {
         config.addAllowedOrigin("*");
         config.addAllowedHeader("*");
 
-        cors.registerCorsConfiguration("/**",config);
+        cors.registerCorsConfiguration("/**", config);
 
         return cors;
     }
 
     @Bean
-    BCryptPasswordEncoder bCryptPasswordEncoder(){
+    BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
