@@ -1,5 +1,7 @@
 package br.com.zup.gerenciadorDePostagem.config.security.jwt;
 
+import br.com.zup.gerenciadorDePostagem.config.security.jwt.exceptions.TokenInvalidoException;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +26,14 @@ public class JWTComponent {
                 .signWith(SignatureAlgorithm.HS512, segredo.getBytes()).compact();
 
         return token;
+    }
+
+    public Claims pegarClaims(String token) {
+        try{
+            return Jwts.parser().setSigningKey(segredo.getBytes()).parseClaimsJws(token).getBody();
+        } catch (Exception e){
+            throw new TokenInvalidoException();
+        }
     }
 
 }
