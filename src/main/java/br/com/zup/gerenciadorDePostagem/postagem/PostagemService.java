@@ -35,15 +35,7 @@ public class PostagemService {
         return postagens;
     }
 
-    public void deletarPostagem(Integer id) {
-        if (postagemRepository.existsById(id)) {
-            postagemRepository.deleteById(id);
-        } else {
-            throw new PostagemNaoEncontradaException("Postagem não encontrada");
-        }
-    }
-
-    public Postagem atualizarPostagem(int idPostagem, Postagem postagemRecebida, String idUsuario) {
+    public Postagem atualizarPostagem(Long idPostagem, Postagem postagemRecebida, String idUsuario) {
 
         Postagem postagemAtualizada = verificarPostagem(idPostagem, idUsuario);
 
@@ -58,7 +50,15 @@ public class PostagemService {
         return postagemRepository.save(postagemAtualizada);
     }
 
-    private Postagem verificarPostagem(Integer idPostagem, String idUsuario) {
+    public void deletarPostagem(Long id) {
+        if (postagemRepository.existsById(id)) {
+            postagemRepository.deleteById(id);
+        } else {
+            throw new PostagemNaoEncontradaException("Postagem não encontrada");
+        }
+    }
+
+    private Postagem verificarPostagem(Long idPostagem, String idUsuario) {
         Optional<Postagem> postagemCadastrada = postagemRepository.findById(idPostagem);
 
         if (postagemCadastrada.isPresent()) {

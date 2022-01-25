@@ -45,7 +45,7 @@ public class PostagemController {
     }
 
     @PutMapping("/{id}")
-    public void editarPostagem(@PathVariable int id, @RequestBody @Valid PostagemDTO postagemDTO,
+    public void editarPostagem(@PathVariable Long id, @RequestBody @Valid PostagemDTO postagemDTO,
                                Authentication authentication) {
 
         UsuarioLogado usuarioLogado = (UsuarioLogado) authentication.getPrincipal();
