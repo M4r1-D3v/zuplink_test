@@ -1,11 +1,16 @@
 package br.com.zup.gerenciadorDePostagem.usuario;
 
 import br.com.zup.gerenciadorDePostagem.exceptions.EmailJaCadstradoException;
+
 import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoCadastrado;
 import br.com.zup.gerenciadorDePostagem.usuario.dtos.UsuarioDto;
+
+import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemUsuariosCadastradosException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,6 +27,7 @@ public class UsuarioService {
         return usuarioRepository.save(usuario);
     }
 
+
     public Usuario atualizarUsuario(String id, Usuario usuario){
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(id);
         if(usuarioOptional.isEmpty()){
@@ -36,6 +42,15 @@ public class UsuarioService {
 
 
         return usuarioParaAtualizar;
+    }
+
+    public List<Usuario> exibirUsuarios(){
+        List<Usuario> usuarios = (List<Usuario>) usuarioRepository.findAll();
+
+        if (usuarios.isEmpty()){
+            throw new NaoExistemUsuariosCadastradosException();
+        }
+        return usuarios;
     }
 
 }

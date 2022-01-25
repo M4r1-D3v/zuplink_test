@@ -1,6 +1,7 @@
 package br.com.zup.gerenciadorDePostagem.config.security;
 
 import br.com.zup.gerenciadorDePostagem.config.security.jwt.FiltroDeAutenticacaoJWT;
+import br.com.zup.gerenciadorDePostagem.config.security.jwt.JWTComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import br.com.zup.gerenciadorDePostagem.config.security.jwt.FiltroAutorizacaoJWT;
 import org.springframework.context.annotation.Bean;
