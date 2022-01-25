@@ -16,7 +16,7 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @Getter
 @Setter
-public class CadastroPostagemDTO {
+public class PostagemDTO {
 
     @NotBlank(message = "Insira um título")
     @Size(min = 3, message = "O título deve conter no minimo 3 caracteres")
