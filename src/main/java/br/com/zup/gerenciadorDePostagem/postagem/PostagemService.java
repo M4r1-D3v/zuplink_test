@@ -43,6 +43,21 @@ public class PostagemService {
         }
     }
 
+    public Postagem atualizarPostagem(int idPostagem, Postagem postagemRecebida, String idUsuario) {
+
+        Postagem postagemAtualizada = verificarPostagem(idPostagem, idUsuario);
+
+        postagemAtualizada.setTitulo(postagemRecebida.getTitulo());
+        postagemAtualizada.setDescricao(postagemRecebida.getDescricao());
+        postagemAtualizada.setLink(postagemRecebida.getLink());
+        postagemAtualizada.setTipo(postagemRecebida.getTipo());
+        postagemAtualizada.setTema(postagemRecebida.getTema());
+        postagemAtualizada.setAreaAtuacao(postagemRecebida.getAreaAtuacao());
+        postagemAtualizada.setDataDeCadastro(LocalDate.now());
+
+        return postagemRepository.save(postagemAtualizada);
+    }
+
     private Postagem verificarPostagem(Integer idPostagem, String idUsuario) {
         Optional<Postagem> postagemCadastrada = postagemRepository.findById(idPostagem);
 
