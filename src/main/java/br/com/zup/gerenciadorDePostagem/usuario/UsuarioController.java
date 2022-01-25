@@ -1,13 +1,16 @@
 package br.com.zup.gerenciadorDePostagem.usuario;
 
+import br.com.zup.gerenciadorDePostagem.config.security.UsuarioLogado;
 import br.com.zup.gerenciadorDePostagem.usuario.dtos.UsuarioDto;
 import br.com.zup.gerenciadorDePostagem.usuario.dtos.UsuarioSaidaDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.net.Authenticator;
 
 @RestController
 @RequestMapping("/usuario")
@@ -25,11 +28,11 @@ public class UsuarioController {
         Usuario usuario = modelMapper.map(usuarioDTO, Usuario.class);
         usuarioService.cadastrarUsuario(usuario);
     }
+    @PutMapping
+    public void  atualizarUsuario (@RequestBody UsuarioDto usuarioDto, Authentication authentication){
+        UsuarioLogado usuarioLogado = (UsuarioLogado) authentication.getPrincipal();
+        Usuario usuario = usuarioService.atualizarUsuario(usuarioLogado.getId(), modelMapper.map(usuarioDto,Usuario.class));
 
-    public UsuarioSaidaDTO atualizarUsuario (@PathVariable String id, @PathVariable @Valid UsuarioDto usuarioDto){
-        Usuario usuario = usuarioService.atualizarUsuario(id, usuarioDto);
-
-        return modelMapper.map(usuario, UsuarioSaidaDTO.class);
     }
 
 }
