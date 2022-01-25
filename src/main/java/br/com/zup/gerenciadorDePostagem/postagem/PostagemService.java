@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PostagemService {
@@ -26,7 +27,6 @@ public class PostagemService {
         return postagemRepository.save(postagem);
     }
 
-
     public List<Postagem> exibirPostagens() {
         List<Postagem> postagens = (List<Postagem>) postagemRepository.findAll();
         if (postagens.isEmpty()) {
@@ -41,6 +41,20 @@ public class PostagemService {
         } else {
             throw new PostagemNaoEncontradaException("Postagem não encontrada");
         }
+    }
+
+    private Postagem verificarPostagem(Integer idPostagem, String idUsuario) {
+        Optional<Postagem> postagemCadastrada = postagemRepository.findById(idPostagem);
+
+        if (postagemCadastrada.isPresent()) {
+            if (idUsuario.equals(postagemCadastrada.get().getAutorPostagem().getId())) {
+                return postagemCadastrada.get();
+            } else {
+                throw new UsuarioNaoAutorizadoException("Usuário não autorizado");
+            }
+        }
+
+        throw new PostagemNaoCadastradaException("Postagem não cadastrada");
 
     }
 
