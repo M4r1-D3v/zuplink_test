@@ -49,4 +49,10 @@ public class UsuarioController {
         return listaUsuariosSaidaDTO;
     }
 
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deletarUsuario (@PathVariable String id){
+        usuarioService.deletarUsuario(id);
+    }
+
 }
