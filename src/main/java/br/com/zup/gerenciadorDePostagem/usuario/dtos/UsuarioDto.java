@@ -20,8 +20,11 @@ public class UsuarioDto {
     @Email
     @NotNull(message = "Insira o e-mail")
     private String email;
-    @NotBlank
+    @NotBlank(message = "Insira a senha")
     @Size(min = 4, message = "A senha não pode conter menos de 4 caracteres")
     private String senha;
+    @NotBlank
+    @Size(min = 2, message = "O nome não pode conter menos de 2 caracteres")
+    private String nome;
 
 }
