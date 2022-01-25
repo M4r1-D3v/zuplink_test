@@ -13,11 +13,13 @@ import java.util.Collection;
 @AllArgsConstructor
 @Getter
 @Setter
-public class UsuarioLogado  implements UserDetails {
+public class UsuarioLogado implements UserDetails {
 
     private String id;
     private String email;
     private String senha;
+    private String nome;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
