@@ -1,9 +1,9 @@
 package br.com.zup.gerenciadorDePostagem.config.security;
 
+import br.com.zup.gerenciadorDePostagem.config.security.jwt.FiltroAutorizacaoJWT;
 import br.com.zup.gerenciadorDePostagem.config.security.jwt.FiltroDeAutenticacaoJWT;
 import br.com.zup.gerenciadorDePostagem.config.security.jwt.JWTComponent;
 import org.springframework.beans.factory.annotation.Autowired;
-import br.com.zup.gerenciadorDePostagem.config.security.jwt.FiltroAutorizacaoJWT;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -27,8 +27,10 @@ public class ConfiguracaoDeSeguranca extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDetailsService detailsService;
 
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+
         http.csrf().disable();
         http.cors().configurationSource(configurarCORS());
 
@@ -43,7 +45,6 @@ public class ConfiguracaoDeSeguranca extends WebSecurityConfigurerAdapter {
         http.addFilter(new FiltroAutorizacaoJWT(authenticationManager(), jwtComponent, userDetailsService()));
 
     }
-
 
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(detailsService).passwordEncoder(bCryptPasswordEncoder());
