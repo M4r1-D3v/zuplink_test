@@ -1,10 +1,12 @@
 package br.com.zup.gerenciadorDePostagem.postagem;
 
+import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemPostagensCadastradasException;
 import br.com.zup.gerenciadorDePostagem.usuario.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class PostagemService {
@@ -20,6 +22,14 @@ public class PostagemService {
         postagem.setDataDeCadastro(LocalDate.now());
 
         return postagemRepository.save(postagem);
+    }
+
+    public List<Postagem> exibirPostagens() {
+        List<Postagem> postagens = (List<Postagem>) postagemRepository.findAll();
+        if (postagens.isEmpty()) {
+            throw new NaoExistemPostagensCadastradasException();
+        }
+        return postagens;
     }
 
 }
