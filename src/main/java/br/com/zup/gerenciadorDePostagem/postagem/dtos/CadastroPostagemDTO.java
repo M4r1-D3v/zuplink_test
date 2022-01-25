@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -22,7 +21,7 @@ public class CadastroPostagemDTO {
     @NotBlank(message = "Insira um título")
     @Size(min = 3, message = "O título deve conter no minimo 3 caracteres")
     private String titulo;
-    @Max(value = 300, message = "A descrição deve conter no máximo 300 caracteres")
+    @Size(max = 300, message = "A descrição deve conter no máximo 300 caracteres")
     private String descricao;
     @NotBlank(message = "Insira o link")
     private String link;
