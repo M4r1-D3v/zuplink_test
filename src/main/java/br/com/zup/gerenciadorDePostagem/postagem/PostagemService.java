@@ -1,8 +1,6 @@
 package br.com.zup.gerenciadorDePostagem.postagem;
 
-
 import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemPostagensCadastradasException;
-import br.com.zup.gerenciadorDePostagem.exceptions.PostagemNaoCadastradaException;
 import br.com.zup.gerenciadorDePostagem.exceptions.PostagemNaoEncontradaException;
 import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoAutorizadoException;
 import br.com.zup.gerenciadorDePostagem.usuario.Usuario;
@@ -70,9 +68,7 @@ public class PostagemService {
                 throw new UsuarioNaoAutorizadoException("Usuário não autorizado");
             }
         }
-
-        throw new PostagemNaoCadastradaException("Postagem não cadastrada");
-
+        throw new PostagemNaoEncontradaException("Postagem não cadastrada");
     }
 
 }
