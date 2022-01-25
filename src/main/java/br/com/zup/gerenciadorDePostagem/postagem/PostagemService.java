@@ -2,7 +2,9 @@ package br.com.zup.gerenciadorDePostagem.postagem;
 
 
 import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemPostagensCadastradasException;
+import br.com.zup.gerenciadorDePostagem.exceptions.PostagemNaoCadastradaException;
 import br.com.zup.gerenciadorDePostagem.exceptions.PostagemNaoEncontradaException;
+import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoAutorizadoException;
 import br.com.zup.gerenciadorDePostagem.usuario.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
