@@ -1,2 +1,15 @@
-package br.com.zup.gerenciadorDePostagem.usuario.dtos;public class ExibirUsuarioPostagemDTO {
+package br.com.zup.gerenciadorDePostagem.usuario.dtos;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class ExibirUsuarioPostagemDTO {
+    private String nome;
+
 }
