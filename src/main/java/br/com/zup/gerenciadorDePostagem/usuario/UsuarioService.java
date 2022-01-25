@@ -2,6 +2,7 @@ package br.com.zup.gerenciadorDePostagem.usuario;
 
 import br.com.zup.gerenciadorDePostagem.exceptions.EmailJaCadastradoException;
 import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemUsuariosCadastradosException;
+import br.com.zup.gerenciadorDePostagem.exceptions.IdNaoEncontradoException;
 import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoCadastrado;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -56,6 +57,14 @@ public class UsuarioService {
             throw new NaoExistemUsuariosCadastradosException();
         }
         return usuarios;
+    }
+
+    public void deletarUsuario(String id){
+        if (usuarioRepository.existsById(id)){
+            usuarioRepository.deleteById(id);
+        }else {
+            throw new IdNaoEncontradoException("Usuário não encontrado");
+        }
     }
 
 }
