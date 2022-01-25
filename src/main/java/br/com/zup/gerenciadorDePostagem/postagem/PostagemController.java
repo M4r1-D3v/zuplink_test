@@ -1,7 +1,7 @@
 package br.com.zup.gerenciadorDePostagem.postagem;
 
 import br.com.zup.gerenciadorDePostagem.config.security.UsuarioLogado;
-import br.com.zup.gerenciadorDePostagem.postagem.dtos.CadastroPostagemDTO;
+import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagemDTO;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagensCadastradasDTO;
 import br.com.zup.gerenciadorDePostagem.usuario.Usuario;
 import org.modelmapper.ModelMapper;
@@ -26,7 +26,7 @@ public class PostagemController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void cadastrarPostagem(@RequestBody @Valid CadastroPostagemDTO cadastroPostagemDTO,
+    public void cadastrarPostagem(@RequestBody @Valid PostagemDTO cadastroPostagemDTO,
                                   Authentication authentication) {
 
         UsuarioLogado usuarioLogado = (UsuarioLogado) authentication.getPrincipal();
@@ -36,12 +36,24 @@ public class PostagemController {
     }
 
     @GetMapping
-    public List<PostagensCadastradasDTO> exibirPostagensCadastradas(){
+    public List<PostagensCadastradasDTO> exibirPostagensCadastradas() {
         List<PostagensCadastradasDTO> postagensCadastradasDTO = new ArrayList<>();
-        for (Postagem postagem : postagemService.exibirPostagens()){
-            postagensCadastradasDTO.add(modelMapper.map(postagem,PostagensCadastradasDTO.class));
+        for (Postagem postagem : postagemService.exibirPostagens()) {
+            postagensCadastradasDTO.add(modelMapper.map(postagem, PostagensCadastradasDTO.class));
         }
         return postagensCadastradasDTO;
+    }
+
+    @PutMapping("/{id}")
+    public void editarPostagem(@PathVariable Long id, @RequestBody @Valid PostagemDTO postagemDTO,
+                               Authentication authentication) {
+
+        UsuarioLogado usuarioLogado = (UsuarioLogado) authentication.getPrincipal();
+
+        Postagem postagemRecebida = modelMapper.map(postagemDTO, Postagem.class);
+
+        postagemService.atualizarPostagem(id, postagemRecebida, usuarioLogado.getId());
+
     }
 
 }

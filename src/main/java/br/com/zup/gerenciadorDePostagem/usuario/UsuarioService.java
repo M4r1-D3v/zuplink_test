@@ -3,7 +3,7 @@ package br.com.zup.gerenciadorDePostagem.usuario;
 import br.com.zup.gerenciadorDePostagem.exceptions.EmailJaCadastradoException;
 import br.com.zup.gerenciadorDePostagem.exceptions.IdNaoEncontradoException;
 import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemUsuariosCadastradosException;
-import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoCadastrado;
+import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoCadastradoException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -37,7 +37,7 @@ public class UsuarioService {
     public Usuario atualizarUsuario(String id, Usuario usuario) {
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(id);
         if (usuarioOptional.isEmpty()) {
-            throw new UsuarioNaoCadastrado("O usuário não existe, favor Cadastrar");
+            throw new UsuarioNaoCadastradoException("O usuário não existe, favor Cadastrar");
         }
         Usuario usuarioParaAtualizar = usuarioOptional.get();
         usuarioParaAtualizar.setEmail(usuario.getEmail());
