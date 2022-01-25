@@ -10,7 +10,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.net.Authenticator;
+import java.util.ArrayList;
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/usuario")
@@ -28,11 +30,23 @@ public class UsuarioController {
         Usuario usuario = modelMapper.map(usuarioDTO, Usuario.class);
         usuarioService.cadastrarUsuario(usuario);
     }
-    @PutMapping
-    public void  atualizarUsuario (@RequestBody UsuarioDto usuarioDto, Authentication authentication){
-        UsuarioLogado usuarioLogado = (UsuarioLogado) authentication.getPrincipal();
-        Usuario usuario = usuarioService.atualizarUsuario(usuarioLogado.getId(), modelMapper.map(usuarioDto,Usuario.class));
 
+    @PutMapping
+    public void atualizarUsuario(@RequestBody UsuarioDto usuarioDto, Authentication authentication) {
+        UsuarioLogado usuarioLogado = (UsuarioLogado) authentication.getPrincipal();
+        Usuario usuario = usuarioService.atualizarUsuario(usuarioLogado.getId(), modelMapper.map(usuarioDto,
+                Usuario.class));
+
+    }
+
+    @GetMapping
+    public List<UsuarioSaidaDTO> exibirUsuariosCadastrados() {
+        List<UsuarioSaidaDTO> listaUsuariosSaidaDTO = new ArrayList<>();
+        for (Usuario usuario : usuarioService.exibirUsuarios()) {
+
+            listaUsuariosSaidaDTO.add(modelMapper.map(usuario, UsuarioSaidaDTO.class));
+        }
+        return listaUsuariosSaidaDTO;
     }
 
 }
