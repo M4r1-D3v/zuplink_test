@@ -22,13 +22,15 @@ public class UsuarioService {
         return usuarioRepository.save(usuario);
     }
 
-    public Usuario atualizarUsuario(String id, UsuarioDto usuarioDto){
+    public Usuario atualizarUsuario(String id, Usuario usuario){
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(id);
         if(usuarioOptional.isEmpty()){
             throw new UsuarioNaoCadastrado ("O usuário não existe, favor Cadastrar");
         }
         Usuario usuarioParaAtualizar = usuarioOptional.get();
-        usuarioParaAtualizar.setEmail(usuarioDto.getEmail());
+        usuarioParaAtualizar.setEmail(usuario.getEmail());
+        usuarioParaAtualizar.setSenha(usuario.getSenha());
+        usuarioParaAtualizar.setNome(usuario.getNome());
 
         usuarioRepository.save(usuarioParaAtualizar);
 
