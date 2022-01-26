@@ -49,10 +49,11 @@ public class UsuarioController {
         return listaUsuariosSaidaDTO;
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deletarUsuario (@PathVariable String id){
-        usuarioService.deletarUsuario(id);
+    public void deletarUsuario (@RequestParam String email, Authentication authentication){
+        UsuarioLogado usuarioLogado = (UsuarioLogado) authentication.getPrincipal();
+        usuarioService.deletarUsuario(email, usuarioLogado.getId());
     }
 
 }
