@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.validator.constraints.URL;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -24,6 +25,10 @@ public class PostagemDTO {
     @Size(max = 300, message = "A descrição deve conter no máximo 300 caracteres")
     private String descricao;
     @NotBlank(message = "Insira o link")
+    @Size(max = 2083, message = "O link deve conter no máximo 2083 caracteres")
+    @URL(regexp = "(https?:\\/\\/(?:www\\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.[^\\s]{2,}|www\\." +
+            "[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.[^\\s]{2,}|https?:\\/\\/(?:www\\.|(?!www))[a-zA-Z0-9]+\\." +
+            "[^\\s]{2,}|www\\.[a-zA-Z0-9]+\\.[^\\s]{2,})")
     private String link;
     @NotNull(message = "Insira o Tipo de postagem ")
     private Tipo tipo;
