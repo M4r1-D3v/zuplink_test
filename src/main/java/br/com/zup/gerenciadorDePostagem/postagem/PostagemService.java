@@ -29,9 +29,11 @@ public class PostagemService {
 
     public List<Postagem> exibirPostagens() {
         List<Postagem> postagens = (List<Postagem>) postagemRepository.findAll();
+
         if (postagens.isEmpty()) {
             throw new NaoExistemPostagensCadastradasException();
         }
+
         return postagens;
     }
 
@@ -50,12 +52,9 @@ public class PostagemService {
         return postagemRepository.save(postagemAtualizada);
     }
 
-    public void deletarPostagem(Long id) {
-        if (postagemRepository.existsById(id)) {
-            postagemRepository.deleteById(id);
-        } else {
-            throw new PostagemNaoEncontradaException("Postagem não encontrada");
-        }
+    public void deletarPostagem(Long idPostagem, String idUsuario) {
+        verificarPostagem(idPostagem, idUsuario);
+        postagemRepository.deleteById(idPostagem);
     }
 
     private Postagem verificarPostagem(Long idPostagem, String idUsuario) {
@@ -68,6 +67,7 @@ public class PostagemService {
                 throw new UsuarioNaoAutorizadoException("Usuário não autorizado");
             }
         }
+
         throw new PostagemNaoEncontradaException("Postagem não cadastrada");
     }
 
