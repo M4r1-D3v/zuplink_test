@@ -50,12 +50,9 @@ public class PostagemService {
         return postagemRepository.save(postagemAtualizada);
     }
 
-    public void deletarPostagem(Long id) {
-        if (postagemRepository.existsById(id)) {
-            postagemRepository.deleteById(id);
-        } else {
-            throw new PostagemNaoEncontradaException("Postagem não encontrada");
-        }
+    public void deletarPostagem(Long idPostagem, String idUsuario) {
+        verificarPostagem(idPostagem, idUsuario);
+        postagemRepository.deleteById(idPostagem);
     }
 
     private Postagem verificarPostagem(Long idPostagem, String idUsuario) {
