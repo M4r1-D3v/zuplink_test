@@ -54,7 +54,7 @@ public class UsuarioService {
         List<Usuario> usuarios = (List<Usuario>) usuarioRepository.findAll();
 
         if (usuarios.isEmpty()) {
-            throw new NaoExistemUsuariosCadastradosException();
+            throw new NaoExistemUsuariosCadastradosException("Não há usuários cadastrados");
         }
         return usuarios;
     }
