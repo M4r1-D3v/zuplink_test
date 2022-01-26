@@ -30,6 +30,7 @@ public class PostagemController {
                                   Authentication authentication) {
 
         UsuarioLogado usuarioLogado = (UsuarioLogado) authentication.getPrincipal();
+
         postagemService.salvarPostagem(modelMapper.map(cadastroPostagemDTO, Postagem.class),
                 modelMapper.map(usuarioLogado, Usuario.class));
 
@@ -38,9 +39,11 @@ public class PostagemController {
     @GetMapping
     public List<PostagensCadastradasDTO> exibirPostagensCadastradas() {
         List<PostagensCadastradasDTO> postagensCadastradasDTO = new ArrayList<>();
+
         for (Postagem postagem : postagemService.exibirPostagens()) {
             postagensCadastradasDTO.add(modelMapper.map(postagem, PostagensCadastradasDTO.class));
         }
+
         return postagensCadastradasDTO;
     }
 
@@ -58,9 +61,10 @@ public class PostagemController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void excluirPostagem(@PathVariable Long id,Authentication authentication){
+    public void excluirPostagem(@PathVariable Long id, Authentication authentication) {
         UsuarioLogado usuarioLogado = (UsuarioLogado) authentication.getPrincipal();
-        postagemService.deletarPostagem(id,usuarioLogado.getId());
+
+        postagemService.deletarPostagem(id, usuarioLogado.getId());
     }
 
 }
