@@ -31,7 +31,7 @@ public class PostagemService {
         List<Postagem> postagens = (List<Postagem>) postagemRepository.findAll();
 
         if (postagens.isEmpty()) {
-            throw new NaoExistemPostagensCadastradasException();
+            throw new NaoExistemPostagensCadastradasException("Não existem postagens cadastradas!");
         }
 
         return postagens;
