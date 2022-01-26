@@ -25,8 +25,9 @@ public class Postagem {
     private Long id;
     @Column(nullable = false)
     private String titulo;
+    @Column(columnDefinition = "VARCHAR(300) DEFAULT 'Não informado'")
     private String descricao;
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, columnDefinition = "VARCHAR(2083)")
     private String link;
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
