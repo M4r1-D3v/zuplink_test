@@ -17,7 +17,7 @@ import javax.validation.constraints.Size;
 
 public class UsuarioDto {
 
-    @Email(regexp = "(^[a-z0-9.]+[\\w]+@zup\\.com\\.br)")
+    @Email(regexp = "(^[a-z0-9.-]+[\\w]+@zup\\.com\\.br)")
     @NotNull(message = "Insira o e-mail")
     private String email;
     @NotBlank(message = "Insira a senha")
