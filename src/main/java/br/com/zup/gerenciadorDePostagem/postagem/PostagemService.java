@@ -29,9 +29,11 @@ public class PostagemService {
 
     public List<Postagem> exibirPostagens() {
         List<Postagem> postagens = (List<Postagem>) postagemRepository.findAll();
+
         if (postagens.isEmpty()) {
             throw new NaoExistemPostagensCadastradasException();
         }
+
         return postagens;
     }
 
@@ -65,6 +67,7 @@ public class PostagemService {
                 throw new UsuarioNaoAutorizadoException("Usuário não autorizado");
             }
         }
+
         throw new PostagemNaoEncontradaException("Postagem não cadastrada");
     }
 
