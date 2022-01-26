@@ -56,4 +56,11 @@ public class PostagemController {
 
     }
 
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void excluirPostagem(@PathVariable Long id,Authentication authentication){
+        UsuarioLogado usuarioLogado = (UsuarioLogado) authentication.getPrincipal();
+        postagemService.deletarPostagem(id,usuarioLogado.getId());
+    }
+
 }
