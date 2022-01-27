@@ -110,13 +110,6 @@ class PostagemServiceTest {
     public void testarExibirPostagensExceptionNaoExistemPostagensCadastradas() {
         when(repository.findAll()).thenReturn(List.of());
 
-       /* try{
-            service.exibirPostagens();
-        }catch (Exception e){
-            assertEquals(NaoExistemPostagensCadastradasException.class, e.getClass());
-            assertEquals(NAO_EXISTEM_POSTAGENS_CADASTRADAS, e.getMessage());
-        }*/
-
         RuntimeException exception = assertThrows(NaoExistemPostagensCadastradasException.class,
                 ()->{service.exibirPostagens();});
 
@@ -180,7 +173,6 @@ class PostagemServiceTest {
     @Test
     void testarDeletarPostagemExceptionPostagemNaoEncontrada() {
         when(repository.findById(anyLong())).thenReturn(Optional.empty());
-        //doNothing().when(repository).deleteById(anyLong());
 
         RuntimeException exception = assertThrows(PostagemNaoEncontradaException.class,
                 () -> {service.deletarPostagem(postagem.getId(),usuario.getId());});
