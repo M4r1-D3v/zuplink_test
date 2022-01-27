@@ -1,6 +1,7 @@
 package br.com.zup.gerenciadorDePostagem.postagem;
 
 import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemPostagensCadastradasException;
+import br.com.zup.gerenciadorDePostagem.exceptions.PostagemNaoEncontradaException;
 import br.com.zup.gerenciadorDePostagem.usuario.Usuario;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,7 @@ class PostagemServiceTest {
     public static final LocalDate DATA_CADASTRO = LocalDate.now();
     public static final int INT = 0;
     public static final String NAO_EXISTEM_POSTAGENS_CADASTRADAS = "Não existem postagens cadastradas!";
+    public static final String POSTAGEM_NAO_CADASTRADA = "Postagem não cadastrada";
 
     @MockBean
     private PostagemRepository repository;
@@ -43,7 +45,6 @@ class PostagemServiceTest {
 
     private Postagem postagem;
     private Usuario usuario;
-    //private Optional<Postagem> postagemOptional;
 
 
     @BeforeEach
@@ -51,8 +52,6 @@ class PostagemServiceTest {
         usuario = new Usuario(ID_USUARIO, NOME, EMAIL, SENHA);
         postagem = new Postagem(ID_POSTAGEM, TITULO, DESCRICAO, LINK, DOCUMENTACAO, JAVA, BACKEND, INT, INT,
                 usuario, DATA_CADASTRO);
-        /*postagemOptional = Optional.of(new Postagem(ID_POSTAGEM, TITULO, DESCRICAO, LINK, DOCUMENTACAO, JAVA, BACKEND, INT, INT,
-                usuario, DATA_CADASTRO));*/
     }
 
     @Test
@@ -150,6 +149,20 @@ class PostagemServiceTest {
         verify(repository, times(1)).save(any(Postagem.class));
         verify(repository, times(1)).findById(anyLong());
 
+    }
+
+    @Test
+    public void testarAtualizarPostagemExceptionPostagemNaoEncontrada() {
+        when(repository.findById(anyLong())).thenReturn(Optional.empty());
+
+        RuntimeException exception = assertThrows(PostagemNaoEncontradaException.class,
+                ()->{service.atualizarPostagem(postagem.getId(), postagem,usuario.getId());});
+
+        assertEquals(PostagemNaoEncontradaException.class, exception.getClass());
+        assertEquals(POSTAGEM_NAO_CADASTRADA,exception.getMessage());
+
+        verify(repository, times(1)).findById(anyLong());
+        verify(repository, times(0)).save(any(Postagem.class));
     }
 
     @Test
