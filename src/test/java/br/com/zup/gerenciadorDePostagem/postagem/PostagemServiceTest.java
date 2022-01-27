@@ -1,20 +1,20 @@
 package br.com.zup.gerenciadorDePostagem.postagem;
 
 import br.com.zup.gerenciadorDePostagem.usuario.Usuario;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDate;
+import java.util.List;
 
-import static br.com.zup.gerenciadorDePostagem.enums.Area.*;
-import static br.com.zup.gerenciadorDePostagem.enums.Tema.*;
-import static br.com.zup.gerenciadorDePostagem.enums.Tipo.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static br.com.zup.gerenciadorDePostagem.enums.Area.BACKEND;
+import static br.com.zup.gerenciadorDePostagem.enums.Tema.JAVA;
+import static br.com.zup.gerenciadorDePostagem.enums.Tipo.DOCUMENTACAO;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -36,12 +36,11 @@ class PostagemServiceTest {
     private PostagemRepository repository;
 
     @Autowired
-    private  PostagemService service;
+    private PostagemService service;
 
 
     private Postagem postagem;
     private Usuario usuario;
-
 
 
     @BeforeEach
@@ -59,13 +58,35 @@ class PostagemServiceTest {
 
         assertNotNull(response);
         assertEquals(Postagem.class, response.getClass());
-        assertEquals(postagem,response);
+        assertEquals(postagem, response);
         verify(repository, times(1)).save(any(Postagem.class));
 
     }
 
     @Test
-    void exibirPostagens() {
+    public void testarExibirPostagensCaminhoPositivo() {
+        when(repository.findAll()).thenReturn(List.of(postagem));
+
+        List<Postagem> response = service.exibirPostagens();
+
+        assertNotNull(response);
+        assertEquals(Postagem.class, response.get(INT).getClass());
+        assertEquals(1, response.size());
+
+        assertEquals(ID_POSTAGEM, response.get(INT).getId());
+        assertEquals(TITULO, response.get(INT).getTitulo());
+        assertEquals(DESCRICAO, response.get(INT).getDescricao());
+        assertEquals(LINK, response.get(INT).getLink());
+        assertEquals(DOCUMENTACAO, response.get(INT).getTipo());
+        assertEquals(JAVA, response.get(INT).getTema());
+        assertEquals(BACKEND, response.get(INT).getAreaAtuacao());
+        assertEquals(INT, response.get(INT).getLikes());
+        assertEquals(INT, response.get(INT).getDeslikes());
+        assertEquals(usuario, response.get(INT).getAutorPostagem());
+        assertEquals(DATA_CADASTRO, response.get(INT).getDataDeCadastro());
+
+        verify(repository, times(1)).findAll();
+
     }
 
     @Test
