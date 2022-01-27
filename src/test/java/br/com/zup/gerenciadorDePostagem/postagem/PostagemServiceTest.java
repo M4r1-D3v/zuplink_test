@@ -10,6 +10,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static br.com.zup.gerenciadorDePostagem.enums.Area.BACKEND;
 import static br.com.zup.gerenciadorDePostagem.enums.Tema.JAVA;
@@ -42,6 +43,7 @@ class PostagemServiceTest {
 
     private Postagem postagem;
     private Usuario usuario;
+    //private Optional<Postagem> postagemOptional;
 
 
     @BeforeEach
@@ -49,6 +51,8 @@ class PostagemServiceTest {
         usuario = new Usuario(ID_USUARIO, NOME, EMAIL, SENHA);
         postagem = new Postagem(ID_POSTAGEM, TITULO, DESCRICAO, LINK, DOCUMENTACAO, JAVA, BACKEND, INT, INT,
                 usuario, DATA_CADASTRO);
+        /*postagemOptional = Optional.of(new Postagem(ID_POSTAGEM, TITULO, DESCRICAO, LINK, DOCUMENTACAO, JAVA, BACKEND, INT, INT,
+                usuario, DATA_CADASTRO));*/
     }
 
     @Test
@@ -106,17 +110,46 @@ class PostagemServiceTest {
     public void testarExibirPostagensExceptionNaoExistemPostagensCadastradas() {
         when(repository.findAll()).thenReturn(List.of());
 
-        try{
+       /* try{
             service.exibirPostagens();
         }catch (Exception e){
             assertEquals(NaoExistemPostagensCadastradasException.class, e.getClass());
             assertEquals(NAO_EXISTEM_POSTAGENS_CADASTRADAS, e.getMessage());
-        }
+        }*/
+
+        RuntimeException exception = assertThrows(NaoExistemPostagensCadastradasException.class,
+                ()->{service.exibirPostagens();});
+
+        assertEquals(NaoExistemPostagensCadastradasException.class, exception.getClass());
+        assertEquals(NAO_EXISTEM_POSTAGENS_CADASTRADAS, exception.getMessage());
 
     }
 
     @Test
-    void atualizarPostagem() {
+    public void testarAtualizarPostagemCaminhoPositivo() {
+        when(repository.findById(anyLong())).thenReturn(Optional.ofNullable(postagem));
+        when(repository.save(any(Postagem.class))).thenReturn(postagem);
+
+        Postagem response = service.atualizarPostagem(postagem.getId(), postagem,usuario.getId());
+
+        assertNotNull(response);
+        assertEquals(Postagem.class,response.getClass());
+
+        assertEquals(ID_POSTAGEM, response.getId());
+        assertEquals(TITULO, response.getTitulo());
+        assertEquals(DESCRICAO, response.getDescricao());
+        assertEquals(LINK, response.getLink());
+        assertEquals(DOCUMENTACAO, response.getTipo());
+        assertEquals(JAVA, response.getTema());
+        assertEquals(BACKEND, response.getAreaAtuacao());
+        assertEquals(INT, response.getLikes());
+        assertEquals(INT, response.getDeslikes());
+        assertEquals(usuario, response.getAutorPostagem());
+        assertEquals(DATA_CADASTRO, response.getDataDeCadastro());
+
+        verify(repository, times(1)).save(any(Postagem.class));
+        verify(repository, times(1)).findById(anyLong());
+
     }
 
     @Test
