@@ -2,6 +2,7 @@ package br.com.zup.gerenciadorDePostagem.postagem;
 
 import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemPostagensCadastradasException;
 import br.com.zup.gerenciadorDePostagem.exceptions.PostagemNaoEncontradaException;
+import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoAutorizadoException;
 import br.com.zup.gerenciadorDePostagem.usuario.Usuario;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -166,8 +167,14 @@ class PostagemServiceTest {
     }
 
     @Test
-    void deletarPostagem() {
-    }
+    void testarDeletarPostagemCaminhoPositivo() {
+        when(repository.findById(anyLong())).thenReturn(Optional.ofNullable(postagem));
+        doNothing().when(repository).deleteById(anyLong());
 
+        service.deletarPostagem(postagem.getId(),usuario.getId());
+
+        verify(repository,times(1)).findById(anyLong());
+        verify(repository, times(1)).deleteById(anyLong());
+    }
 
 }
