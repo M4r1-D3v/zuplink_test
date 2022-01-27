@@ -177,4 +177,19 @@ class PostagemServiceTest {
         verify(repository, times(1)).deleteById(anyLong());
     }
 
+    @Test
+    void testarDeletarPostagemExceptionPostagemNaoEncontrada() {
+        when(repository.findById(anyLong())).thenReturn(Optional.empty());
+        //doNothing().when(repository).deleteById(anyLong());
+
+        RuntimeException exception = assertThrows(PostagemNaoEncontradaException.class,
+                () -> {service.deletarPostagem(postagem.getId(),usuario.getId());});
+
+        assertEquals(PostagemNaoEncontradaException.class, exception.getClass());
+        assertEquals(POSTAGEM_NAO_CADASTRADA,exception.getMessage());
+
+        verify(repository,times(1)).findById(anyLong());
+        verify(repository, times(0)).deleteById(anyLong());
+    }
+
 }
