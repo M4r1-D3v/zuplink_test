@@ -1,5 +1,6 @@
 package br.com.zup.gerenciadorDePostagem.postagem;
 
+import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemPostagensCadastradasException;
 import br.com.zup.gerenciadorDePostagem.usuario.Usuario;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,8 +14,7 @@ import java.util.List;
 import static br.com.zup.gerenciadorDePostagem.enums.Area.BACKEND;
 import static br.com.zup.gerenciadorDePostagem.enums.Tema.JAVA;
 import static br.com.zup.gerenciadorDePostagem.enums.Tipo.DOCUMENTACAO;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -31,6 +31,7 @@ class PostagemServiceTest {
     public static final String SENHA = "1234";
     public static final LocalDate DATA_CADASTRO = LocalDate.now();
     public static final int INT = 0;
+    public static final String NAO_EXISTEM_POSTAGENS_CADASTRADAS = "Não existem postagens cadastradas!";
 
     @MockBean
     private PostagemRepository repository;
@@ -98,6 +99,19 @@ class PostagemServiceTest {
         assertEquals(DATA_CADASTRO, response.get(INT).getDataDeCadastro());
 
         verify(repository, times(1)).findAll();
+
+    }
+
+    @Test
+    public void testarExibirPostagensExceptionNaoExistemPostagensCadastradas() {
+        when(repository.findAll()).thenReturn(List.of());
+
+        try{
+            service.exibirPostagens();
+        }catch (Exception e){
+            assertEquals(NaoExistemPostagensCadastradasException.class, e.getClass());
+            assertEquals(NAO_EXISTEM_POSTAGENS_CADASTRADAS, e.getMessage());
+        }
 
     }
 
