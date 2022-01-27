@@ -51,14 +51,26 @@ class PostagemServiceTest {
     }
 
     @Test
-    void testarSalvarPostagemCaminhoPositivo() {
+    public void testarSalvarPostagemCaminhoPositivo() {
         when(repository.save(any(Postagem.class))).thenReturn(postagem);
 
         Postagem response = service.salvarPostagem(postagem, usuario);
 
         assertNotNull(response);
         assertEquals(Postagem.class, response.getClass());
-        assertEquals(postagem, response);
+
+        assertEquals(ID_POSTAGEM, response.getId());
+        assertEquals(TITULO, response.getTitulo());
+        assertEquals(DESCRICAO, response.getDescricao());
+        assertEquals(LINK, response.getLink());
+        assertEquals(DOCUMENTACAO, response.getTipo());
+        assertEquals(JAVA,response.getTema());
+        assertEquals(BACKEND, response.getAreaAtuacao());
+        assertEquals(INT,response.getLikes());
+        assertEquals(INT, response.getDeslikes());
+        assertEquals(usuario, response.getAutorPostagem());
+        assertEquals(DATA_CADASTRO, response.getDataDeCadastro());
+
         verify(repository, times(1)).save(any(Postagem.class));
 
     }
