@@ -2,25 +2,33 @@ package br.com.zup.gerenciadorDePostagem.usuario;
 
 
 import br.com.zup.gerenciadorDePostagem.config.security.UsuarioLogado;
+import br.com.zup.gerenciadorDePostagem.config.security.jwt.JWTComponent;
 import br.com.zup.gerenciadorDePostagem.usuario.dtos.UsuarioDto;
 import br.com.zup.gerenciadorDePostagem.usuario.dtos.UsuarioSaidaDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.Arrays;
 import java.util.List;
 
-@WebMvcTest(UsuarioController.class)
+@WebMvcTest({UsuarioController.class, ModelMapper.class, JWTComponent.class})
 public class UsuarioControllerTest {
     @MockBean
     private UsuarioService usuarioService;
-
-
+    @MockBean
+    private ModelMapper modelMapper;
     @Autowired
     private MockMvc mockMvc;
 
@@ -55,5 +63,16 @@ public class UsuarioControllerTest {
         usuarioLogado.setSenha("123456");
         usuarioLogado.setId("1");
 
+    }
+    @Test
+    public void testarCadastroDeUsuario()throws Exception{
+        Mockito.when(usuarioService.cadastrarUsuario(Mockito.any(Usuario.class))).thenReturn(usuario);
+        String json = objectMapper.writeValueAsString(usuario);
+
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post("/usuario")
+                .contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(MockMvcResultMatchers.status().is(201)
+                );
+        Mockito.verify(usuarioService,Mockito.times(1)).cadastrarUsuario(Mockito.any());
     }
 }
