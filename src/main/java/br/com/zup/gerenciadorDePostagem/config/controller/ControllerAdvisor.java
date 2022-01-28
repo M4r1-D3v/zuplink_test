@@ -84,29 +84,18 @@ public class ControllerAdvisor {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity manipularErroArea(HttpMessageNotReadableException exception) {
+    public ResponseEntity manipularErroEnums(HttpMessageNotReadableException exception) {
         if (exception.getLocalizedMessage().contains("br.com.zup.gerenciadorDePostagem.enuns.Area")) {
             return ResponseEntity.status(422).build();
         }
-
-        return ResponseEntity.status(400).build();
-    }
-
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity manipularErroTema(HttpMessageNotReadableException exception) {
         if (exception.getLocalizedMessage().contains("br.com.zup.gerenciadorDePostagem.enuns.Tema")) {
             return ResponseEntity.status(422).build();
         }
-
-        return ResponseEntity.status(400).build();
-    }
-
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity manipularErroTipo(HttpMessageNotReadableException exception) {
         if (exception.getLocalizedMessage().contains("br.com.zup.gerenciadorDePostagem.enuns.Tipo")) {
             return ResponseEntity.status(422).build();
         }
 
         return ResponseEntity.status(400).build();
     }
+
 }
