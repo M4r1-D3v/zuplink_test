@@ -82,9 +82,19 @@ public class ControllerAdvisor {
     public MensagemDeErro manipularExcecaoGeral(RuntimeException exception) {
         return new MensagemDeErro("Algo foi preenchido incorretamente, por favor tente novamente.");
     }
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity manipularErroArea(HttpMessageNotReadableException exception) {
         if (exception.getLocalizedMessage().contains("br.com.zup.gerenciadorDePostagem.enuns.Area")) {
+            return ResponseEntity.status(422).build();
+        }
+
+        return ResponseEntity.status(400).build();
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity manipularErroTema(HttpMessageNotReadableException exception) {
+        if (exception.getLocalizedMessage().contains("br.com.zup.gerenciadorDePostagem.enuns.Tema")) {
             return ResponseEntity.status(422).build();
         }
 
