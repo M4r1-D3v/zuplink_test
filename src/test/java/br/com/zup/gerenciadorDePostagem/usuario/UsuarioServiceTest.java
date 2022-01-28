@@ -3,6 +3,7 @@ package br.com.zup.gerenciadorDePostagem.usuario;
 import br.com.zup.gerenciadorDePostagem.exceptions.EmailJaCadastradoException;
 import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemUsuariosCadastradosException;
 import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoCadastradoException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
@@ -142,7 +144,15 @@ class UsuarioServiceTest {
     }
 
     @Test
-    public void deletarUsuario() {
+    public void testarDeletarUsuarioCaminhoPositivo() {
+        when(usuarioRepository.findByEmail(anyString())).thenReturn(Optional.ofNullable(usuario));
+        doNothing().when(usuarioRepository).deleteById(anyString());
+
+        usuarioService.deletarUsuario(EMAIL,ID_USUARIO);
+
+        verify(usuarioRepository,times(1)).findByEmail(anyString());
+        verify(usuarioRepository,times(1)).deleteById(anyString());
+
     }
 
 }
