@@ -3,6 +3,7 @@ package br.com.zup.gerenciadorDePostagem.usuario.config;
 import br.com.zup.gerenciadorDePostagem.exceptions.EmailJaCadastradoException;
 import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemPostagensCadastradasException;
 import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemUsuariosCadastradosException;
+import br.com.zup.gerenciadorDePostagem.exceptions.PostagemNaoEncontradaException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -41,8 +42,13 @@ public class ControllerAdvisor {
 
     @ExceptionHandler(NaoExistemUsuariosCadastradosException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public MensagemDeErro manipularExcecaoDeEmailCadastrado(NaoExistemUsuariosCadastradosException exception) {
+    public MensagemDeErro manipularExcecaoDeUsuarioNaoCadastrado(NaoExistemUsuariosCadastradosException exception) {
         return new MensagemDeErro(exception.getMessage());
     }
 
+    @ExceptionHandler(PostagemNaoEncontradaException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public MensagemDeErro manipularExcecaoPostagemNaoEncontrada(PostagemNaoEncontradaException exception) {
+        return new MensagemDeErro(exception.getMessage());
+    }
 }
