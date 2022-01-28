@@ -1,6 +1,7 @@
 package br.com.zup.gerenciadorDePostagem.config.controller;
 
 import br.com.zup.gerenciadorDePostagem.config.security.jwt.exceptions.AcessoNegadoException;
+import br.com.zup.gerenciadorDePostagem.config.security.jwt.exceptions.TokenInvalidoException;
 import br.com.zup.gerenciadorDePostagem.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
@@ -65,6 +66,12 @@ public class ControllerAdvisor {
     @ExceptionHandler(AcessoNegadoException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public MensagemDeErro manipularExcecaoAcessoNegado(AcessoNegadoException exception) {
+        return new MensagemDeErro(exception.getMessage());
+    }
+
+    @ExceptionHandler(TokenInvalidoException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public MensagemDeErro manipularExcecaoTokenInvalido(TokenInvalidoException exception) {
         return new MensagemDeErro(exception.getMessage());
     }
 
