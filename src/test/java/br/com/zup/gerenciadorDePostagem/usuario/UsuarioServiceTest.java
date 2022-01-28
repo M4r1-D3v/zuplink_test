@@ -6,6 +6,7 @@ import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoCadastradoException
 import br.com.zup.gerenciadorDePostagem.postagem.Postagem;
 import lombok.NoArgsConstructor;
 import org.hibernate.event.spi.SaveOrUpdateEvent;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -14,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.util.List;
 import java.util.Optional;
 
 import static br.com.zup.gerenciadorDePostagem.enums.Area.BACKEND;
@@ -38,6 +40,7 @@ class UsuarioServiceTest {
     public static final String SENHA = "1234";
     public static final String EMAIL_JA_CADASTRADO = "Email já cadastrado";
     public static final String USUARIO_NAO_CADASTRADO = "O usuário não existe, favor Cadastrar";
+    public static final int INDEX = 0;
 
     @MockBean
     private UsuarioRepository usuarioRepository;
@@ -116,7 +119,22 @@ class UsuarioServiceTest {
     }
 
     @Test
-    public void exibirUsuarios() {
+    public void testarExibirUsuariosCaminhoPositivo() {
+        when(usuarioRepository.findAll()).thenReturn(List.of(usuario));
+
+        List<Usuario> response = usuarioService.exibirUsuarios();
+
+        assertNotNull(response);
+        assertEquals(Usuario.class,response.get(INDEX).getClass());
+        assertEquals(1, response.size());
+
+        assertEquals(ID_USUARIO,response.get(INDEX).getId());
+        assertEquals(NOME,response.get(INDEX).getNome());
+        assertEquals(EMAIL,response.get(INDEX).getEmail());
+        assertEquals(SENHA,response.get(INDEX).getSenha());
+
+        verify(usuarioRepository,times(1)).findAll();
+
     }
 
     @Test
