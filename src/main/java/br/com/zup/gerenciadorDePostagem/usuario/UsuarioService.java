@@ -25,7 +25,7 @@ public class UsuarioService {
         String senhaEscondida = encoder.encode(usuario.getSenha());
 
         if (usuarioExistente.isPresent()) {
-            throw new EmailJaCadastradoException();
+            throw new EmailJaCadastradoException("Email já cadastrado");
         }
 
         usuario.setSenha(senhaEscondida);
