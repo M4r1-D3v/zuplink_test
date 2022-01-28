@@ -2,8 +2,8 @@ package br.com.zup.gerenciadorDePostagem.usuario;
 
 import br.com.zup.gerenciadorDePostagem.exceptions.EmailJaCadastradoException;
 import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemUsuariosCadastradosException;
+import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoAutorizadoException;
 import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoCadastradoException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +33,8 @@ class UsuarioServiceTest {
     public static final String USUARIO_NAO_CADASTRADO = "O usuário não existe, favor Cadastrar";
     public static final int INDEX = 0;
     public static final String NAO_HA_USUARIOS_CADASTRADOS = "Não há usuários cadastrados";
+    public static final String USUARIO_NAO_AUTORIZADO = "Usuário não autorizado";
+    public static final String USUARIO_NAO_ENCONTRADO = "Usuário não encontrado";
 
     @MockBean
     private UsuarioRepository usuarioRepository;
@@ -152,6 +154,21 @@ class UsuarioServiceTest {
 
         verify(usuarioRepository,times(1)).findByEmail(anyString());
         verify(usuarioRepository,times(1)).deleteById(anyString());
+
+    }
+
+    @Test
+    public void testarDeletarUsuarioExceptionUsuarioNaoAutorizado() {
+        when(usuarioRepository.findByEmail(anyString())).thenReturn(Optional.ofNullable(usuario));
+
+        RuntimeException exception = assertThrows(UsuarioNaoAutorizadoException.class,
+                () -> {usuarioService.deletarUsuario(EMAIL,ID_TESTE);});
+
+        assertEquals(UsuarioNaoAutorizadoException.class, exception.getClass());
+        assertEquals(USUARIO_NAO_AUTORIZADO, exception.getMessage());
+
+        verify(usuarioRepository,times(1)).findByEmail(anyString());
+        verify(usuarioRepository,times(0)).deleteById(anyString());
 
     }
 
