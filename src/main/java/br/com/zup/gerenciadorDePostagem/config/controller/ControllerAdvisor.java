@@ -4,6 +4,8 @@ import br.com.zup.gerenciadorDePostagem.config.security.jwt.exceptions.AcessoNeg
 import br.com.zup.gerenciadorDePostagem.config.security.jwt.exceptions.TokenInvalidoException;
 import br.com.zup.gerenciadorDePostagem.exceptions.*;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -73,6 +75,20 @@ public class ControllerAdvisor {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public MensagemDeErro manipularExcecaoTokenInvalido(TokenInvalidoException exception) {
         return new MensagemDeErro(exception.getMessage());
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public MensagemDeErro manipularExcecaoGeral(RuntimeException exception) {
+        return new MensagemDeErro("Algo foi preenchido incorretamente, por favor tente novamente.");
+    }
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity manipularErroArea(HttpMessageNotReadableException exception) {
+        if (exception.getLocalizedMessage().contains("br.com.zup.gerenciadorDePostagem.enuns.Area")) {
+            return ResponseEntity.status(422).build();
+        }
+
+        return ResponseEntity.status(400).build();
     }
 
 }
