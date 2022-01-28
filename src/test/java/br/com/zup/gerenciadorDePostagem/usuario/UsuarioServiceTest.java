@@ -101,6 +101,17 @@ class UsuarioServiceTest {
 
     @Test
     public void testarAtualizarUsuarioExceptionUsuarioNaoCadastrado() {
+        when(usuarioRepository.findById(anyString())).thenReturn(empty());
+        when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuario);
+
+        RuntimeException exception = assertThrows(UsuarioNaoCadastradoException.class,
+                () -> {usuarioService.atualizarUsuario(ID_USUARIO,usuario);});
+
+        assertEquals(UsuarioNaoCadastradoException.class, exception.getClass());
+        assertEquals(USUARIO_NAO_CADASTRADO, exception.getMessage());
+
+        verify(usuarioRepository,times(1)).findById(anyString());
+        verify(usuarioRepository,times(0)).save(any(Usuario.class));
 
     }
 
