@@ -1,4 +1,4 @@
-package br.com.zup.gerenciadorDePostagem.usuario.config;
+package br.com.zup.gerenciadorDePostagem.config.controller;
 
 import br.com.zup.gerenciadorDePostagem.config.security.jwt.exceptions.AcessoNegadoException;
 import br.com.zup.gerenciadorDePostagem.exceptions.*;
@@ -64,7 +64,7 @@ public class ControllerAdvisor {
 
     @ExceptionHandler(AcessoNegadoException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public MensagemDeErro manipularExcecaoUsuarioNaoCadastrado(UsuarioNaoCadastradoException exception) {
+    public MensagemDeErro manipularExcecaoAcessoNegado(AcessoNegadoException exception) {
         return new MensagemDeErro(exception.getMessage());
     }
 
