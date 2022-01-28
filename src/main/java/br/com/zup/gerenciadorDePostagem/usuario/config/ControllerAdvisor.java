@@ -54,4 +54,12 @@ public class ControllerAdvisor {
     public MensagemDeErro manipularExcecaoUsuarioNaoAutorizado(UsuarioNaoAutorizadoException exception) {
         return new MensagemDeErro(exception.getMessage());
     }
+
+    @ExceptionHandler(UsuarioNaoCadastradoException.class)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public MensagemDeErro manipularExcecaoUsuarioNaoCadastrado(UsuarioNaoCadastradoException exception) {
+        return new MensagemDeErro(exception.getMessage());
+    }
+
+
 }
