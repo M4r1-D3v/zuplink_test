@@ -172,4 +172,19 @@ class UsuarioServiceTest {
 
     }
 
+    @Test
+    public void testarDeletarUsuarioExceptionUsuarioNaoCadastrado() {
+        when(usuarioRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+
+        RuntimeException exception = assertThrows(UsuarioNaoCadastradoException.class,
+                () -> {usuarioService.deletarUsuario(EMAIL,ID_USUARIO);});
+
+        assertEquals(UsuarioNaoCadastradoException.class, exception.getClass());
+        assertEquals(USUARIO_NAO_ENCONTRADO, exception.getMessage());
+
+        verify(usuarioRepository,times(1)).findByEmail(anyString());
+        verify(usuarioRepository,times(0)).deleteById(anyString());
+
+    }
+
 }
