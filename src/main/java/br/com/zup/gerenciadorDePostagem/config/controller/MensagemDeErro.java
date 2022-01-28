@@ -1,4 +1,4 @@
-package br.com.zup.gerenciadorDePostagem.usuario.config;
+package br.com.zup.gerenciadorDePostagem.config.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

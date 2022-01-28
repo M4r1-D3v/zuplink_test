@@ -1,5 +1,6 @@
 package br.com.zup.gerenciadorDePostagem.usuario.config;
 
+import br.com.zup.gerenciadorDePostagem.config.security.jwt.exceptions.AcessoNegadoException;
 import br.com.zup.gerenciadorDePostagem.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
@@ -61,5 +62,10 @@ public class ControllerAdvisor {
         return new MensagemDeErro(exception.getMessage());
     }
 
+    @ExceptionHandler(AcessoNegadoException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public MensagemDeErro manipularExcecaoUsuarioNaoCadastrado(UsuarioNaoCadastradoException exception) {
+        return new MensagemDeErro(exception.getMessage());
+    }
 
 }
