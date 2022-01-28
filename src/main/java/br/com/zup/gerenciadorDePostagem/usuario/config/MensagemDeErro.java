@@ -11,6 +11,4 @@ import lombok.Setter;
 @Setter
 public class MensagemDeErro {
     public String mensagem;
-    public String campo;
-
 }
