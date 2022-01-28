@@ -1,6 +1,7 @@
 package br.com.zup.gerenciadorDePostagem.usuario.config;
 
 import br.com.zup.gerenciadorDePostagem.exceptions.EmailJaCadastradoException;
+import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemPostagensCadastradasException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,13 +16,12 @@ import java.util.List;
 public class ControllerAdvisor {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    public List<MensagemDeErro> manipularErrosDeValidacao(MethodArgumentNotValidException exception){
+    public List<MensagemDeErro> manipularErrosDeValidacao(MethodArgumentNotValidException exception) {
         List<MensagemDeErro> mensagens = new ArrayList<>();
 
-        for (FieldError fieldError : exception.getFieldErrors()){
-            mensagens.add(new MensagemDeErro(fieldError.getDefaultMessage(), fieldError.getField()));
+        for (FieldError fieldError : exception.getFieldErrors()) {
+            mensagens.add(new MensagemDeErro(fieldError.getDefaultMessage()));
         }
-
         return mensagens;
     }
 
@@ -29,8 +29,14 @@ public class ControllerAdvisor {
     @ExceptionHandler(EmailJaCadastradoException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     public MensagemDeErro manipularExcecaoDeEmailCadastrado(EmailJaCadastradoException exception) {
-        return new MensagemDeErro(exception.getMessage(),"sem campo");
-
+        return new MensagemDeErro(exception.getMessage());
     }
+
+    @ExceptionHandler(NaoExistemPostagensCadastradasException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    public MensagemDeErro manipularExcecaoDePostagensNaoCadastradas(NaoExistemPostagensCadastradasException exception) {
+        return new MensagemDeErro(exception.getMessage());
+    }
+
 
 }
