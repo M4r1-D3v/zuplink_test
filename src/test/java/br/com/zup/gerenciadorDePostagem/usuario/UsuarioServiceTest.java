@@ -1,34 +1,23 @@
 package br.com.zup.gerenciadorDePostagem.usuario;
 
 import br.com.zup.gerenciadorDePostagem.exceptions.EmailJaCadastradoException;
-import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoAutorizadoException;
+import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemUsuariosCadastradosException;
 import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoCadastradoException;
-import br.com.zup.gerenciadorDePostagem.postagem.Postagem;
-import lombok.NoArgsConstructor;
-import org.hibernate.event.spi.SaveOrUpdateEvent;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
-import java.util.Optional;
 
-import static br.com.zup.gerenciadorDePostagem.enums.Area.BACKEND;
-import static br.com.zup.gerenciadorDePostagem.enums.Tema.JAVA;
-import static br.com.zup.gerenciadorDePostagem.enums.Tema.REACT;
-import static br.com.zup.gerenciadorDePostagem.enums.Tipo.DOCUMENTACAO;
-import static java.util.Optional.*;
+import static java.util.Optional.empty;
+import static java.util.Optional.ofNullable;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 class UsuarioServiceTest {
@@ -41,6 +30,7 @@ class UsuarioServiceTest {
     public static final String EMAIL_JA_CADASTRADO = "Email já cadastrado";
     public static final String USUARIO_NAO_CADASTRADO = "O usuário não existe, favor Cadastrar";
     public static final int INDEX = 0;
+    public static final String NAO_HA_USUARIOS_CADASTRADOS = "Não há usuários cadastrados";
 
     @MockBean
     private UsuarioRepository usuarioRepository;
@@ -132,6 +122,20 @@ class UsuarioServiceTest {
         assertEquals(NOME,response.get(INDEX).getNome());
         assertEquals(EMAIL,response.get(INDEX).getEmail());
         assertEquals(SENHA,response.get(INDEX).getSenha());
+
+        verify(usuarioRepository,times(1)).findAll();
+
+    }
+
+    @Test
+    public void testarExibirUsuariosExceptionNaoExistemUsuariosCadastradas() {
+        when(usuarioRepository.findAll()).thenReturn(List.of());
+
+        RuntimeException exception = assertThrows(NaoExistemUsuariosCadastradosException.class,
+                () -> {usuarioService.exibirUsuarios();});
+
+        assertEquals(NaoExistemUsuariosCadastradosException.class,exception.getClass());
+        assertEquals(NAO_HA_USUARIOS_CADASTRADOS, exception.getMessage());
 
         verify(usuarioRepository,times(1)).findAll();
 
