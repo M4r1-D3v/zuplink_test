@@ -36,6 +36,7 @@ class PostagemServiceTest {
     public static final int INT = 0;
     public static final String NAO_EXISTEM_POSTAGENS_CADASTRADAS = "Não existem postagens cadastradas!";
     public static final String POSTAGEM_NAO_CADASTRADA = "Postagem não cadastrada";
+    public static final String USUÁRIO_NAO_AUTORIZADO = "Usuário não autorizado";
 
     @MockBean
     private PostagemRepository repository;
@@ -46,6 +47,7 @@ class PostagemServiceTest {
 
     private Postagem postagem;
     private Usuario usuario;
+    private Usuario usuarioTeste;
 
 
     @BeforeEach
@@ -53,6 +55,7 @@ class PostagemServiceTest {
         usuario = new Usuario(ID_USUARIO, NOME, EMAIL, SENHA);
         postagem = new Postagem(ID_POSTAGEM, TITULO, DESCRICAO, LINK, DOCUMENTACAO, JAVA, BACKEND, INT, INT,
                 usuario, DATA_CADASTRO);
+        usuarioTeste = new Usuario("402880e67e97bc73017e97bdd9fa0001", NOME, EMAIL, SENHA);
     }
 
     @Test
@@ -154,6 +157,21 @@ class PostagemServiceTest {
 
         assertEquals(PostagemNaoEncontradaException.class, exception.getClass());
         assertEquals(POSTAGEM_NAO_CADASTRADA,exception.getMessage());
+
+        verify(repository, times(1)).findById(anyLong());
+        verify(repository, times(0)).save(any(Postagem.class));
+    }
+
+    @Test
+    public void testarAtualizarPostagemExceptionUsuarioNaoAutorizado() {
+        when(repository.findById(anyLong())).thenReturn(Optional.ofNullable(postagem));
+
+        RuntimeException exception = assertThrows(UsuarioNaoAutorizadoException.class,
+                ()->{service.atualizarPostagem(postagem.getId(), postagem,usuarioTeste.getId());});
+
+        assertEquals(UsuarioNaoAutorizadoException.class, exception.getClass());
+        assertEquals(USUÁRIO_NAO_AUTORIZADO,exception.getMessage());
+
 
         verify(repository, times(1)).findById(anyLong());
         verify(repository, times(0)).save(any(Postagem.class));
