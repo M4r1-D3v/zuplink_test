@@ -202,4 +202,19 @@ class PostagemServiceTest {
         verify(repository, times(0)).deleteById(anyLong());
     }
 
+    @Test
+    public void testarDeletarPostagemExceptionUsuarioNaoAutorizado() {
+        when(repository.findById(anyLong())).thenReturn(Optional.ofNullable(postagem));
+
+        RuntimeException exception = assertThrows(UsuarioNaoAutorizadoException.class,
+                ()->{service.atualizarPostagem(postagem.getId(), postagem,usuarioTeste.getId());});
+
+        assertEquals(UsuarioNaoAutorizadoException.class, exception.getClass());
+        assertEquals(USUÁRIO_NAO_AUTORIZADO,exception.getMessage());
+
+
+        verify(repository, times(1)).findById(anyLong());
+        verify(repository, times(0)).save(any(Postagem.class));
+    }
+
 }
