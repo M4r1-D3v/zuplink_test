@@ -101,4 +101,12 @@ public class ControllerAdvisor {
         return ResponseEntity.status(400).build();
     }
 
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity manipularErroTipo(HttpMessageNotReadableException exception) {
+        if (exception.getLocalizedMessage().contains("br.com.zup.gerenciadorDePostagem.enuns.Tipo")) {
+            return ResponseEntity.status(422).build();
+        }
+
+        return ResponseEntity.status(400).build();
+    }
 }
