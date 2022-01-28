@@ -1,6 +1,8 @@
 package br.com.zup.gerenciadorDePostagem.usuario;
 
 import br.com.zup.gerenciadorDePostagem.exceptions.EmailJaCadastradoException;
+import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoAutorizadoException;
+import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoCadastradoException;
 import br.com.zup.gerenciadorDePostagem.postagem.Postagem;
 import lombok.NoArgsConstructor;
 import org.hibernate.event.spi.SaveOrUpdateEvent;
@@ -16,7 +18,9 @@ import java.util.Optional;
 
 import static br.com.zup.gerenciadorDePostagem.enums.Area.BACKEND;
 import static br.com.zup.gerenciadorDePostagem.enums.Tema.JAVA;
+import static br.com.zup.gerenciadorDePostagem.enums.Tema.REACT;
 import static br.com.zup.gerenciadorDePostagem.enums.Tipo.DOCUMENTACAO;
+import static java.util.Optional.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -33,6 +37,7 @@ class UsuarioServiceTest {
     public static final String EMAIL = "xablau@zup.com.br";
     public static final String SENHA = "1234";
     public static final String EMAIL_JA_CADASTRADO = "Email já cadastrado";
+    public static final String USUARIO_NAO_CADASTRADO = "O usuário não existe, favor Cadastrar";
 
     @MockBean
     private UsuarioRepository usuarioRepository;
@@ -54,13 +59,13 @@ class UsuarioServiceTest {
     }
 
     @Test
-    void testarCadastrarUsuarioCaminhoPositivo() {
+    public void testarCadastrarUsuarioCaminhoPositivo() {
 
     }
 
     @Test
-    void testarCadastrarUsuarioExceptionEmailJaCadastrado() {
-        when(usuarioRepository.findByEmail(anyString())).thenReturn(Optional.ofNullable(usuario));
+     public void testarCadastrarUsuarioExceptionEmailJaCadastrado() {
+        when(usuarioRepository.findByEmail(anyString())).thenReturn(ofNullable(usuario));
         when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuario);
 
         RuntimeException exception = assertThrows(EmailJaCadastradoException.class,
@@ -75,15 +80,36 @@ class UsuarioServiceTest {
     }
 
     @Test
-    void testarAtualizarUsuarioCaminhoPositivo() {
+    public void testarAtualizarUsuarioCaminhoPositivo() {
+        when(usuarioRepository.findById(anyString())).thenReturn(ofNullable(usuario));
+        when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuario);
+
+        Usuario response = usuarioService.atualizarUsuario(ID_USUARIO, usuario);
+
+        assertNotNull(response);
+        assertEquals(Usuario.class,response.getClass());
+
+        assertEquals(ID_USUARIO,response.getId());
+        assertEquals(NOME,response.getNome());
+        assertEquals(EMAIL,response.getEmail());
+        assertEquals(SENHA,response.getSenha());
+
+        verify(usuarioRepository,times(1)).findById(anyString());
+        verify(usuarioRepository,times(1)).save(any(Usuario.class));
+
     }
 
     @Test
-    void exibirUsuarios() {
+    public void testarAtualizarUsuarioExceptionUsuarioNaoCadastrado() {
+
     }
 
     @Test
-    void deletarUsuario() {
+    public void exibirUsuarios() {
+    }
+
+    @Test
+    public void deletarUsuario() {
     }
 
 }
