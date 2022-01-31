@@ -1,5 +1,6 @@
 package br.com.zup.gerenciadorDePostagem.postagem;
 
+import br.com.zup.gerenciadorDePostagem.config.security.UsuarioLoginService;
 import br.com.zup.gerenciadorDePostagem.config.security.jwt.JWTComponent;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagemDTO;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagensCadastradasDTO;
@@ -12,6 +13,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -22,12 +25,14 @@ import java.util.List;
 import static br.com.zup.gerenciadorDePostagem.enums.Area.BACKEND;
 import static br.com.zup.gerenciadorDePostagem.enums.Tema.JAVA;
 import static br.com.zup.gerenciadorDePostagem.enums.Tipo.DOCUMENTACAO;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest({PostagemController.class, ModelMapper.class, JWTComponent.class})
+@WebMvcTest({PostagemController.class, ModelMapper.class, JWTComponent.class, UsuarioLoginService.class})
 class PostagemControllerTest {
 
     public static final String TITULO = "Titulo";
@@ -44,6 +49,12 @@ class PostagemControllerTest {
     private PostagemService service;
     @MockBean
     private ModelMapper modelMapper;
+    @MockBean
+    private JWTComponent jwtComponent;
+    @MockBean
+    private UsuarioLoginService usuarioLoginService;
+
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -54,22 +65,32 @@ class PostagemControllerTest {
 
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         objectMapper = new ObjectMapper();
+        usuario = new Usuario(ID_USUARIO, NOME, EMAIL_USUARIO, SENHA);
         postagem = new Postagem(ID_POSTAGEM, TITULO, DESCRICAO, LINK,
                 DOCUMENTACAO, JAVA, BACKEND, INT, INT, usuario, LocalDate.now());
         postagemDTO = new PostagemDTO(TITULO, DESCRICAO, LINK,
                 DOCUMENTACAO, JAVA, BACKEND);
-        usuario = new Usuario(ID_USUARIO, NOME, EMAIL_USUARIO, SENHA);
     }
 
     @Test
-    void testarRotaParaCadastrarPostagemCaminhoPositivo() {
+    @WithMockUser(username = EMAIL_USUARIO,password = SENHA)
+    public void testarRotaParaCadastrarPostagemCaminhoPositivo() throws Exception{
+        when(service.salvarPostagem(any(Postagem.class), any(Authentication.class))).thenReturn(postagem);
+        String json = objectMapper.writeValueAsString(postagemDTO);
+
+
+        ResultActions response = mockMvc.perform(post("/postagem").content(json)
+                .contentType(APPLICATION_JSON)).andExpect(status().isCreated());
+
+
+        assertEquals(201, response.andReturn().getResponse().getStatus());
 
     }
 
     @Test
-    void testarRotaParaExibirPostagensCadastradasCaminhoPositivo() throws Exception {
+    public void testarRotaParaExibirPostagensCadastradasCaminhoPositivo() throws Exception {
         when(service.exibirPostagens()).thenReturn(List.of(postagem));
 
         ResultActions response = mockMvc.perform(MockMvcRequestBuilders.get("/postagem")
@@ -84,10 +105,10 @@ class PostagemControllerTest {
     }
 
     @Test
-    void editarPostagem() {
+    public void editarPostagem() {
     }
 
     @Test
-    void excluirPostagem() {
+    public void excluirPostagem() {
     }
 }
