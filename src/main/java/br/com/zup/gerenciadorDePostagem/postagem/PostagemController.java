@@ -1,6 +1,8 @@
 package br.com.zup.gerenciadorDePostagem.postagem;
 
+
 import br.com.zup.gerenciadorDePostagem.components.ConversorAutenticacao;
+import br.com.zup.gerenciadorDePostagem.postagem.dtos.AtualizarPostagemDTO;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagemDTO;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagensCadastradasDTO;
 import br.com.zup.gerenciadorDePostagem.usuario.Usuario;
@@ -49,12 +51,12 @@ public class PostagemController {
     }
 
     @PutMapping("/{id}")
-    public void editarPostagem(@PathVariable Long id, @RequestBody @Valid PostagemDTO postagemDTO,
+    public void editarPostagem(@PathVariable Long id, @RequestBody @Valid AtualizarPostagemDTO atualizarPostagemDTO,
                                Authentication authentication) {
 
         Usuario usuario = conversorAutenticacao.converterAutenticacao(authentication);
 
-        Postagem postagemRecebida = modelMapper.map(postagemDTO, Postagem.class);
+        Postagem postagemRecebida = modelMapper.map(atualizarPostagemDTO, Postagem.class);
 
         postagemService.atualizarPostagem(id, postagemRecebida, usuario);
 
