@@ -4,6 +4,7 @@ import br.com.zup.gerenciadorDePostagem.components.ConversorAutenticacao;
 import br.com.zup.gerenciadorDePostagem.config.security.UsuarioLoginService;
 import br.com.zup.gerenciadorDePostagem.config.security.jwt.JWTComponent;
 import br.com.zup.gerenciadorDePostagem.exceptions.PostagemNaoEncontradaException;
+import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoAutorizadoException;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagemDTO;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagensCadastradasDTO;
 import br.com.zup.gerenciadorDePostagem.usuario.Usuario;
@@ -292,6 +293,21 @@ class PostagemControllerTest {
 
 
         assertEquals(404, response.andReturn().getResponse().getStatus());
+        verify(service, times(1)).deletarPostagem(anyLong(), any());
+
+    }
+
+    @Test
+    @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
+    public void testarRotaParaExcluirPostagemUsuarioNaoAutorizado() throws Exception {
+        when(conversorAutenticacaoService.converterAutenticacao(any())).thenReturn(usuario);
+        doThrow(UsuarioNaoAutorizadoException.class).when(service).deletarPostagem(anyLong(), any());
+
+        ResultActions response= mockMvc.perform(delete("/postagem/" + postagem.getId())
+                .contentType(APPLICATION_JSON)).andExpect(status().isForbidden());
+
+
+        assertEquals(403, response.andReturn().getResponse().getStatus());
         verify(service, times(1)).deletarPostagem(anyLong(), any());
 
     }
