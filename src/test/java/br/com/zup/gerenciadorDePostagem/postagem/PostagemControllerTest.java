@@ -120,6 +120,15 @@ class PostagemControllerTest {
     }
 
     @Test
-    public void excluirPostagem() {
+    @WithMockUser(username = EMAIL_USUARIO,password = SENHA)
+    public void testarRotaParaExcluirPostagemCaminhoPositivo() throws Exception {
+        doNothing().when(service).deletarPostagem(anyLong(),any(Authentication.class));
+
+        ResultActions response = mockMvc.perform(delete("/postagem/" + postagem.getId())
+                .contentType(APPLICATION_JSON)).andExpect(status().isNoContent());
+
+        assertEquals(204,response.andReturn().getResponse().getStatus());
+        verify(service,times(1)).deletarPostagem(anyLong(),any(Authentication.class));
+
     }
 }
