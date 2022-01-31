@@ -60,18 +60,9 @@ public class UsuarioService {
     }
 
     public void deletarUsuario(String email, String idUsuario) {
-        Optional<Usuario> usuarioExiste = usuarioRepository.findByEmail(email);
+        Usuario usuario = verificarUsuario(email, idUsuario);
 
-        if (usuarioExiste.isPresent()) {
-            if (idUsuario.equals(usuarioExiste.get().getId())){
-                usuarioRepository.deleteById(usuarioExiste.get().getId());
-            }else{
-                throw new UsuarioNaoAutorizadoException("Usuário não autorizado");
-            }
-        }else {
-            throw new UsuarioNaoCadastradoException("Usuário não encontrado");
-        }
-
+        usuarioRepository.deleteById(usuario.getId());
     }
 
     private Usuario verificarUsuario(String email, String idUsuario) {
