@@ -92,7 +92,7 @@ class PostagemControllerTest {
 
     @Test
     @WithMockUser(username = EMAIL_USUARIO,password = SENHA)
-    public void testarRotaParaCadastrarPostagemValidacaoNotBlank() throws Exception{
+    public void testarRotaParaCadastrarPostagemValidacaoTituloNotBlank() throws Exception{
         postagemDTO.setTitulo("");
         when(service.salvarPostagem(any(Postagem.class), any(Usuario.class))).thenReturn(postagem);
         String json = objectMapper.writeValueAsString(postagemDTO);
@@ -108,7 +108,7 @@ class PostagemControllerTest {
 
     @Test
     @WithMockUser(username = EMAIL_USUARIO,password = SENHA)
-    public void testarRotaParaCadastrarPostagemValidacaoNotNull() throws Exception{
+    public void testarRotaParaCadastrarPostagemValidacaoTituloNotNull() throws Exception{
         postagemDTO.setTitulo(null);
         when(service.salvarPostagem(any(Postagem.class), any(Usuario.class))).thenReturn(postagem);
         String json = objectMapper.writeValueAsString(postagemDTO);
@@ -120,6 +120,23 @@ class PostagemControllerTest {
         verify(service,times(0)).salvarPostagem(any(),any());
 
     }
+
+    @Test
+    @WithMockUser(username = EMAIL_USUARIO,password = SENHA)
+    public void testarRotaParaCadastrarPostagemValidacaoTituloSizeMin() throws Exception{
+        postagemDTO.setTitulo("Ti");
+        when(service.salvarPostagem(any(Postagem.class), any(Usuario.class))).thenReturn(postagem);
+        String json = objectMapper.writeValueAsString(postagemDTO);
+
+
+        ResultActions response = mockMvc.perform(post("/postagem").content(json)
+                .contentType(APPLICATION_JSON)).andExpect(status().isUnprocessableEntity());
+
+        verify(service,times(0)).salvarPostagem(any(),any());
+
+    }
+
+
 
     @Test
     public void testarRotaParaExibirPostagensCadastradasCaminhoPositivo() throws Exception {
