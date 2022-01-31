@@ -35,7 +35,7 @@ class PostagemServiceTest {
     public static final LocalDate DATA_CADASTRO = LocalDate.now();
     public static final int INT = 0;
     public static final String NAO_EXISTEM_POSTAGENS_CADASTRADAS = "Não existem postagens cadastradas!";
-    public static final String POSTAGEM_NAO_CADASTRADA = "Postagem não cadastrada";
+    public static final String POSTAGEM_NAO_CADASTRADA = "Postagem não encontrada";
     public static final String USUÁRIO_NAO_AUTORIZADO = "Usuário não autorizado";
 
     @MockBean
@@ -126,7 +126,7 @@ class PostagemServiceTest {
         when(repository.findById(anyLong())).thenReturn(Optional.ofNullable(postagem));
         when(repository.save(any(Postagem.class))).thenReturn(postagem);
 
-        Postagem response = service.atualizarPostagem(postagem.getId(), postagem,usuario.getId());
+        Postagem response = service.atualizarPostagem(postagem.getId(), postagem,usuario);
 
         assertNotNull(response);
         assertEquals(Postagem.class,response.getClass());
@@ -153,7 +153,7 @@ class PostagemServiceTest {
         when(repository.findById(anyLong())).thenReturn(Optional.empty());
 
         RuntimeException exception = assertThrows(PostagemNaoEncontradaException.class,
-                ()->{service.atualizarPostagem(postagem.getId(), postagem,usuario.getId());});
+                ()->{service.atualizarPostagem(postagem.getId(), postagem,usuarioTeste);});
 
         assertEquals(PostagemNaoEncontradaException.class, exception.getClass());
         assertEquals(POSTAGEM_NAO_CADASTRADA,exception.getMessage());
@@ -167,7 +167,7 @@ class PostagemServiceTest {
         when(repository.findById(anyLong())).thenReturn(Optional.ofNullable(postagem));
 
         RuntimeException exception = assertThrows(UsuarioNaoAutorizadoException.class,
-                ()->{service.atualizarPostagem(postagem.getId(), postagem,usuarioTeste.getId());});
+                ()->{service.atualizarPostagem(postagem.getId(), postagem,usuarioTeste);});
 
         assertEquals(UsuarioNaoAutorizadoException.class, exception.getClass());
         assertEquals(USUÁRIO_NAO_AUTORIZADO,exception.getMessage());
@@ -182,7 +182,7 @@ class PostagemServiceTest {
         when(repository.findById(anyLong())).thenReturn(Optional.ofNullable(postagem));
         doNothing().when(repository).deleteById(anyLong());
 
-        service.deletarPostagem(postagem.getId(),usuario.getId());
+        service.deletarPostagem(postagem.getId(),usuario);
 
         verify(repository,times(1)).findById(anyLong());
         verify(repository, times(1)).deleteById(anyLong());
@@ -193,7 +193,7 @@ class PostagemServiceTest {
         when(repository.findById(anyLong())).thenReturn(Optional.empty());
 
         RuntimeException exception = assertThrows(PostagemNaoEncontradaException.class,
-                () -> {service.deletarPostagem(postagem.getId(),usuario.getId());});
+                () -> {service.deletarPostagem(postagem.getId(),usuarioTeste);});
 
         assertEquals(PostagemNaoEncontradaException.class, exception.getClass());
         assertEquals(POSTAGEM_NAO_CADASTRADA,exception.getMessage());
@@ -207,7 +207,7 @@ class PostagemServiceTest {
         when(repository.findById(anyLong())).thenReturn(Optional.ofNullable(postagem));
 
         RuntimeException exception = assertThrows(UsuarioNaoAutorizadoException.class,
-                ()->{service.atualizarPostagem(postagem.getId(), postagem,usuarioTeste.getId());});
+                ()->{service.atualizarPostagem(postagem.getId(), postagem,usuarioTeste);});
 
         assertEquals(UsuarioNaoAutorizadoException.class, exception.getClass());
         assertEquals(USUÁRIO_NAO_AUTORIZADO,exception.getMessage());

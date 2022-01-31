@@ -1,5 +1,6 @@
 package br.com.zup.gerenciadorDePostagem.postagem;
 
+import br.com.zup.gerenciadorDePostagem.components.ConversorAutenticacao;
 import br.com.zup.gerenciadorDePostagem.config.security.UsuarioLoginService;
 import br.com.zup.gerenciadorDePostagem.config.security.jwt.JWTComponent;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagemDTO;
@@ -13,11 +14,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -29,7 +28,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -54,6 +52,8 @@ class PostagemControllerTest {
     private JWTComponent jwtComponent;
     @MockBean
     private UsuarioLoginService usuarioLoginService;
+    @MockBean
+    private ConversorAutenticacao conversorAutenticacaoService;
 
 
     @Autowired
@@ -78,7 +78,7 @@ class PostagemControllerTest {
     @Test
     @WithMockUser(username = EMAIL_USUARIO,password = SENHA)
     public void testarRotaParaCadastrarPostagemCaminhoPositivo() throws Exception{
-        when(service.salvarPostagem(any(Postagem.class), any(Authentication.class))).thenReturn(postagem);
+        when(service.salvarPostagem(any(Postagem.class), any(Usuario.class))).thenReturn(postagem);
         String json = objectMapper.writeValueAsString(postagemDTO);
 
 
@@ -109,7 +109,7 @@ class PostagemControllerTest {
     @Test
     @WithMockUser(username = EMAIL_USUARIO,password = SENHA)
     public void testarRotaParaEditarPostagemCaminhoPositivo() throws Exception{
-        when(service.atualizarPostagem(anyLong(),any(Postagem.class),any(Authentication.class))).thenReturn(postagem);
+        when(service.atualizarPostagem(anyLong(),any(Postagem.class),any(Usuario.class))).thenReturn(postagem);
         String json = objectMapper.writeValueAsString(postagemDTO);
 
         ResultActions response = mockMvc.perform(put("/postagem/" + postagem.getId()).content(json)
@@ -122,13 +122,13 @@ class PostagemControllerTest {
     @Test
     @WithMockUser(username = EMAIL_USUARIO,password = SENHA)
     public void testarRotaParaExcluirPostagemCaminhoPositivo() throws Exception {
-        doNothing().when(service).deletarPostagem(anyLong(),any(Authentication.class));
+        doNothing().when(service).deletarPostagem(anyLong(),any(Usuario.class));
 
         ResultActions response = mockMvc.perform(delete("/postagem/" + postagem.getId())
                 .contentType(APPLICATION_JSON)).andExpect(status().isNoContent());
 
         assertEquals(204,response.andReturn().getResponse().getStatus());
-        verify(service,times(1)).deletarPostagem(anyLong(),any(Authentication.class));
+        verify(service,times(1)).deletarPostagem(anyLong(),any());
 
     }
 }
