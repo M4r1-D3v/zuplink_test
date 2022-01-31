@@ -1,7 +1,7 @@
 package br.com.zup.gerenciadorDePostagem.postagem;
 
 import br.com.zup.gerenciadorDePostagem.components.ConversorAutenticacao;
-import br.com.zup.gerenciadorDePostagem.postagem.dtos.AtualizarPostagemDTO;
+import br.com.zup.gerenciadorDePostagem.enums.Area;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagemDTO;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagensCadastradasDTO;
 import br.com.zup.gerenciadorDePostagem.usuario.Usuario;
@@ -38,11 +38,12 @@ public class PostagemController {
 
     }
 
-   @GetMapping
-    public List<PostagensCadastradasDTO> exibirPostagensCadastradas() {
+
+    @GetMapping
+    public List<PostagensCadastradasDTO> exibirPostagensCadastradas(@RequestParam (required = false) Area area) {
         List<PostagensCadastradasDTO> postagensCadastradasDTO = new ArrayList<>();
 
-        for (Postagem postagem : postagemService.exibirPostagens()) {
+        for (Postagem postagem : postagemService.exibirPostagens(area)) {
             postagensCadastradasDTO.add(modelMapper.map(postagem, PostagensCadastradasDTO.class));
         }
 
