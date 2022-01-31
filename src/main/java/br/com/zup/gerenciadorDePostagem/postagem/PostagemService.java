@@ -78,7 +78,7 @@ public class PostagemService {
             }
         }
 
-        throw new PostagemNaoEncontradaException("Postagem não cadastrada");
+        throw new PostagemNaoEncontradaException("Postagem não encontrada");
     }
 
     private Usuario converterAutenticacao(Authentication authentication) {
