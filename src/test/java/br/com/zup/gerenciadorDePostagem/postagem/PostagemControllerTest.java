@@ -157,6 +157,21 @@ class PostagemControllerTest {
     }
 
     @Test
+    @WithMockUser(username = EMAIL_USUARIO,password = SENHA)
+    public void testarRotaParaCadastrarPostagemValidacaoLinkNotBlank() throws Exception{
+        postagemDTO.setLink("");
+        when(service.salvarPostagem(any(Postagem.class), any(Usuario.class))).thenReturn(postagem);
+        String json = objectMapper.writeValueAsString(postagemDTO);
+
+
+        ResultActions response = mockMvc.perform(post("/postagem").content(json)
+                .contentType(APPLICATION_JSON)).andExpect(status().isUnprocessableEntity());
+
+        verify(service,times(0)).salvarPostagem(any(),any());
+
+    }
+
+    @Test
     public void testarRotaParaExibirPostagensCadastradasCaminhoPositivo() throws Exception {
         when(service.exibirPostagens()).thenReturn(List.of(postagem));
 
