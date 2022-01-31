@@ -3,6 +3,7 @@ package br.com.zup.gerenciadorDePostagem.postagem;
 import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemPostagensCadastradasException;
 import br.com.zup.gerenciadorDePostagem.exceptions.PostagemNaoEncontradaException;
 import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoAutorizadoException;
+import br.com.zup.gerenciadorDePostagem.postagem.dtos.AtualizarPostagemDTO;
 import br.com.zup.gerenciadorDePostagem.usuario.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,7 +44,6 @@ public class PostagemService {
 
         postagemAtualizada.setTitulo(postagemRecebida.getTitulo());
         postagemAtualizada.setDescricao(postagemRecebida.getDescricao());
-        postagemAtualizada.setLink(postagemRecebida.getLink());
         postagemAtualizada.setTipo(postagemRecebida.getTipo());
         postagemAtualizada.setTema(postagemRecebida.getTema());
         postagemAtualizada.setAreaAtuacao(postagemRecebida.getAreaAtuacao());
