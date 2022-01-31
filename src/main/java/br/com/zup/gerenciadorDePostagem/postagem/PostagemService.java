@@ -30,7 +30,7 @@ public class PostagemService {
         return postagemRepository.save(postagem);
     }
 
-    public List<Postagem> exibirPostagens(Area area) {
+    public List<Postagem> exibirPostagens() {
         List<Postagem> postagens = (List<Postagem>) postagemRepository.findAll();
 
         if (postagens.isEmpty()) {
@@ -90,7 +90,7 @@ public class PostagemService {
         if (tipo !=null){
             return postagemRepository.findAllByTipo(tipo);
         }
-        return exibirPostagens(area);
+        return exibirPostagens();
     }
 
 }
