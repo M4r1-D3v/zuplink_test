@@ -1,6 +1,7 @@
 package br.com.zup.gerenciadorDePostagem.postagem;
 
 import br.com.zup.gerenciadorDePostagem.enums.Area;
+import br.com.zup.gerenciadorDePostagem.enums.Tipo;
 import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemPostagensCadastradasException;
 import br.com.zup.gerenciadorDePostagem.exceptions.PostagemNaoEncontradaException;
 import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoAutorizadoException;
@@ -71,11 +72,13 @@ public class PostagemService {
         throw new PostagemNaoEncontradaException("Postagem não cadastrada");
     }
 
-    public List<Postagem> aplicarFiltroDeBusca (Area area) {
+    public List<Postagem> aplicarFiltroDeBusca (Area area, Tipo tipo) {
         if (area != null) {
             return postagemRepository.findAllByArea(area);
         }
-
+        if (tipo !=null){
+            return postagemRepository.findAllByTipo(tipo);
+        }
         return exibirPostagens(area);
     }
 
