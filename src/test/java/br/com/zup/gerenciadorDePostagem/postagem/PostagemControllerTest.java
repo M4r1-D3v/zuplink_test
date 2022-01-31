@@ -28,6 +28,7 @@ import static br.com.zup.gerenciadorDePostagem.enums.Tipo.DOCUMENTACAO;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -93,19 +94,29 @@ class PostagemControllerTest {
     public void testarRotaParaExibirPostagensCadastradasCaminhoPositivo() throws Exception {
         when(service.exibirPostagens()).thenReturn(List.of(postagem));
 
-        ResultActions response = mockMvc.perform(MockMvcRequestBuilders.get("/postagem")
-                .contentType(APPLICATION_JSON)).andExpect(status().isOk()).andExpect(jsonPath("$").isArray());
+        ResultActions response = mockMvc.perform(get("/postagem")
+                .contentType(APPLICATION_JSON)).andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray());
 
         String jsonResposta = response.andReturn().getResponse().getContentAsString();
         List<PostagensCadastradasDTO> postagens = objectMapper.readValue(jsonResposta,
-                new TypeReference<List<PostagensCadastradasDTO>>() {
-                });
+                new TypeReference<List<PostagensCadastradasDTO>>() {});
 
         verify(service, times(1)).exibirPostagens();
+
     }
 
     @Test
-    public void editarPostagem() {
+    @WithMockUser(username = EMAIL_USUARIO,password = SENHA)
+    public void testarRotaParaEditarPostagemCaminhoPositivo() throws Exception{
+        when(service.atualizarPostagem(anyLong(),any(Postagem.class),any(Authentication.class))).thenReturn(postagem);
+        String json = objectMapper.writeValueAsString(postagemDTO);
+
+        ResultActions response = mockMvc.perform(put("/postagem/" + postagem.getId()).content(json)
+                .contentType(APPLICATION_JSON)).andExpect(status().isOk());
+
+        assertEquals(200, response.andReturn().getResponse().getStatus());
+
     }
 
     @Test
