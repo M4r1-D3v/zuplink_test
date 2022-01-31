@@ -3,11 +3,13 @@ package br.com.zup.gerenciadorDePostagem.postagem;
 import br.com.zup.gerenciadorDePostagem.components.ConversorAutenticacao;
 import br.com.zup.gerenciadorDePostagem.config.security.UsuarioLoginService;
 import br.com.zup.gerenciadorDePostagem.config.security.jwt.JWTComponent;
+import br.com.zup.gerenciadorDePostagem.exceptions.PostagemNaoEncontradaException;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagemDTO;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagensCadastradasDTO;
 import br.com.zup.gerenciadorDePostagem.usuario.Usuario;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
@@ -69,7 +71,6 @@ class PostagemControllerTest {
 
     private ObjectMapper objectMapper;
     private Postagem postagem;
-    private Postagem postagemTeste;
     private PostagemDTO postagemDTO;
     private Usuario usuario;
 
@@ -79,8 +80,6 @@ class PostagemControllerTest {
         objectMapper = new ObjectMapper();
         usuario = new Usuario(ID_USUARIO, NOME, EMAIL_USUARIO, SENHA);
         postagem = new Postagem(ID_POSTAGEM, TITULO, DESCRICAO, LINK,
-                DOCUMENTACAO, JAVA, BACKEND, INT, INT, usuario, LocalDate.now());
-        postagemTeste = new Postagem(ID_TESTES, TITULO, DESCRICAO, LINK,
                 DOCUMENTACAO, JAVA, BACKEND, INT, INT, usuario, LocalDate.now());
         postagemDTO = new PostagemDTO(TITULO, DESCRICAO, LINK,
                 DOCUMENTACAO, JAVA, BACKEND);
@@ -278,6 +277,21 @@ class PostagemControllerTest {
                 .contentType(APPLICATION_JSON)).andExpect(status().isNoContent());
 
         assertEquals(204, response.andReturn().getResponse().getStatus());
+        verify(service, times(1)).deletarPostagem(anyLong(), any());
+
+    }
+
+    @Test
+    @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
+    public void testarRotaParaExcluirPostagemNaoCadastrada() throws Exception {
+        when(conversorAutenticacaoService.converterAutenticacao(any())).thenReturn(usuario);
+        doThrow(PostagemNaoEncontradaException.class).when(service).deletarPostagem(anyLong(), any());
+
+        ResultActions response= mockMvc.perform(delete("/postagem/" + postagem.getId())
+                .contentType(APPLICATION_JSON)).andExpect(status().isNotFound());
+
+
+        assertEquals(404, response.andReturn().getResponse().getStatus());
         verify(service, times(1)).deletarPostagem(anyLong(), any());
 
     }
