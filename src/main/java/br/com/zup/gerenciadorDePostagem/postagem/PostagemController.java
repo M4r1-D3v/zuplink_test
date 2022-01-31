@@ -3,7 +3,6 @@ package br.com.zup.gerenciadorDePostagem.postagem;
 import br.com.zup.gerenciadorDePostagem.config.security.UsuarioLogado;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagemDTO;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagensCadastradasDTO;
-import br.com.zup.gerenciadorDePostagem.usuario.Usuario;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,10 +28,7 @@ public class PostagemController {
     public void cadastrarPostagem(@RequestBody @Valid PostagemDTO cadastroPostagemDTO,
                                   Authentication authentication) {
 
-        UsuarioLogado usuarioLogado = (UsuarioLogado) authentication.getPrincipal();
-
-        postagemService.salvarPostagem(modelMapper.map(cadastroPostagemDTO, Postagem.class),
-                modelMapper.map(usuarioLogado, Usuario.class));
+        postagemService.salvarPostagem(modelMapper.map(cadastroPostagemDTO, Postagem.class),authentication);
 
     }
 
@@ -51,20 +47,16 @@ public class PostagemController {
     public void editarPostagem(@PathVariable Long id, @RequestBody @Valid PostagemDTO postagemDTO,
                                Authentication authentication) {
 
-        UsuarioLogado usuarioLogado = (UsuarioLogado) authentication.getPrincipal();
-
         Postagem postagemRecebida = modelMapper.map(postagemDTO, Postagem.class);
 
-        postagemService.atualizarPostagem(id, postagemRecebida, usuarioLogado.getId());
+        postagemService.atualizarPostagem(id, postagemRecebida, authentication);
 
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void excluirPostagem(@PathVariable Long id, Authentication authentication) {
-        UsuarioLogado usuarioLogado = (UsuarioLogado) authentication.getPrincipal();
-
-        postagemService.deletarPostagem(id, usuarioLogado.getId());
+        postagemService.deletarPostagem(id, authentication);
     }
 
 }

@@ -23,6 +23,6 @@ public class PostagensCadastradasDTO {
     private Tipo tipo;
     private Tema tema;
     private Area areaAtuacao;
-    private ExibirUsuarioPostagemDTO autorDaPostagem;
+    private ExibirUsuarioPostagemDTO autorPostagem;
 
 }
