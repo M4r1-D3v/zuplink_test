@@ -3,6 +3,7 @@ package br.com.zup.gerenciadorDePostagem.postagem;
 import br.com.zup.gerenciadorDePostagem.components.ConversorAutenticacao;
 import br.com.zup.gerenciadorDePostagem.config.security.UsuarioLoginService;
 import br.com.zup.gerenciadorDePostagem.config.security.jwt.JWTComponent;
+import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemPostagensCadastradasException;
 import br.com.zup.gerenciadorDePostagem.exceptions.PostagemNaoEncontradaException;
 import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoAutorizadoException;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagemDTO;
@@ -252,6 +253,19 @@ class PostagemControllerTest {
         List<PostagensCadastradasDTO> postagens = objectMapper.readValue(jsonResposta,
                 new TypeReference<List<PostagensCadastradasDTO>>() {});
 
+        verify(service, times(1)).exibirPostagens();
+
+    }
+
+    @Test
+    public void testarRotaParaExibirPostagensNaoExistemPostagemCadastradas() throws Exception {
+        doThrow(NaoExistemPostagensCadastradasException.class).when(service).exibirPostagens();
+
+        ResultActions response = mockMvc.perform(get("/postagem")
+                        .contentType(APPLICATION_JSON)).andExpect(status().isNotFound());
+
+
+        assertEquals(404, response.andReturn().getResponse().getStatus());
         verify(service, times(1)).exibirPostagens();
 
     }
