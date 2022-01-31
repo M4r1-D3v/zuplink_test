@@ -42,9 +42,11 @@ public class PostagemService {
         return postagens;
     }
 
-    public Postagem atualizarPostagem(Long idPostagem, Postagem postagemRecebida, String idUsuario) {
+    public Postagem atualizarPostagem(Long idPostagem, Postagem postagemRecebida, Authentication authentication) {
 
-        Postagem postagemAtualizada = verificarPostagem(idPostagem, idUsuario);
+        Usuario usuariologado = converterAutenticacao(authentication);
+
+        Postagem postagemAtualizada = verificarPostagem(idPostagem, usuariologado.getId());
 
         postagemAtualizada.setTitulo(postagemRecebida.getTitulo());
         postagemAtualizada.setDescricao(postagemRecebida.getDescricao());
@@ -55,10 +57,13 @@ public class PostagemService {
         postagemAtualizada.setDataDeCadastro(LocalDate.now());
 
         return postagemRepository.save(postagemAtualizada);
+
     }
 
-    public void deletarPostagem(Long idPostagem, String idUsuario) {
-        verificarPostagem(idPostagem, idUsuario);
+    public void deletarPostagem(Long idPostagem, Authentication authentication) {
+        Usuario usuariologado = converterAutenticacao(authentication);
+        verificarPostagem(idPostagem, usuariologado.getId());
+
         postagemRepository.deleteById(idPostagem);
     }
 
