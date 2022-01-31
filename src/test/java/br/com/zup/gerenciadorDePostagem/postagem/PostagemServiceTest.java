@@ -134,7 +134,6 @@ class PostagemServiceTest {
         assertEquals(ID_POSTAGEM, response.getId());
         assertEquals(TITULO, response.getTitulo());
         assertEquals(DESCRICAO, response.getDescricao());
-        assertEquals(LINK, response.getLink());
         assertEquals(DOCUMENTACAO, response.getTipo());
         assertEquals(JAVA, response.getTema());
         assertEquals(BACKEND, response.getAreaAtuacao());
