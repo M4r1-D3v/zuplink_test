@@ -271,6 +271,22 @@ class PostagemControllerTest {
 
     @Test
     @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
+    public void testarRotaParaEditarPostagemUsuarioNaoAutorizado() throws Exception {
+        when(conversorAutenticacaoService.converterAutenticacao(any())).thenReturn(usuario);
+        doThrow(UsuarioNaoAutorizadoException.class).when(service).atualizarPostagem(anyLong(),any(),any());
+        String json = objectMapper.writeValueAsString(postagemDTO);
+
+        ResultActions response= mockMvc.perform(put("/postagem/" + postagem.getId()).content(json)
+                .contentType(APPLICATION_JSON)).andExpect(status().isForbidden());
+
+
+        assertEquals(403, response.andReturn().getResponse().getStatus());
+        verify(service, times(1)).atualizarPostagem(anyLong(),any(),any());
+
+    }
+
+    @Test
+    @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
     public void testarRotaParaExcluirPostagemCaminhoPositivo() throws Exception {
         doNothing().when(service).deletarPostagem(anyLong(), any(Usuario.class));
 
@@ -301,7 +317,7 @@ class PostagemControllerTest {
     @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
     public void testarRotaParaExcluirPostagemUsuarioNaoAutorizado() throws Exception {
         when(conversorAutenticacaoService.converterAutenticacao(any())).thenReturn(usuario);
-        doThrow(UsuarioNaoAutorizadoException.class).when(service).deletarPostagem(anyLong(), any());
+        doThrow(UsuarioNaoAutorizadoException.class).when(service).deletarPostagem(anyLong(), any(Usuario.class));
 
         ResultActions response= mockMvc.perform(delete("/postagem/" + postagem.getId())
                 .contentType(APPLICATION_JSON)).andExpect(status().isForbidden());
