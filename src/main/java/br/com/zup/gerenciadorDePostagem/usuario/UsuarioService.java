@@ -34,15 +34,15 @@ public class UsuarioService {
     }
 
 
-    public Usuario atualizarUsuario(String id, Usuario usuario) {
+    public Usuario atualizarUsuario(String id, Usuario usuarioAtualizado) {
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(id);
         if (usuarioOptional.isEmpty()) {
             throw new UsuarioNaoCadastradoException("O usuário não existe, favor Cadastrar");
         }
         Usuario usuarioParaAtualizar = usuarioOptional.get();
-        usuarioParaAtualizar.setEmail(usuario.getEmail());
-        usuarioParaAtualizar.setSenha(usuario.getSenha());
-        usuarioParaAtualizar.setNome(usuario.getNome());
+        usuarioParaAtualizar.setEmail(usuarioAtualizado.getEmail());
+        usuarioParaAtualizar.setSenha(usuarioAtualizado.getSenha());
+        usuarioParaAtualizar.setNome(usuarioAtualizado.getNome());
 
         usuarioRepository.save(usuarioParaAtualizar);
 

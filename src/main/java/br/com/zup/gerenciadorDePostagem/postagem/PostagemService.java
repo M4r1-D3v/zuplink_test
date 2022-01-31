@@ -1,12 +1,10 @@
 package br.com.zup.gerenciadorDePostagem.postagem;
 
-import br.com.zup.gerenciadorDePostagem.config.security.UsuarioLogado;
 import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemPostagensCadastradasException;
 import br.com.zup.gerenciadorDePostagem.exceptions.PostagemNaoEncontradaException;
 import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoAutorizadoException;
 import br.com.zup.gerenciadorDePostagem.usuario.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -20,13 +18,11 @@ public class PostagemService {
     private PostagemRepository postagemRepository;
 
 
-    public Postagem salvarPostagem(Postagem postagem, Authentication authentication) {
-
-        Usuario autorPostagem = converterAutenticacao(authentication);
+    public Postagem salvarPostagem(Postagem postagem, Usuario usuario) {
 
         postagem.setLikes(0);
         postagem.setDeslikes(0);
-        postagem.setAutorPostagem(autorPostagem);
+        postagem.setAutorPostagem(usuario);
         postagem.setDataDeCadastro(LocalDate.now());
 
         return postagemRepository.save(postagem);
@@ -42,11 +38,9 @@ public class PostagemService {
         return postagens;
     }
 
-    public Postagem atualizarPostagem(Long idPostagem, Postagem postagemRecebida, Authentication authentication) {
+    public Postagem atualizarPostagem(Long idPostagem, Postagem postagemRecebida, Usuario usuarioLogado){
 
-        Usuario usuariologado = converterAutenticacao(authentication);
-
-        Postagem postagemAtualizada = verificarPostagem(idPostagem, usuariologado.getId());
+        Postagem postagemAtualizada = verificarPostagem(idPostagem, usuarioLogado.getId());
 
         postagemAtualizada.setTitulo(postagemRecebida.getTitulo());
         postagemAtualizada.setDescricao(postagemRecebida.getDescricao());
@@ -60,9 +54,8 @@ public class PostagemService {
 
     }
 
-    public void deletarPostagem(Long idPostagem, Authentication authentication) {
-        Usuario usuariologado = converterAutenticacao(authentication);
-        verificarPostagem(idPostagem, usuariologado.getId());
+    public void deletarPostagem(Long idPostagem, Usuario usuario) {
+        verificarPostagem(idPostagem, usuario.getId());
 
         postagemRepository.deleteById(idPostagem);
     }
@@ -79,14 +72,6 @@ public class PostagemService {
         }
 
         throw new PostagemNaoEncontradaException("Postagem não encontrada");
-    }
-
-    private Usuario converterAutenticacao(Authentication authentication) {
-        UsuarioLogado usuarioLogado = (UsuarioLogado) authentication.getPrincipal();
-
-        return new Usuario(usuarioLogado.getId(), usuarioLogado.getNome(),
-                usuarioLogado.getEmail(), usuarioLogado.getSenha());
-
     }
 
 }
