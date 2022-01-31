@@ -43,6 +43,11 @@ class PostagemControllerTest {
     public static final String SENHA = "1234";
     public static final long ID_POSTAGEM = 1L;
     public static final int INT = 0;
+    public static final String DESCRICAO_SIZE = "Lorem Ipsum is simply dummy text of the printing and typesetting" +
+            " industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an" +
+            " unknown" + "printer took a galley of type and scrambled it to make a type specimen book. It has" +
+            " survived not only five centuries, but also the leap into electronic typesetting, remaining" +
+            " essentially unchanged.";
 
     @MockBean
     private PostagemService service;
@@ -136,7 +141,20 @@ class PostagemControllerTest {
 
     }
 
+    @Test
+    @WithMockUser(username = EMAIL_USUARIO,password = SENHA)
+    public void testarRotaParaCadastrarPostagemValidacaoDescricaoSizeMax() throws Exception{
+        postagemDTO.setDescricao(DESCRICAO_SIZE);
+        when(service.salvarPostagem(any(Postagem.class), any(Usuario.class))).thenReturn(postagem);
+        String json = objectMapper.writeValueAsString(postagemDTO);
 
+
+        ResultActions response = mockMvc.perform(post("/postagem").content(json)
+                .contentType(APPLICATION_JSON)).andExpect(status().isUnprocessableEntity());
+
+        verify(service,times(0)).salvarPostagem(any(),any());
+
+    }
 
     @Test
     public void testarRotaParaExibirPostagensCadastradasCaminhoPositivo() throws Exception {
