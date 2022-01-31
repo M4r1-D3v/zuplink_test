@@ -1,6 +1,5 @@
 package br.com.zup.gerenciadorDePostagem.postagem;
 
-
 import br.com.zup.gerenciadorDePostagem.components.ConversorAutenticacao;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.AtualizarPostagemDTO;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagemDTO;
