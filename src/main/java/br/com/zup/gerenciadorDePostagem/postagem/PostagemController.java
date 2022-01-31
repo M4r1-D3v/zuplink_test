@@ -8,6 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,10 +30,7 @@ public class PostagemController {
     public void cadastrarPostagem(@RequestBody @Valid PostagemDTO cadastroPostagemDTO,
                                   Authentication authentication) {
 
-        UsuarioLogado usuarioLogado = (UsuarioLogado) authentication.getPrincipal();
-
-        postagemService.salvarPostagem(modelMapper.map(cadastroPostagemDTO, Postagem.class),
-                modelMapper.map(usuarioLogado, Usuario.class));
+        postagemService.salvarPostagem(modelMapper.map(cadastroPostagemDTO, Postagem.class),authentication);
 
     }
 
