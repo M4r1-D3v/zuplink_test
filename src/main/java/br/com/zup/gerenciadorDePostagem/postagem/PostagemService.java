@@ -1,13 +1,11 @@
 package br.com.zup.gerenciadorDePostagem.postagem;
 
-import br.com.zup.gerenciadorDePostagem.config.security.UsuarioLogado;
+import br.com.zup.gerenciadorDePostagem.enums.Area;
 import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemPostagensCadastradasException;
 import br.com.zup.gerenciadorDePostagem.exceptions.PostagemNaoEncontradaException;
 import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoAutorizadoException;
-import br.com.zup.gerenciadorDePostagem.postagem.dtos.AtualizarPostagemDTO;
 import br.com.zup.gerenciadorDePostagem.usuario.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -31,7 +29,7 @@ public class PostagemService {
         return postagemRepository.save(postagem);
     }
 
-    public List<Postagem> exibirPostagens() {
+    public List<Postagem> exibirPostagens(Area area) {
         List<Postagem> postagens = (List<Postagem>) postagemRepository.findAll();
 
         if (postagens.isEmpty()) {
@@ -82,6 +80,14 @@ public class PostagemService {
             throw new UsuarioNaoAutorizadoException("Usuário não autorizado");
         }
 
+    }
+
+    public List<Postagem> aplicarFiltroDeBusca (Area area) {
+        if (area != null) {
+            return postagemRepository.findAllByArea(area);
+        }
+
+        return exibirPostagens(area);
     }
 
 }
