@@ -57,9 +57,11 @@ public class PostagemService {
     }
 
     public void deletarPostagem(Long idPostagem, Usuario usuario) {
-        verificarPostagem(idPostagem, usuario.getId());
+        Postagem postagem = verificarPostagem(idPostagem);
+        validarAutenticidade(usuario, postagem);
 
-        postagemRepository.deleteById(idPostagem);
+        postagemRepository.deleteById(postagem.getId());
+
     }
 
     public Postagem verificarPostagem(Long idPostagem) {
@@ -72,12 +74,10 @@ public class PostagemService {
         }
     }
 
-    public Boolean validarAutenticidade(Usuario usuarioLogado, Postagem postagem) {
 
+    public void validarAutenticidade(Usuario usuarioLogado, Postagem postagem) {
 
-        if (usuarioLogado.getId().equals(postagem.getAutorPostagem().getId())) {
-            return true;
-        }  else{
+        if (!usuarioLogado.getId().equals(postagem.getAutorPostagem().getId())) {
             throw new UsuarioNaoAutorizadoException("Usuário não autorizado");
         }
 
