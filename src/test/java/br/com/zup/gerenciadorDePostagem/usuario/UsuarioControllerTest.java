@@ -5,6 +5,7 @@ import br.com.zup.gerenciadorDePostagem.components.ConversorAutenticacao;
 import br.com.zup.gerenciadorDePostagem.config.security.UsuarioLoginService;
 import br.com.zup.gerenciadorDePostagem.config.security.jwt.JWTComponent;
 import br.com.zup.gerenciadorDePostagem.exceptions.EmailJaCadastradoException;
+import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemUsuariosCadastradosException;
 import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoCadastradoException;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagensCadastradasDTO;
 import br.com.zup.gerenciadorDePostagem.usuario.dtos.UsuarioDto;
@@ -303,6 +304,19 @@ public class UsuarioControllerTest {
                 new TypeReference<List<UsuarioSaidaDTO>>() {});
 
         assertEquals(200, response.andReturn().getResponse().getStatus());
+        verify(usuarioService, times(1)).exibirUsuarios();
+
+    }
+
+    @Test
+    @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
+    public void testarRotaParaExibirUsuariosCadastradasExceptionNaoExistemUsuariosCadastrados() throws Exception {
+        doThrow(NaoExistemUsuariosCadastradosException.class).when(usuarioService).exibirUsuarios();
+
+        ResultActions response = mockMvc.perform(get("/usuario")
+                        .contentType(APPLICATION_JSON)).andExpect(status().isNotFound());
+
+        assertEquals(404, response.andReturn().getResponse().getStatus());
         verify(usuarioService, times(1)).exibirUsuarios();
 
     }
