@@ -4,6 +4,7 @@ package br.com.zup.gerenciadorDePostagem.usuario;
 import br.com.zup.gerenciadorDePostagem.components.ConversorAutenticacao;
 import br.com.zup.gerenciadorDePostagem.config.security.UsuarioLoginService;
 import br.com.zup.gerenciadorDePostagem.config.security.jwt.JWTComponent;
+import br.com.zup.gerenciadorDePostagem.exceptions.EmailJaCadastradoException;
 import br.com.zup.gerenciadorDePostagem.usuario.dtos.UsuarioDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
@@ -209,5 +210,20 @@ public class UsuarioControllerTest {
         verify(usuarioService, times(0)).cadastrarUsuario(any());
 
     }
+
+   @Test
+    public void testarRotaParaCadastrarUsuarioExceptionEmailJaCadastrado() throws Exception{
+        when(modelMapper.map(any(),any())).thenReturn(usuario);
+        doThrow(EmailJaCadastradoException.class).when(usuarioService).cadastrarUsuario(usuario);
+        String json = objectMapper.writeValueAsString(usuarioDto);
+
+        ResultActions response = mockMvc.perform(post("/usuario")
+                .contentType(APPLICATION_JSON).content(json))
+                .andExpect(status().isUnprocessableEntity());
+
+       assertEquals(422,response.andReturn().getResponse().getStatus());
+       verify(usuarioService, times(1)).cadastrarUsuario(any());
+
+   }
 
 }
