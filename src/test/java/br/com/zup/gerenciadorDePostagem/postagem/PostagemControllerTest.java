@@ -300,6 +300,7 @@ class PostagemControllerTest {
         List<PostagensCadastradasDTO> postagens = objectMapper.readValue(jsonResposta,
                 new TypeReference<List<PostagensCadastradasDTO>>() {});
 
+        assertEquals(200, response.andReturn().getResponse().getStatus());
         verify(service, times(1)).exibirPostagens();
 
     }
@@ -509,6 +510,7 @@ class PostagemControllerTest {
     @Test
     @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
     public void testarRotaParaExcluirPostagemCaminhoPositivo() throws Exception {
+        when(conversorAutenticacao.converterAutenticacao(any())).thenReturn(usuario);
         doNothing().when(service).deletarPostagem(anyLong(), any(Usuario.class));
 
         ResultActions response = mockMvc.perform(delete("/postagem/" + postagem.getId())
