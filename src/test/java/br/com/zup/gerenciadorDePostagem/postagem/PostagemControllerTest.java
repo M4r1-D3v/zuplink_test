@@ -492,7 +492,7 @@ class PostagemControllerTest {
     public void testarRotaParaEditarPostagemUsuarioNaoAutorizado() throws Exception {
         when(conversorAutenticacao.converterAutenticacao(any(Authentication.class))).thenReturn(usuario);
         when(modelMapper.map(any(AtualizarPostagemDTO.class),any())).thenReturn(postagem);
-        doThrow(PostagemNaoEncontradaException.class).when(service)
+        doThrow(UsuarioNaoAutorizadoException.class).when(service)
                 .atualizarPostagem(anyLong(),any(Postagem.class),any(Usuario.class));
 
         String json = objectMapper.writeValueAsString(atualizarPostagemDTO);
