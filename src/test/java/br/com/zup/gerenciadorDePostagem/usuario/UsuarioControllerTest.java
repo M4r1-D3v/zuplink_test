@@ -312,6 +312,25 @@ public class UsuarioControllerTest {
 
     @Test
     @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
+    public void testarRotaParaAtualizarUsuarioValidacaoSenhaNotBlank() throws Exception {
+        when(conversorAutenticacao.converterAutenticacao(any(Authentication.class))).thenReturn(usuario);
+        when(modelMapper.map(any(UsuarioDto.class), any())).thenReturn(usuario);
+        when(usuarioService.atualizarUsuario(anyString(), any(Usuario.class))).thenReturn(usuario);
+
+        usuarioDto.setSenha("");
+        String json = objectMapper.writeValueAsString(usuarioDto);
+
+        ResultActions response = mockMvc.perform(put("/usuario")
+                        .contentType(APPLICATION_JSON).content(json))
+                .andExpect(status().isUnprocessableEntity());
+
+        assertEquals(422, response.andReturn().getResponse().getStatus());
+        verify(usuarioService, times(0)).atualizarUsuario(anyString(), any(Usuario.class));
+
+    }
+
+    @Test
+    @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
     public void testarRotaParaAtualizarUsuarioExceptionUsuarioNaoCadastrado() throws Exception {
         when(conversorAutenticacao.converterAutenticacao(any(Authentication.class))).thenReturn(usuario);
         when(modelMapper.map(any(UsuarioDto.class), any())).thenReturn(usuario);
