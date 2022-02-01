@@ -91,7 +91,7 @@ public class PostagemService {
             return postagemRepository.findAllByLocalDate(dataDeCadastro);
         }
         else if (likes != null){
-            return postagemRepository.findAllByInteger(likes);
+            return postagemRepository.like(likes);
         }
         else if (deslikes != null){
             return postagemRepository.deslike(deslikes);
