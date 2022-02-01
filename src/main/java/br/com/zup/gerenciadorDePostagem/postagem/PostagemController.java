@@ -15,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,11 +45,12 @@ public class PostagemController {
     public List<PostagensCadastradasDTO> exibirPostagensCadastradas(@RequestParam (required = false)Area area,
                                                                     @RequestParam (required = false) Tipo tipo,
                                                                     @RequestParam (required = false) Tema tema,
-                                                                    @RequestParam (required = false) Usuario autorPostagem){
+                                                                    @RequestParam (required = false) Usuario autorPostagem,
+                                                                    @RequestParam (required = false)LocalDate dataDeCadastro){
 
         List<PostagensCadastradasDTO> postagensCadastradasDTO = new ArrayList<>();
 
-        for (Postagem postagem : postagemService.aplicarFiltroDeBusca(area, tipo, tema, autorPostagem)) {
+        for (Postagem postagem : postagemService.aplicarFiltroDeBusca(area, tipo, tema, autorPostagem, dataDeCadastro)) {
             postagensCadastradasDTO.add(modelMapper.map(postagem, PostagensCadastradasDTO.class));
         }
 
