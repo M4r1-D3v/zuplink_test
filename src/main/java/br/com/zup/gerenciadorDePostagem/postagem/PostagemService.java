@@ -30,14 +30,12 @@ public class PostagemService {
         return postagemRepository.save(postagem);
     }
 
-    public List<Postagem> exibirPostagens() {
-        List<Postagem> postagens = (List<Postagem>) postagemRepository.findAll();
+    public List<Postagem> exibirPostagens(Area area, Tipo tipo, Tema tema, Usuario autorPostagem,
+                                          LocalDate dataDeCadastro, Integer likes, Integer deslikes) {
 
-        if (postagens.isEmpty()) {
-            throw new NaoExistemPostagensCadastradasException("Não existem postagens cadastradas!");
-        }
+        List<Postagem> postagem = aplicarFiltroDeBusca(area, tipo, tema, autorPostagem, dataDeCadastro, likes, deslikes);
 
-        return postagens;
+        return postagem;
     }
 
     public Postagem atualizarPostagem(Long idPostagem, Postagem postagemRecebida, String idUsuario) {
@@ -73,32 +71,30 @@ public class PostagemService {
         throw new PostagemNaoEncontradaException("Postagem não cadastrada");
     }
 
-    public List<Postagem> aplicarFiltroDeBusca (Area area, Tipo tipo, Tema tema, Usuario autorPostagem,
-                                                LocalDate dataDeCadastro, Integer likes, Integer deslikes) {
+    public List<Postagem> aplicarFiltroDeBusca(Area area, Tipo tipo, Tema tema, Usuario autorPostagem,
+                                               LocalDate dataDeCadastro, Integer likes, Integer deslikes) {
         if (area != null) {
             return postagemRepository.findAllByArea(area);
-        }
-        else if (tipo !=null){
+        } else if (tipo != null) {
             return postagemRepository.findAllByTipo(tipo);
-        }
-        else if (tema != null){
+        } else if (tema != null) {
             return postagemRepository.findAllByTema(tema);
-        }
-        else if (autorPostagem != null){
-            return  postagemRepository.findAllByUsuario(autorPostagem);
-        }
-        else if (dataDeCadastro != null){
+        } else if (autorPostagem != null) {
+            return postagemRepository.findAllByUsuario(autorPostagem);
+        } else if (dataDeCadastro != null) {
             return postagemRepository.findAllByLocalDate(dataDeCadastro);
-        }
-        else if (likes != null){
+        } else if (likes != null) {
             return postagemRepository.like(likes);
-        }
-        else if (deslikes != null){
+        } else if (deslikes != null) {
             return postagemRepository.deslike(deslikes);
         }
         List<Postagem> postagens = (List<Postagem>) postagemRepository.findAll();
-        return exibirPostagens();
-    }
 
+        if (postagens.isEmpty()) {
+            throw new NaoExistemPostagensCadastradasException("Não existem postagens cadastradas!");
+        }
+
+        return postagens;
+    }
 
 }
