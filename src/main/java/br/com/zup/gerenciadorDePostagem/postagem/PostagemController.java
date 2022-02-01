@@ -47,11 +47,12 @@ public class PostagemController {
                                                                     @RequestParam (required = false) Tema tema,
                                                                     @RequestParam (required = false) Usuario autorPostagem,
                                                                     @RequestParam (required = false) LocalDate dataDeCadastro,
-                                                                    @RequestParam (required = false) Integer likes){
+                                                                    @RequestParam (required = false) Integer likes,
+                                                                    @RequestParam (required = false) Integer deslikes){
 
         List<PostagensCadastradasDTO> postagensCadastradasDTO = new ArrayList<>();
 
-        for (Postagem postagem : postagemService.aplicarFiltroDeBusca(area, tipo, tema, autorPostagem, dataDeCadastro, likes)) {
+        for (Postagem postagem : postagemService.aplicarFiltroDeBusca(area, tipo, tema, autorPostagem, dataDeCadastro, likes, deslikes)) {
             postagensCadastradasDTO.add(modelMapper.map(postagem, PostagensCadastradasDTO.class));
         }
 
