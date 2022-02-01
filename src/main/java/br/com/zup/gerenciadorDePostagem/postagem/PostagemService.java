@@ -73,7 +73,8 @@ public class PostagemService {
         throw new PostagemNaoEncontradaException("Postagem não cadastrada");
     }
 
-    public List<Postagem> aplicarFiltroDeBusca (Area area, Tipo tipo, Tema tema, Usuario autorPostagem, LocalDate dataDeCadastro) {
+    public List<Postagem> aplicarFiltroDeBusca (Area area, Tipo tipo, Tema tema, Usuario autorPostagem,
+                                                LocalDate dataDeCadastro, Integer likes) {
         if (area != null) {
             return postagemRepository.findAllByArea(area);
         }
@@ -88,6 +89,9 @@ public class PostagemService {
         }
         else if (dataDeCadastro != null){
             return postagemRepository.findAllByLocalDate(dataDeCadastro);
+        }
+        else if (likes != null){
+            return postagemRepository.findAllByInteger(likes);
         }
         List<Postagem> postagens = (List<Postagem>) postagemRepository.findAll();
         return exibirPostagens();
