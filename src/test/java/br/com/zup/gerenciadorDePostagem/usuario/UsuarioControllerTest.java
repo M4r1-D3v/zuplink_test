@@ -6,7 +6,10 @@ import br.com.zup.gerenciadorDePostagem.config.security.UsuarioLoginService;
 import br.com.zup.gerenciadorDePostagem.config.security.jwt.JWTComponent;
 import br.com.zup.gerenciadorDePostagem.exceptions.EmailJaCadastradoException;
 import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoCadastradoException;
+import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagensCadastradasDTO;
 import br.com.zup.gerenciadorDePostagem.usuario.dtos.UsuarioDto;
+import br.com.zup.gerenciadorDePostagem.usuario.dtos.UsuarioSaidaDTO;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,11 +22,13 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest({UsuarioController.class, ModelMapper.class, JWTComponent.class, UsuarioLoginService.class})
@@ -281,6 +286,24 @@ public class UsuarioControllerTest {
 
         assertEquals(404, response.andReturn().getResponse().getStatus());
         verify(usuarioService, times(1)).atualizarUsuario(anyString(),any(Usuario.class));
+
+    }
+
+    @Test
+    @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
+    public void testarRotaParaExibirUsuariosCadastradasCaminhoPositivo() throws Exception {
+        when(usuarioService.exibirUsuarios()).thenReturn(List.of(usuario));
+
+        ResultActions response = mockMvc.perform(get("/usuario")
+                        .contentType(APPLICATION_JSON)).andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray());
+
+        String jsonResposta = response.andReturn().getResponse().getContentAsString();
+        List<UsuarioSaidaDTO> postagens = objectMapper.readValue(jsonResposta,
+                new TypeReference<List<UsuarioSaidaDTO>>() {});
+
+        assertEquals(200, response.andReturn().getResponse().getStatus());
+        verify(usuarioService, times(1)).exibirUsuarios();
 
     }
 
