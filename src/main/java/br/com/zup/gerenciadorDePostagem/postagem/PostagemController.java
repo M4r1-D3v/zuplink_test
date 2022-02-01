@@ -42,15 +42,16 @@ public class PostagemController {
     }
 
     @GetMapping
-    public List<PostagensCadastradasDTO> exibirPostagensCadastradas(@RequestParam (required = false)Area area,
+    public List<PostagensCadastradasDTO> exibirPostagensCadastradas(@RequestParam (required = false) Area area,
                                                                     @RequestParam (required = false) Tipo tipo,
                                                                     @RequestParam (required = false) Tema tema,
                                                                     @RequestParam (required = false) Usuario autorPostagem,
-                                                                    @RequestParam (required = false)LocalDate dataDeCadastro){
+                                                                    @RequestParam (required = false) LocalDate dataDeCadastro,
+                                                                    @RequestParam (required = false) Integer likes){
 
         List<PostagensCadastradasDTO> postagensCadastradasDTO = new ArrayList<>();
 
-        for (Postagem postagem : postagemService.aplicarFiltroDeBusca(area, tipo, tema, autorPostagem, dataDeCadastro)) {
+        for (Postagem postagem : postagemService.aplicarFiltroDeBusca(area, tipo, tema, autorPostagem, dataDeCadastro, likes)) {
             postagensCadastradasDTO.add(modelMapper.map(postagem, PostagensCadastradasDTO.class));
         }
 
