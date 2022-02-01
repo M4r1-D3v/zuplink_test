@@ -8,7 +8,6 @@ import br.com.zup.gerenciadorDePostagem.exceptions.EmailJaCadastradoException;
 import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemUsuariosCadastradosException;
 import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoAutorizadoException;
 import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoCadastradoException;
-import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagensCadastradasDTO;
 import br.com.zup.gerenciadorDePostagem.usuario.dtos.UsuarioDto;
 import br.com.zup.gerenciadorDePostagem.usuario.dtos.UsuarioSaidaDTO;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -91,6 +90,7 @@ public class UsuarioControllerTest {
                 .andExpect(status().is(201)
                 );
 
+        assertEquals(201, resultActions.andReturn().getResponse().getStatus());
         verify(usuarioService, times(1)).cadastrarUsuario(any());
 
     }
@@ -256,29 +256,29 @@ public class UsuarioControllerTest {
 
     @Test
     @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
-    public void testarRotaParaAtualizarUsuarioCaminhoPositivo() throws Exception{
+    public void testarRotaParaAtualizarUsuarioCaminhoPositivo() throws Exception {
         when(conversorAutenticacao.converterAutenticacao(any(Authentication.class))).thenReturn(usuario);
         when(modelMapper.map(any(UsuarioDto.class), any())).thenReturn(usuario);
-        when(usuarioService.atualizarUsuario(anyString(),any(Usuario.class))).thenReturn(usuario);
+        when(usuarioService.atualizarUsuario(anyString(), any(Usuario.class))).thenReturn(usuario);
 
         String json = objectMapper.writeValueAsString(usuarioDto);
 
         ResultActions response = mockMvc.perform(put("/usuario")
-                .contentType(APPLICATION_JSON).content(json))
+                        .contentType(APPLICATION_JSON).content(json))
                 .andExpect(status().isOk());
 
         assertEquals(200, response.andReturn().getResponse().getStatus());
-        verify(usuarioService, times(1)).atualizarUsuario(anyString(),any(Usuario.class));
+        verify(usuarioService, times(1)).atualizarUsuario(anyString(), any(Usuario.class));
 
     }
 
     @Test
     @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
-    public void testarRotaParaAtualizarUsuarioExceptionUsuarioNaoCadastrado() throws Exception{
+    public void testarRotaParaAtualizarUsuarioExceptionUsuarioNaoCadastrado() throws Exception {
         when(conversorAutenticacao.converterAutenticacao(any(Authentication.class))).thenReturn(usuario);
         when(modelMapper.map(any(UsuarioDto.class), any())).thenReturn(usuario);
         doThrow(UsuarioNaoCadastradoException.class).when(usuarioService)
-                .atualizarUsuario(anyString(),any(Usuario.class));
+                .atualizarUsuario(anyString(), any(Usuario.class));
 
         String json = objectMapper.writeValueAsString(usuarioDto);
 
@@ -287,7 +287,7 @@ public class UsuarioControllerTest {
                 .andExpect(status().isNotFound());
 
         assertEquals(404, response.andReturn().getResponse().getStatus());
-        verify(usuarioService, times(1)).atualizarUsuario(anyString(),any(Usuario.class));
+        verify(usuarioService, times(1)).atualizarUsuario(anyString(), any(Usuario.class));
 
     }
 
@@ -315,7 +315,7 @@ public class UsuarioControllerTest {
         doThrow(NaoExistemUsuariosCadastradosException.class).when(usuarioService).exibirUsuarios();
 
         ResultActions response = mockMvc.perform(get("/usuario")
-                        .contentType(APPLICATION_JSON)).andExpect(status().isNotFound());
+                .contentType(APPLICATION_JSON)).andExpect(status().isNotFound());
 
         assertEquals(404, response.andReturn().getResponse().getStatus());
         verify(usuarioService, times(1)).exibirUsuarios();
@@ -324,43 +324,43 @@ public class UsuarioControllerTest {
 
     @Test
     @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
-    public void testarRotaParaDeletarUsuarioCaminhoPositivo() throws Exception{
+    public void testarRotaParaDeletarUsuarioCaminhoPositivo() throws Exception {
         when(conversorAutenticacao.converterAutenticacao(any(Authentication.class))).thenReturn(usuario);
-        doNothing().when(usuarioService).deletarUsuario(anyString(),anyString());
+        doNothing().when(usuarioService).deletarUsuario(anyString(), anyString());
 
         ResultActions response = mockMvc.perform(delete("/usuario?email=" + EMAIL_USUARIO)
                 .contentType(APPLICATION_JSON)).andExpect(status().isNoContent());
 
-        assertEquals(204,response.andReturn().getResponse().getStatus());
-        verify(usuarioService,times(1)).deletarUsuario(anyString(),anyString());
+        assertEquals(204, response.andReturn().getResponse().getStatus());
+        verify(usuarioService, times(1)).deletarUsuario(anyString(), anyString());
 
     }
 
     @Test
     @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
-    public void testarRotaParaDeletarUsuarioExceptionUsuarioNaoCadastrado() throws Exception{
+    public void testarRotaParaDeletarUsuarioExceptionUsuarioNaoCadastrado() throws Exception {
         when(conversorAutenticacao.converterAutenticacao(any(Authentication.class))).thenReturn(usuario);
-        doThrow(UsuarioNaoCadastradoException.class).when(usuarioService).deletarUsuario(anyString(),anyString());
+        doThrow(UsuarioNaoCadastradoException.class).when(usuarioService).deletarUsuario(anyString(), anyString());
 
         ResultActions response = mockMvc.perform(delete("/usuario?email=" + EMAIL_USUARIO)
                 .contentType(APPLICATION_JSON)).andExpect(status().isNotFound());
 
-        assertEquals(404,response.andReturn().getResponse().getStatus());
-        verify(usuarioService,times(1)).deletarUsuario(anyString(),anyString());
+        assertEquals(404, response.andReturn().getResponse().getStatus());
+        verify(usuarioService, times(1)).deletarUsuario(anyString(), anyString());
 
     }
 
     @Test
     @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
-    public void testarRotaParaDeletarUsuarioExceptionUsuarioNaoAutorizado() throws Exception{
+    public void testarRotaParaDeletarUsuarioExceptionUsuarioNaoAutorizado() throws Exception {
         when(conversorAutenticacao.converterAutenticacao(any(Authentication.class))).thenReturn(usuario);
-        doThrow(UsuarioNaoAutorizadoException.class).when(usuarioService).deletarUsuario(anyString(),anyString());
+        doThrow(UsuarioNaoAutorizadoException.class).when(usuarioService).deletarUsuario(anyString(), anyString());
 
         ResultActions response = mockMvc.perform(delete("/usuario?email=" + EMAIL_USUARIO)
                 .contentType(APPLICATION_JSON)).andExpect(status().isForbidden());
 
-        assertEquals(403,response.andReturn().getResponse().getStatus());
-        verify(usuarioService,times(1)).deletarUsuario(anyString(),anyString());
+        assertEquals(403, response.andReturn().getResponse().getStatus());
+        verify(usuarioService, times(1)).deletarUsuario(anyString(), anyString());
 
     }
 
