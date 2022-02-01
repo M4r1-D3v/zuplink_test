@@ -321,4 +321,18 @@ public class UsuarioControllerTest {
 
     }
 
+    @Test
+    @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
+    public void testarRotaParaDeletarUsuarioCaminhoPositivo() throws Exception{
+        when(conversorAutenticacao.converterAutenticacao(any(Authentication.class))).thenReturn(usuario);
+        doNothing().when(usuarioService).deletarUsuario(anyString(),anyString());
+
+        ResultActions response = mockMvc.perform(delete("/usuario?email=" + EMAIL_USUARIO)
+                .contentType(APPLICATION_JSON)).andExpect(status().isNoContent());
+
+        assertEquals(204,response.andReturn().getResponse().getStatus());
+        verify(usuarioService,times(1)).deletarUsuario(anyString(),anyString());
+
+    }
+
 }
