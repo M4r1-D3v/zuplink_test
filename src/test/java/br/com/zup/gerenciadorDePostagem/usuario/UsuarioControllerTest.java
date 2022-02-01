@@ -6,6 +6,7 @@ import br.com.zup.gerenciadorDePostagem.config.security.UsuarioLoginService;
 import br.com.zup.gerenciadorDePostagem.config.security.jwt.JWTComponent;
 import br.com.zup.gerenciadorDePostagem.exceptions.EmailJaCadastradoException;
 import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemUsuariosCadastradosException;
+import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoAutorizadoException;
 import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoCadastradoException;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagensCadastradasDTO;
 import br.com.zup.gerenciadorDePostagem.usuario.dtos.UsuarioDto;
@@ -345,6 +346,20 @@ public class UsuarioControllerTest {
                 .contentType(APPLICATION_JSON)).andExpect(status().isNotFound());
 
         assertEquals(404,response.andReturn().getResponse().getStatus());
+        verify(usuarioService,times(1)).deletarUsuario(anyString(),anyString());
+
+    }
+
+    @Test
+    @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
+    public void testarRotaParaDeletarUsuarioExceptionUsuarioNaoAutorizado() throws Exception{
+        when(conversorAutenticacao.converterAutenticacao(any(Authentication.class))).thenReturn(usuario);
+        doThrow(UsuarioNaoAutorizadoException.class).when(usuarioService).deletarUsuario(anyString(),anyString());
+
+        ResultActions response = mockMvc.perform(delete("/usuario?email=" + EMAIL_USUARIO)
+                .contentType(APPLICATION_JSON)).andExpect(status().isForbidden());
+
+        assertEquals(403,response.andReturn().getResponse().getStatus());
         verify(usuarioService,times(1)).deletarUsuario(anyString(),anyString());
 
     }
