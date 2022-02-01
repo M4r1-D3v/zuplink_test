@@ -5,6 +5,7 @@ import br.com.zup.gerenciadorDePostagem.components.ConversorAutenticacao;
 import br.com.zup.gerenciadorDePostagem.config.security.UsuarioLoginService;
 import br.com.zup.gerenciadorDePostagem.config.security.jwt.JWTComponent;
 import br.com.zup.gerenciadorDePostagem.exceptions.EmailJaCadastradoException;
+import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoCadastradoException;
 import br.com.zup.gerenciadorDePostagem.usuario.dtos.UsuarioDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -260,6 +261,25 @@ public class UsuarioControllerTest {
                 .andExpect(status().isOk());
 
         assertEquals(200, response.andReturn().getResponse().getStatus());
+        verify(usuarioService, times(1)).atualizarUsuario(anyString(),any(Usuario.class));
+
+    }
+
+    @Test
+    @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
+    public void testarRotaParaAtualizarUsuarioExceptionUsuarioNaoCadastrado() throws Exception{
+        when(conversorAutenticacao.converterAutenticacao(any(Authentication.class))).thenReturn(usuario);
+        when(modelMapper.map(any(UsuarioDto.class), any())).thenReturn(usuario);
+        doThrow(UsuarioNaoCadastradoException.class).when(usuarioService)
+                .atualizarUsuario(anyString(),any(Usuario.class));
+
+        String json = objectMapper.writeValueAsString(usuarioDto);
+
+        ResultActions response = mockMvc.perform(put("/usuario")
+                        .contentType(APPLICATION_JSON).content(json))
+                .andExpect(status().isNotFound());
+
+        assertEquals(404, response.andReturn().getResponse().getStatus());
         verify(usuarioService, times(1)).atualizarUsuario(anyString(),any(Usuario.class));
 
     }
