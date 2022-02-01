@@ -90,6 +90,7 @@ public class PostagemService {
         if (tipo !=null){
             return postagemRepository.findAllByTipo(tipo);
         }
+        List<Postagem> postagens = (List<Postagem>) postagemRepository.findAll();
         return exibirPostagens();
     }
 
