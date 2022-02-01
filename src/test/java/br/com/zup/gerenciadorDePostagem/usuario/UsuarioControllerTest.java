@@ -13,6 +13,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -20,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest({UsuarioController.class, ModelMapper.class, JWTComponent.class, UsuarioLoginService.class})
@@ -29,6 +32,7 @@ public class UsuarioControllerTest {
     public static final String EMA = "ana@zup.com.br";
     public static final String SENHA = "1234";
     public static final String ID_USUARIO = "1";
+    private static final String EMAIL_USUARIO = "email@zup.com.br";
 
 
     @MockBean
@@ -239,6 +243,24 @@ public class UsuarioControllerTest {
 
         assertEquals(422, response.andReturn().getResponse().getStatus());
         verify(usuarioService, times(1)).cadastrarUsuario(any());
+
+    }
+
+    @Test
+    @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
+    public void testarRotaParaAtualizarUsuarioCaminhoPositivo() throws Exception{
+        when(conversorAutenticacao.converterAutenticacao(any(Authentication.class))).thenReturn(usuario);
+        when(modelMapper.map(any(UsuarioDto.class), any())).thenReturn(usuario);
+        when(usuarioService.atualizarUsuario(anyString(),any(Usuario.class))).thenReturn(usuario);
+
+        String json = objectMapper.writeValueAsString(usuarioDto);
+
+        ResultActions response = mockMvc.perform(put("/usuario")
+                .contentType(APPLICATION_JSON).content(json))
+                .andExpect(status().isOk());
+
+        assertEquals(200, response.andReturn().getResponse().getStatus());
+        verify(usuarioService, times(1)).atualizarUsuario(anyString(),any(Usuario.class));
 
     }
 
