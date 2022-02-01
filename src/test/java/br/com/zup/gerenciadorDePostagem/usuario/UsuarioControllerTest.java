@@ -162,4 +162,20 @@ public class UsuarioControllerTest {
 
     }
 
+    @Test
+    public void testarRotaParaCadastroDeUsuarioValidacaoNomeNotNull() throws Exception {
+        usuarioDto.setNome(null);
+        when(usuarioService.cadastrarUsuario(any())).thenReturn(usuario);
+        String json = objectMapper.writeValueAsString(usuarioDto);
+
+        ResultActions response = mockMvc.perform(post("/usuario")
+                        .contentType(APPLICATION_JSON).content(json))
+                .andExpect(status().isUnprocessableEntity());
+
+
+        assertEquals(422,response.andReturn().getResponse().getStatus());
+        verify(usuarioService, times(0)).cadastrarUsuario(any());
+
+    }
+
 }
