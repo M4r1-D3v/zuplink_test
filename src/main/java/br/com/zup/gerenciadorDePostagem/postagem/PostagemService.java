@@ -43,7 +43,8 @@ public class PostagemService {
 
     public Postagem atualizarPostagem(Long idPostagem, Postagem postagemRecebida, Usuario usuarioLogado) {
 
-        Postagem postagemAtualizada = verificarPostagem(idPostagem, usuarioLogado.getId());
+        Postagem postagemAtualizada = verificarPostagem(idPostagem);
+        validarAutenticidade(usuarioLogado,postagemAtualizada);
 
         postagemAtualizada.setTitulo(postagemRecebida.getTitulo());
         postagemAtualizada.setDescricao(postagemRecebida.getDescricao());
