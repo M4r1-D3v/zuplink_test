@@ -47,7 +47,6 @@ class PostagemControllerTest {
     public static final String EMAIL_USUARIO = "email@zup.com.br";
     public static final String SENHA = "1234";
     public static final long ID_POSTAGEM = 1L;
-    public static final long ID_TESTES = 2L;
     public static final int INT = 0;
     public static final String DESCRICAO_SIZE = "Lorem Ipsum is simply dummy text of the printing and typesetting" +
             " industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an" +
