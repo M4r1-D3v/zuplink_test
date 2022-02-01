@@ -1,11 +1,13 @@
 package br.com.zup.gerenciadorDePostagem.postagem;
 
+import br.com.zup.gerenciadorDePostagem.config.security.UsuarioLogado;
 import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemPostagensCadastradasException;
 import br.com.zup.gerenciadorDePostagem.exceptions.PostagemNaoEncontradaException;
 import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoAutorizadoException;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.AtualizarPostagemDTO;
 import br.com.zup.gerenciadorDePostagem.usuario.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -39,9 +41,10 @@ public class PostagemService {
         return postagens;
     }
 
-    public Postagem atualizarPostagem(Long idPostagem, Postagem postagemRecebida, Usuario usuarioLogado){
+    public Postagem atualizarPostagem(Long idPostagem, Postagem postagemRecebida, Usuario usuarioLogado) {
 
-        Postagem postagemAtualizada = verificarPostagem(idPostagem, usuarioLogado.getId());
+        Postagem postagemAtualizada = verificarPostagem(idPostagem);
+        validarAutenticidade(usuarioLogado,postagemAtualizada);
 
         postagemAtualizada.setTitulo(postagemRecebida.getTitulo());
         postagemAtualizada.setDescricao(postagemRecebida.getDescricao());
@@ -55,23 +58,30 @@ public class PostagemService {
     }
 
     public void deletarPostagem(Long idPostagem, Usuario usuario) {
-        verificarPostagem(idPostagem, usuario.getId());
+        Postagem postagem = verificarPostagem(idPostagem);
+        validarAutenticidade(usuario, postagem);
 
-        postagemRepository.deleteById(idPostagem);
+        postagemRepository.deleteById(postagem.getId());
+
     }
 
-    private Postagem verificarPostagem(Long idPostagem, String idUsuario) {
+    public Postagem verificarPostagem(Long idPostagem) {
         Optional<Postagem> postagemCadastrada = postagemRepository.findById(idPostagem);
 
         if (postagemCadastrada.isPresent()) {
-            if (idUsuario.equals(postagemCadastrada.get().getAutorPostagem().getId())) {
-                return postagemCadastrada.get();
-            } else {
-                throw new UsuarioNaoAutorizadoException("Usuário não autorizado");
-            }
+            return postagemCadastrada.get();
+        } else {
+            throw new PostagemNaoEncontradaException("Postagem não encontrada");
+        }
+    }
+
+
+    public void validarAutenticidade(Usuario usuarioLogado, Postagem postagem) {
+
+        if (!usuarioLogado.getId().equals(postagem.getAutorPostagem().getId())) {
+            throw new UsuarioNaoAutorizadoException("Usuário não autorizado");
         }
 
-        throw new PostagemNaoEncontradaException("Postagem não encontrada");
     }
 
 }
