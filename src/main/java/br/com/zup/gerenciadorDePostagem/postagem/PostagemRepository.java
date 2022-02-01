@@ -18,5 +18,9 @@ public interface PostagemRepository extends CrudRepository<Postagem,Long> {
     List<Postagem> findAllByLocalDate (LocalDate dataDeCadastro);
     @Query(value = "SELECT * FROM postagens ORDER BY likes DESC", nativeQuery = true)
     List<Postagem> findAllByInteger (Integer likes);
+    @Query(value = "SELECT * FROM postagens ORDER BY deslikes DESC", nativeQuery = true)
+    List<Postagem> deslike (Integer deslikes);
+
+
 
 }
