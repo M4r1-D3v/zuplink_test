@@ -6,18 +6,19 @@ import br.com.zup.gerenciadorDePostagem.config.security.jwt.JWTComponent;
 import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemPostagensCadastradasException;
 import br.com.zup.gerenciadorDePostagem.exceptions.PostagemNaoEncontradaException;
 import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoAutorizadoException;
+import br.com.zup.gerenciadorDePostagem.postagem.dtos.AtualizarPostagemDTO;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagemDTO;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagensCadastradasDTO;
 import br.com.zup.gerenciadorDePostagem.usuario.Usuario;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -64,7 +65,7 @@ class PostagemControllerTest {
     @MockBean
     private UsuarioLoginService usuarioLoginService;
     @MockBean
-    private ConversorAutenticacao conversorAutenticacaoService;
+    private ConversorAutenticacao conversorAutenticacao;
 
 
     @Autowired
@@ -74,6 +75,7 @@ class PostagemControllerTest {
     private ObjectMapper objectMapper;
     private Postagem postagem;
     private PostagemDTO postagemDTO;
+    private AtualizarPostagemDTO atualizarPostagemDTO;
     private Usuario usuario;
 
 
@@ -85,6 +87,7 @@ class PostagemControllerTest {
                 DOCUMENTACAO, JAVA, BACKEND, INT, INT, usuario, LocalDate.now());
         postagemDTO = new PostagemDTO(TITULO, DESCRICAO, LINK,
                 DOCUMENTACAO, JAVA, BACKEND);
+        atualizarPostagemDTO = new AtualizarPostagemDTO(TITULO,DESCRICAO,DOCUMENTACAO,JAVA,BACKEND);
     }
 
 
@@ -273,8 +276,11 @@ class PostagemControllerTest {
     @Test
     @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
     public void testarRotaParaEditarPostagemCaminhoPositivo() throws Exception {
+        when(conversorAutenticacao.converterAutenticacao(any(Authentication.class))).thenReturn(usuario);
+        when(modelMapper.map(any(AtualizarPostagemDTO.class),any())).thenReturn(postagem);
         when(service.atualizarPostagem(anyLong(), any(Postagem.class), any(Usuario.class))).thenReturn(postagem);
-        String json = objectMapper.writeValueAsString(postagemDTO);
+
+        String json = objectMapper.writeValueAsString(atualizarPostagemDTO);
 
         ResultActions response = mockMvc.perform(put("/postagem/" + postagem.getId()).content(json)
                 .contentType(APPLICATION_JSON)).andExpect(status().isOk());
@@ -286,9 +292,12 @@ class PostagemControllerTest {
     @Test
     @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
     public void testarRotaParaEditarPostagemPostagemNaoEncontrada() throws Exception {
-        when(conversorAutenticacaoService.converterAutenticacao(any())).thenReturn(usuario);
-        doThrow(PostagemNaoEncontradaException.class).when(service).atualizarPostagem(anyLong(),any(),any());
-        String json = objectMapper.writeValueAsString(postagemDTO);
+        when(conversorAutenticacao.converterAutenticacao(any(Authentication.class))).thenReturn(usuario);
+        when(modelMapper.map(any(AtualizarPostagemDTO.class),any())).thenReturn(postagem);
+        doThrow(PostagemNaoEncontradaException.class).when(service)
+                .atualizarPostagem(anyLong(),any(Postagem.class),any(Usuario.class));
+
+        String json = objectMapper.writeValueAsString(atualizarPostagemDTO);
 
         ResultActions response= mockMvc.perform(put("/postagem/" + postagem.getId()).content(json)
                 .contentType(APPLICATION_JSON)).andExpect(status().isNotFound());
@@ -302,9 +311,12 @@ class PostagemControllerTest {
     @Test
     @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
     public void testarRotaParaEditarPostagemUsuarioNaoAutorizado() throws Exception {
-        when(conversorAutenticacaoService.converterAutenticacao(any())).thenReturn(usuario);
-        doThrow(UsuarioNaoAutorizadoException.class).when(service).atualizarPostagem(anyLong(),any(),any());
-        String json = objectMapper.writeValueAsString(postagemDTO);
+        when(conversorAutenticacao.converterAutenticacao(any(Authentication.class))).thenReturn(usuario);
+        when(modelMapper.map(any(AtualizarPostagemDTO.class),any())).thenReturn(postagem);
+        doThrow(PostagemNaoEncontradaException.class).when(service)
+                .atualizarPostagem(anyLong(),any(Postagem.class),any(Usuario.class));
+
+        String json = objectMapper.writeValueAsString(atualizarPostagemDTO);
 
         ResultActions response= mockMvc.perform(put("/postagem/" + postagem.getId()).content(json)
                 .contentType(APPLICATION_JSON)).andExpect(status().isForbidden());
@@ -331,7 +343,7 @@ class PostagemControllerTest {
     @Test
     @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
     public void testarRotaParaExcluirPostagemNaoCadastrada() throws Exception {
-        when(conversorAutenticacaoService.converterAutenticacao(any())).thenReturn(usuario);
+        when(conversorAutenticacao.converterAutenticacao(any())).thenReturn(usuario);
         doThrow(PostagemNaoEncontradaException.class).when(service).deletarPostagem(anyLong(), any());
 
         ResultActions response= mockMvc.perform(delete("/postagem/" + postagem.getId())
@@ -346,7 +358,7 @@ class PostagemControllerTest {
     @Test
     @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
     public void testarRotaParaExcluirPostagemUsuarioNaoAutorizado() throws Exception {
-        when(conversorAutenticacaoService.converterAutenticacao(any())).thenReturn(usuario);
+        when(conversorAutenticacao.converterAutenticacao(any())).thenReturn(usuario);
         doThrow(UsuarioNaoAutorizadoException.class).when(service).deletarPostagem(anyLong(), any(Usuario.class));
 
         ResultActions response= mockMvc.perform(delete("/postagem/" + postagem.getId())
