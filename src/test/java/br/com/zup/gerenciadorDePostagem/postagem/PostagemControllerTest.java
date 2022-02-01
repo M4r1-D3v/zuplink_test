@@ -286,6 +286,27 @@ class PostagemControllerTest {
                 .contentType(APPLICATION_JSON)).andExpect(status().isOk());
 
         assertEquals(200, response.andReturn().getResponse().getStatus());
+        verify(service,times(1))
+                .atualizarPostagem(anyLong(),any(Postagem.class),any(Usuario.class));
+
+    }
+
+    @Test
+    @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
+    public void testarRotaParaEditarPostagemValidacaoTituloNotBlank() throws Exception {
+        when(conversorAutenticacao.converterAutenticacao(any(Authentication.class))).thenReturn(usuario);
+        when(modelMapper.map(any(AtualizarPostagemDTO.class),any())).thenReturn(postagem);
+        when(service.atualizarPostagem(anyLong(), any(Postagem.class), any(Usuario.class))).thenReturn(postagem);
+
+        atualizarPostagemDTO.setTitulo("");
+        String json = objectMapper.writeValueAsString(atualizarPostagemDTO);
+
+        ResultActions response = mockMvc.perform(put("/postagem/" + postagem.getId()).content(json)
+                .contentType(APPLICATION_JSON)).andExpect(status().isUnprocessableEntity());
+
+        assertEquals(422,response.andReturn().getResponse().getStatus());
+        verify(service, times(0))
+                .atualizarPostagem(anyLong(),any(Postagem.class),any(Usuario.class));
 
     }
 
