@@ -84,7 +84,7 @@ public class PostagemService {
 
     }
 
-    public List<Postagem> aplicarFiltroDeBusca (Area area, Tipo tipo, Tema tema, Usuario autorPostagem) {
+    public List<Postagem> aplicarFiltroDeBusca (Area area, Tipo tipo, Tema tema, Usuario autorPostagem, LocalDate dataDeCadastro) {
         if (area != null) {
             return postagemRepository.findAllByArea(area);
         }
@@ -96,6 +96,9 @@ public class PostagemService {
         }
         else if (autorPostagem != null){
             return  postagemRepository.findAllByUsuario(autorPostagem);
+        }
+        else if (dataDeCadastro != null){
+            return postagemRepository.findAllByLocalDate(dataDeCadastro);
         }
         List<Postagem> postagens = (List<Postagem>) postagemRepository.findAll();
         return exibirPostagens();
