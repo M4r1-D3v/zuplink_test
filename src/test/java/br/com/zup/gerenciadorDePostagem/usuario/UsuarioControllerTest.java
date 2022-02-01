@@ -7,23 +7,20 @@ import br.com.zup.gerenciadorDePostagem.config.security.jwt.JWTComponent;
 import br.com.zup.gerenciadorDePostagem.exceptions.EmailJaCadastradoException;
 import br.com.zup.gerenciadorDePostagem.usuario.dtos.UsuarioDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
-import static org.springframework.http.MediaType.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest({UsuarioController.class, ModelMapper.class, JWTComponent.class, UsuarioLoginService.class})
 public class UsuarioControllerTest {
@@ -72,7 +69,9 @@ public class UsuarioControllerTest {
 
     @Test
     public void testarRotaParaCadastroDeUsuarioCaminhoPositivo() throws Exception {
+        when(modelMapper.map(any(UsuarioDto.class), any())).thenReturn(usuario);
         when(usuarioService.cadastrarUsuario(any(Usuario.class))).thenReturn(usuario);
+
         String json = objectMapper.writeValueAsString(usuarioDto);
 
         ResultActions resultActions = mockMvc.perform(post("/usuario")
@@ -86,23 +85,27 @@ public class UsuarioControllerTest {
 
     @Test
     public void testarRotaParaCadastroDeUsuarioValidacaoEmailForaPadrao() throws Exception {
+        when(modelMapper.map(any(UsuarioDto.class), any())).thenReturn(usuario);
+        when(usuarioService.cadastrarUsuario(any(Usuario.class))).thenReturn(usuario);
+
         usuarioDto.setEmail("email@email");
-        when(usuarioService.cadastrarUsuario(any())).thenReturn(usuario);
         String json = objectMapper.writeValueAsString(usuarioDto);
 
         ResultActions response = mockMvc.perform(post("/usuario")
                         .contentType(APPLICATION_JSON).content(json))
                 .andExpect(status().isUnprocessableEntity());
 
-        assertEquals(422,response.andReturn().getResponse().getStatus());
+        assertEquals(422, response.andReturn().getResponse().getStatus());
         verify(usuarioService, times(0)).cadastrarUsuario(any());
 
     }
 
     @Test
     public void testarRotaParaCadastroDeUsuarioValidacaoEmailNotNull() throws Exception {
+        when(modelMapper.map(any(UsuarioDto.class), any())).thenReturn(usuario);
+        when(usuarioService.cadastrarUsuario(any(Usuario.class))).thenReturn(usuario);
+
         usuarioDto.setEmail(null);
-        when(usuarioService.cadastrarUsuario(any())).thenReturn(usuario);
         String json = objectMapper.writeValueAsString(usuarioDto);
 
         ResultActions response = mockMvc.perform(post("/usuario")
@@ -110,15 +113,17 @@ public class UsuarioControllerTest {
                 .andExpect(status().isUnprocessableEntity());
 
 
-        assertEquals(422,response.andReturn().getResponse().getStatus());
+        assertEquals(422, response.andReturn().getResponse().getStatus());
         verify(usuarioService, times(0)).cadastrarUsuario(any());
 
     }
 
     @Test
     public void testarRotaParaCadastroDeUsuarioValidacaoSenhaNotNull() throws Exception {
+        when(modelMapper.map(any(UsuarioDto.class), any())).thenReturn(usuario);
+        when(usuarioService.cadastrarUsuario(any(Usuario.class))).thenReturn(usuario);
+
         usuarioDto.setSenha(null);
-        when(usuarioService.cadastrarUsuario(any())).thenReturn(usuario);
         String json = objectMapper.writeValueAsString(usuarioDto);
 
         ResultActions response = mockMvc.perform(post("/usuario")
@@ -126,15 +131,17 @@ public class UsuarioControllerTest {
                 .andExpect(status().isUnprocessableEntity());
 
 
-        assertEquals(422,response.andReturn().getResponse().getStatus());
+        assertEquals(422, response.andReturn().getResponse().getStatus());
         verify(usuarioService, times(0)).cadastrarUsuario(any());
 
     }
 
     @Test
     public void testarRotaParaCadastroDeUsuarioValidacaoSenhaNotBlank() throws Exception {
+        when(modelMapper.map(any(UsuarioDto.class), any())).thenReturn(usuario);
+        when(usuarioService.cadastrarUsuario(any(Usuario.class))).thenReturn(usuario);
+
         usuarioDto.setSenha("");
-        when(usuarioService.cadastrarUsuario(any())).thenReturn(usuario);
         String json = objectMapper.writeValueAsString(usuarioDto);
 
         ResultActions response = mockMvc.perform(post("/usuario")
@@ -142,15 +149,17 @@ public class UsuarioControllerTest {
                 .andExpect(status().isUnprocessableEntity());
 
 
-        assertEquals(422,response.andReturn().getResponse().getStatus());
+        assertEquals(422, response.andReturn().getResponse().getStatus());
         verify(usuarioService, times(0)).cadastrarUsuario(any());
 
     }
 
     @Test
     public void testarRotaParaCadastroDeUsuarioValidacaoSenhaSizeMin() throws Exception {
+        when(modelMapper.map(any(UsuarioDto.class), any())).thenReturn(usuario);
+        when(usuarioService.cadastrarUsuario(any(Usuario.class))).thenReturn(usuario);
+
         usuarioDto.setSenha("123");
-        when(usuarioService.cadastrarUsuario(any())).thenReturn(usuario);
         String json = objectMapper.writeValueAsString(usuarioDto);
 
         ResultActions response = mockMvc.perform(post("/usuario")
@@ -158,15 +167,17 @@ public class UsuarioControllerTest {
                 .andExpect(status().isUnprocessableEntity());
 
 
-        assertEquals(422,response.andReturn().getResponse().getStatus());
+        assertEquals(422, response.andReturn().getResponse().getStatus());
         verify(usuarioService, times(0)).cadastrarUsuario(any());
 
     }
 
     @Test
     public void testarRotaParaCadastroDeUsuarioValidacaoNomeNotNull() throws Exception {
+        when(modelMapper.map(any(UsuarioDto.class), any())).thenReturn(usuario);
+        when(usuarioService.cadastrarUsuario(any(Usuario.class))).thenReturn(usuario);
+
         usuarioDto.setNome(null);
-        when(usuarioService.cadastrarUsuario(any())).thenReturn(usuario);
         String json = objectMapper.writeValueAsString(usuarioDto);
 
         ResultActions response = mockMvc.perform(post("/usuario")
@@ -174,15 +185,17 @@ public class UsuarioControllerTest {
                 .andExpect(status().isUnprocessableEntity());
 
 
-        assertEquals(422,response.andReturn().getResponse().getStatus());
+        assertEquals(422, response.andReturn().getResponse().getStatus());
         verify(usuarioService, times(0)).cadastrarUsuario(any());
 
     }
 
     @Test
     public void testarRotaParaCadastroDeUsuarioValidacaoNomeNotBlank() throws Exception {
+        when(modelMapper.map(any(UsuarioDto.class), any())).thenReturn(usuario);
+        when(usuarioService.cadastrarUsuario(any(Usuario.class))).thenReturn(usuario);
+
         usuarioDto.setNome("");
-        when(usuarioService.cadastrarUsuario(any())).thenReturn(usuario);
         String json = objectMapper.writeValueAsString(usuarioDto);
 
         ResultActions response = mockMvc.perform(post("/usuario")
@@ -190,15 +203,17 @@ public class UsuarioControllerTest {
                 .andExpect(status().isUnprocessableEntity());
 
 
-        assertEquals(422,response.andReturn().getResponse().getStatus());
+        assertEquals(422, response.andReturn().getResponse().getStatus());
         verify(usuarioService, times(0)).cadastrarUsuario(any());
 
     }
 
     @Test
     public void testarRotaParaCadastroDeUsuarioValidacaoNomeSizeMin() throws Exception {
+        when(modelMapper.map(any(UsuarioDto.class), any())).thenReturn(usuario);
+        when(usuarioService.cadastrarUsuario(any(Usuario.class))).thenReturn(usuario);
+
         usuarioDto.setNome("J");
-        when(usuarioService.cadastrarUsuario(any())).thenReturn(usuario);
         String json = objectMapper.writeValueAsString(usuarioDto);
 
         ResultActions response = mockMvc.perform(post("/usuario")
@@ -206,24 +221,25 @@ public class UsuarioControllerTest {
                 .andExpect(status().isUnprocessableEntity());
 
 
-        assertEquals(422,response.andReturn().getResponse().getStatus());
+        assertEquals(422, response.andReturn().getResponse().getStatus());
         verify(usuarioService, times(0)).cadastrarUsuario(any());
 
     }
 
-   @Test
-    public void testarRotaParaCadastrarUsuarioExceptionEmailJaCadastrado() throws Exception{
-        when(modelMapper.map(any(),any())).thenReturn(usuario);
+    @Test
+    public void testarRotaParaCadastrarUsuarioExceptionEmailJaCadastrado() throws Exception {
+        when(modelMapper.map(any(), any())).thenReturn(usuario);
         doThrow(EmailJaCadastradoException.class).when(usuarioService).cadastrarUsuario(usuario);
+
         String json = objectMapper.writeValueAsString(usuarioDto);
 
         ResultActions response = mockMvc.perform(post("/usuario")
-                .contentType(APPLICATION_JSON).content(json))
+                        .contentType(APPLICATION_JSON).content(json))
                 .andExpect(status().isUnprocessableEntity());
 
-       assertEquals(422,response.andReturn().getResponse().getStatus());
-       verify(usuarioService, times(1)).cadastrarUsuario(any());
+        assertEquals(422, response.andReturn().getResponse().getStatus());
+        verify(usuarioService, times(1)).cadastrarUsuario(any());
 
-   }
+    }
 
 }
