@@ -12,7 +12,7 @@ public interface PostagemRepository extends CrudRepository<Postagem,Long> {
     List<Postagem> findAllByArea (Area area);
     List<Postagem> findAllByTipo (Tipo tipo);
     List<Postagem> findAllByTema (Tema tema);
-    List<Postagem> findAllByTema (Usuario autorPostagem);
+    List<Postagem> findAllByUsuario (Usuario autorPostagem);
 
 
 }
