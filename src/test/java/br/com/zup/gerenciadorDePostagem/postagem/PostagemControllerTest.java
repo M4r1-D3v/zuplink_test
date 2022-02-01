@@ -94,153 +94,197 @@ class PostagemControllerTest {
     @Test
     @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
     public void testarRotaParaCadastrarPostagemCaminhoPositivo() throws Exception {
+        when(conversorAutenticacao.converterAutenticacao(any(Authentication.class))).thenReturn(usuario);
+        when(modelMapper.map(any(PostagemDTO.class),any())).thenReturn(postagem);
         when(service.salvarPostagem(any(Postagem.class), any(Usuario.class))).thenReturn(postagem);
+
         String json = objectMapper.writeValueAsString(postagemDTO);
 
         ResultActions response = mockMvc.perform(post("/postagem").content(json)
                 .contentType(APPLICATION_JSON)).andExpect(status().isCreated());
 
         assertEquals(201, response.andReturn().getResponse().getStatus());
+        verify(service,times(1)).salvarPostagem(any(Postagem.class),any(Usuario.class));
 
     }
 
     @Test
     @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
     public void testarRotaParaCadastrarPostagemValidacaoTituloNotBlank() throws Exception {
-        postagemDTO.setTitulo("");
+        when(conversorAutenticacao.converterAutenticacao(any(Authentication.class))).thenReturn(usuario);
+        when(modelMapper.map(any(PostagemDTO.class),any())).thenReturn(postagem);
         when(service.salvarPostagem(any(Postagem.class), any(Usuario.class))).thenReturn(postagem);
+
+        postagemDTO.setTitulo("");
         String json = objectMapper.writeValueAsString(postagemDTO);
 
         ResultActions response = mockMvc.perform(post("/postagem").content(json)
                 .contentType(APPLICATION_JSON)).andExpect(status().isUnprocessableEntity());
 
-        verify(service, times(0)).salvarPostagem(any(), any());
+        assertEquals(422, response.andReturn().getResponse().getStatus());
+        verify(service, times(0)).salvarPostagem(any(Postagem.class), any(Usuario.class));
 
     }
 
     @Test
     @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
     public void testarRotaParaCadastrarPostagemValidacaoTituloNotNull() throws Exception {
-        postagemDTO.setTitulo(null);
+        when(conversorAutenticacao.converterAutenticacao(any(Authentication.class))).thenReturn(usuario);
+        when(modelMapper.map(any(PostagemDTO.class),any())).thenReturn(postagem);
         when(service.salvarPostagem(any(Postagem.class), any(Usuario.class))).thenReturn(postagem);
+
+        postagemDTO.setTitulo(null);
         String json = objectMapper.writeValueAsString(postagemDTO);
 
         ResultActions response = mockMvc.perform(post("/postagem").content(json)
                 .contentType(APPLICATION_JSON)).andExpect(status().isUnprocessableEntity());
 
-        verify(service, times(0)).salvarPostagem(any(), any());
+        assertEquals(422, response.andReturn().getResponse().getStatus());
+        verify(service, times(0)).salvarPostagem(any(Postagem.class), any(Usuario.class));
 
     }
 
     @Test
     @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
     public void testarRotaParaCadastrarPostagemValidacaoTituloSizeMin() throws Exception {
-        postagemDTO.setTitulo("Ti");
+        when(conversorAutenticacao.converterAutenticacao(any(Authentication.class))).thenReturn(usuario);
+        when(modelMapper.map(any(PostagemDTO.class),any())).thenReturn(postagem);
         when(service.salvarPostagem(any(Postagem.class), any(Usuario.class))).thenReturn(postagem);
+
+        postagemDTO.setTitulo("Ti");
         String json = objectMapper.writeValueAsString(postagemDTO);
 
         ResultActions response = mockMvc.perform(post("/postagem").content(json)
                 .contentType(APPLICATION_JSON)).andExpect(status().isUnprocessableEntity());
 
-        verify(service, times(0)).salvarPostagem(any(), any());
+        assertEquals(422, response.andReturn().getResponse().getStatus());
+        verify(service, times(0)).salvarPostagem(any(Postagem.class), any(Usuario.class));
 
     }
 
     @Test
     @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
     public void testarRotaParaCadastrarPostagemValidacaoDescricaoSizeMax() throws Exception {
-        postagemDTO.setDescricao(DESCRICAO_SIZE);
+        when(conversorAutenticacao.converterAutenticacao(any(Authentication.class))).thenReturn(usuario);
+        when(modelMapper.map(any(PostagemDTO.class),any())).thenReturn(postagem);
         when(service.salvarPostagem(any(Postagem.class), any(Usuario.class))).thenReturn(postagem);
+
+        postagemDTO.setDescricao(DESCRICAO_SIZE);
         String json = objectMapper.writeValueAsString(postagemDTO);
 
         ResultActions response = mockMvc.perform(post("/postagem").content(json)
                 .contentType(APPLICATION_JSON)).andExpect(status().isUnprocessableEntity());
 
-        verify(service, times(0)).salvarPostagem(any(), any());
+        assertEquals(422, response.andReturn().getResponse().getStatus());
+        verify(service, times(0)).salvarPostagem(any(Postagem.class), any(Usuario.class));
 
     }
 
     @Test
     @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
     public void testarRotaParaCadastrarPostagemValidacaoLinkNotBlank() throws Exception {
-        postagemDTO.setLink("");
+        when(conversorAutenticacao.converterAutenticacao(any(Authentication.class))).thenReturn(usuario);
+        when(modelMapper.map(any(PostagemDTO.class),any())).thenReturn(postagem);
         when(service.salvarPostagem(any(Postagem.class), any(Usuario.class))).thenReturn(postagem);
+
+        postagemDTO.setLink("");
         String json = objectMapper.writeValueAsString(postagemDTO);
 
         ResultActions response = mockMvc.perform(post("/postagem").content(json)
                 .contentType(APPLICATION_JSON)).andExpect(status().isUnprocessableEntity());
 
-        verify(service, times(0)).salvarPostagem(any(), any());
+        assertEquals(422, response.andReturn().getResponse().getStatus());
+        verify(service, times(0)).salvarPostagem(any(Postagem.class), any(Usuario.class));
 
     }
 
     @Test
     @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
     public void testarRotaParaCadastrarPostagemValidacaoLinkNotNull() throws Exception {
-        postagemDTO.setLink(null);
+        when(conversorAutenticacao.converterAutenticacao(any(Authentication.class))).thenReturn(usuario);
+        when(modelMapper.map(any(PostagemDTO.class),any())).thenReturn(postagem);
         when(service.salvarPostagem(any(Postagem.class), any(Usuario.class))).thenReturn(postagem);
+
+        postagemDTO.setLink(null);
         String json = objectMapper.writeValueAsString(postagemDTO);
 
         ResultActions response = mockMvc.perform(post("/postagem").content(json)
                 .contentType(APPLICATION_JSON)).andExpect(status().isUnprocessableEntity());
 
-        verify(service, times(0)).salvarPostagem(any(), any());
+        assertEquals(422, response.andReturn().getResponse().getStatus());
+        verify(service, times(0)).salvarPostagem(any(Postagem.class), any(Usuario.class));
 
     }
 
     @Test
     @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
     public void testarRotaParaCadastrarPostagemValidacaoLinkPadrao() throws Exception {
-        postagemDTO.setLink("xablau");
+        when(conversorAutenticacao.converterAutenticacao(any(Authentication.class))).thenReturn(usuario);
+        when(modelMapper.map(any(PostagemDTO.class),any())).thenReturn(postagem);
         when(service.salvarPostagem(any(Postagem.class), any(Usuario.class))).thenReturn(postagem);
+
+        postagemDTO.setLink("xablau");
         String json = objectMapper.writeValueAsString(postagemDTO);
 
         ResultActions response = mockMvc.perform(post("/postagem").content(json)
                 .contentType(APPLICATION_JSON)).andExpect(status().isUnprocessableEntity());
 
-        verify(service, times(0)).salvarPostagem(any(), any());
+        assertEquals(422, response.andReturn().getResponse().getStatus());
+        verify(service, times(0)).salvarPostagem(any(Postagem.class), any(Usuario.class));
 
     }
 
     @Test
     @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
     public void testarRotaParaCadastrarPostagemValidacaoTemaNotNull() throws Exception {
-        postagemDTO.setTema(null);
+        when(conversorAutenticacao.converterAutenticacao(any(Authentication.class))).thenReturn(usuario);
+        when(modelMapper.map(any(PostagemDTO.class),any())).thenReturn(postagem);
         when(service.salvarPostagem(any(Postagem.class), any(Usuario.class))).thenReturn(postagem);
+
+        postagemDTO.setTema(null);
         String json = objectMapper.writeValueAsString(postagemDTO);
 
         ResultActions response = mockMvc.perform(post("/postagem").content(json)
                 .contentType(APPLICATION_JSON)).andExpect(status().isUnprocessableEntity());
 
-        verify(service, times(0)).salvarPostagem(any(), any());
+        assertEquals(422, response.andReturn().getResponse().getStatus());
+        verify(service, times(0)).salvarPostagem(any(Postagem.class), any(Usuario.class));
 
     }
 
     @Test
     @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
     public void testarRotaParaCadastrarPostagemValidacaoTipoNotNull() throws Exception {
-        postagemDTO.setTipo(null);
+        when(conversorAutenticacao.converterAutenticacao(any(Authentication.class))).thenReturn(usuario);
+        when(modelMapper.map(any(PostagemDTO.class),any())).thenReturn(postagem);
         when(service.salvarPostagem(any(Postagem.class), any(Usuario.class))).thenReturn(postagem);
+
+        postagemDTO.setTipo(null);
         String json = objectMapper.writeValueAsString(postagemDTO);
 
         ResultActions response = mockMvc.perform(post("/postagem").content(json)
                 .contentType(APPLICATION_JSON)).andExpect(status().isUnprocessableEntity());
 
-        verify(service, times(0)).salvarPostagem(any(), any());
+        assertEquals(422, response.andReturn().getResponse().getStatus());
+        verify(service, times(0)).salvarPostagem(any(Postagem.class), any(Usuario.class));
 
     }
 
     @Test
     @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
     public void testarRotaParaCadastrarPostagemValidacaoAreaAtuacaoNotNull() throws Exception {
-        postagemDTO.setAreaAtuacao(null);
+        when(conversorAutenticacao.converterAutenticacao(any(Authentication.class))).thenReturn(usuario);
+        when(modelMapper.map(any(PostagemDTO.class),any())).thenReturn(postagem);
         when(service.salvarPostagem(any(Postagem.class), any(Usuario.class))).thenReturn(postagem);
+
+        postagemDTO.setAreaAtuacao(null);
         String json = objectMapper.writeValueAsString(postagemDTO);
 
         ResultActions response = mockMvc.perform(post("/postagem").content(json)
                 .contentType(APPLICATION_JSON)).andExpect(status().isUnprocessableEntity());
 
-        verify(service, times(0)).salvarPostagem(any(), any());
+        assertEquals(422, response.andReturn().getResponse().getStatus());
+        verify(service, times(0)).salvarPostagem(any(Postagem.class), any(Usuario.class));
 
     }
 
