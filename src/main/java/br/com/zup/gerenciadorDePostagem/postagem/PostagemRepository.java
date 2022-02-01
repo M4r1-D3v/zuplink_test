@@ -6,6 +6,7 @@ import br.com.zup.gerenciadorDePostagem.enums.Tipo;
 import br.com.zup.gerenciadorDePostagem.usuario.Usuario;
 import org.springframework.data.repository.CrudRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface PostagemRepository extends CrudRepository<Postagem,Long> {
@@ -13,6 +14,7 @@ public interface PostagemRepository extends CrudRepository<Postagem,Long> {
     List<Postagem> findAllByTipo (Tipo tipo);
     List<Postagem> findAllByTema (Tema tema);
     List<Postagem> findAllByUsuario (Usuario autorPostagem);
+    List<Postagem> findAllByLocalDate (LocalDate dataDeCadastro);
 
 
 }
