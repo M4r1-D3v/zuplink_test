@@ -1,11 +1,13 @@
 package br.com.zup.gerenciadorDePostagem.postagem;
 
+import br.com.zup.gerenciadorDePostagem.config.security.UsuarioLogado;
 import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemPostagensCadastradasException;
 import br.com.zup.gerenciadorDePostagem.exceptions.PostagemNaoEncontradaException;
 import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoAutorizadoException;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.AtualizarPostagemDTO;
 import br.com.zup.gerenciadorDePostagem.usuario.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -39,7 +41,7 @@ public class PostagemService {
         return postagens;
     }
 
-    public Postagem atualizarPostagem(Long idPostagem, Postagem postagemRecebida, Usuario usuarioLogado){
+    public Postagem atualizarPostagem(Long idPostagem, Postagem postagemRecebida, Usuario usuarioLogado) {
 
         Postagem postagemAtualizada = verificarPostagem(idPostagem, usuarioLogado.getId());
 
@@ -60,16 +62,25 @@ public class PostagemService {
         postagemRepository.deleteById(idPostagem);
     }
 
-    private Postagem verificarPostagem(Long idPostagem) {
+    public Postagem verificarPostagem(Long idPostagem) {
         Optional<Postagem> postagemCadastrada = postagemRepository.findById(idPostagem);
 
         if (postagemCadastrada.isPresent()) {
-                return postagemCadastrada.get();
-            } else {
-
-        throw new PostagemNaoEncontradaException("Postagem não encontrada");
+            return postagemCadastrada.get();
+        } else {
+            throw new PostagemNaoEncontradaException("Postagem não encontrada");
+        }
     }
 
+    public Boolean validarAutenticidade(Usuario usuarioLogado, Postagem postagem) {
 
+
+        if (usuarioLogado.getId().equals(postagem.getAutorPostagem().getId())) {
+            return true;
+        }  else{
+            throw new UsuarioNaoAutorizadoException("Usuário não autorizado");
+        }
+
+    }
 
 }
