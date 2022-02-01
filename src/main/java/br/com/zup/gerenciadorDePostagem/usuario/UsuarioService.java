@@ -75,6 +75,11 @@ public class UsuarioService {
         }
     }
 
+    public void validarAutenticidadeUsuario(Usuario usuarioCadastrado,String id){
+        if (!usuarioCadastrado.getId().equals(id)){
+            throw new UsuarioNaoAutorizadoException("Usuario não autorizado");
+        }
 
+    }
 
 }
