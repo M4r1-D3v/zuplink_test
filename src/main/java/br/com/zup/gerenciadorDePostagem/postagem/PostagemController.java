@@ -2,6 +2,7 @@ package br.com.zup.gerenciadorDePostagem.postagem;
 
 import br.com.zup.gerenciadorDePostagem.components.ConversorAutenticacao;
 import br.com.zup.gerenciadorDePostagem.enums.Area;
+import br.com.zup.gerenciadorDePostagem.enums.Tipo;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagemDTO;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagensCadastradasDTO;
 import br.com.zup.gerenciadorDePostagem.usuario.Usuario;
@@ -34,16 +35,16 @@ public class PostagemController {
 
         Usuario usuario = conversorAutenticacao.converterAutenticacao(authentication);
 
-        postagemService.salvarPostagem(modelMapper.map(cadastroPostagemDTO, Postagem.class),usuario);
+        postagemService.salvarPostagem(modelMapper.map(cadastroPostagemDTO, Postagem.class), usuario);
 
     }
 
-
     @GetMapping
-    public List<PostagensCadastradasDTO> exibirPostagensCadastradas(@RequestParam (required = false) Area area) {
+    public List<PostagensCadastradasDTO> exibirPostagensCadastradas(@RequestParam(required = false) Area area,
+                                                                    @RequestParam(required = false) Tipo tipo) {
         List<PostagensCadastradasDTO> postagensCadastradasDTO = new ArrayList<>();
 
-        for (Postagem postagem : postagemService.exibirPostagens(area)) {
+        for (Postagem postagem : postagemService.aplicarFiltroDeBusca(area, tipo)) {
             postagensCadastradasDTO.add(modelMapper.map(postagem, PostagensCadastradasDTO.class));
         }
 
