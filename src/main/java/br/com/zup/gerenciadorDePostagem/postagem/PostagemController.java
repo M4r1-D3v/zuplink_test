@@ -53,7 +53,7 @@ public class PostagemController {
 
         List<PostagensCadastradasDTO> postagensCadastradasDTO = new ArrayList<>();
 
-        for (Postagem postagem : postagemService.aplicarFiltroDeBusca(area, tipo, tema, autorPostagem,
+        for (Postagem postagem : postagemService.exibirPostagens(area, tipo, tema, autorPostagem,
                 dataDeCadastro, likes, deslikes)) {
             postagensCadastradasDTO.add(modelMapper.map(postagem, PostagensCadastradasDTO.class));
         }
