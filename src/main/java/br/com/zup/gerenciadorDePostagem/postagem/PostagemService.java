@@ -73,7 +73,7 @@ public class PostagemService {
         throw new PostagemNaoEncontradaException("Postagem não cadastrada");
     }
 
-    public List<Postagem> aplicarFiltroDeBusca (Area area, Tipo tipo, Tema tema) {
+    public List<Postagem> aplicarFiltroDeBusca (Area area, Tipo tipo, Tema tema, Usuario autorPostagem) {
         if (area != null) {
             return postagemRepository.findAllByArea(area);
         }
@@ -82,6 +82,9 @@ public class PostagemService {
         }
         else if (tema != null){
             return postagemRepository.findAllByTema(tema);
+        }
+        else if (autorPostagem != null){
+            return  postagemRepository.findAllByUsuario(autorPostagem);
         }
         List<Postagem> postagens = (List<Postagem>) postagemRepository.findAll();
         return exibirPostagens();
