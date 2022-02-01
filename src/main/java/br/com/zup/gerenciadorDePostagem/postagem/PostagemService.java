@@ -60,18 +60,16 @@ public class PostagemService {
         postagemRepository.deleteById(idPostagem);
     }
 
-    private Postagem verificarPostagem(Long idPostagem, String idUsuario) {
+    private Postagem verificarPostagem(Long idPostagem) {
         Optional<Postagem> postagemCadastrada = postagemRepository.findById(idPostagem);
 
         if (postagemCadastrada.isPresent()) {
-            if (idUsuario.equals(postagemCadastrada.get().getAutorPostagem().getId())) {
                 return postagemCadastrada.get();
             } else {
-                throw new UsuarioNaoAutorizadoException("Usuário não autorizado");
-            }
-        }
 
         throw new PostagemNaoEncontradaException("Postagem não encontrada");
     }
+
+
 
 }
