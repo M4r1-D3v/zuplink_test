@@ -65,17 +65,16 @@ public class UsuarioService {
         usuarioRepository.deleteById(usuario.getId());
     }
 
-    private Usuario verificarUsuario(String email, String idUsuario) {
+    private Usuario verificarUsuario(String email) {
         Optional<Usuario> usuarioCadastrado = usuarioRepository.findByEmail(email);
 
         if (usuarioCadastrado.isPresent()) {
-            if (idUsuario.equals(usuarioCadastrado.get().getEmail())) {
-                return usuarioCadastrado.get();
-            } else {
-                throw new UsuarioNaoAutorizadoException("Usuário não autorizado");
-            }
+            return usuarioCadastrado.get();
+        } else {
+            throw new NaoExistemUsuariosCadastradosException("Usuario não cadastrado");
         }
-        throw new NaoExistemUsuariosCadastradosException("Usuario não cadastrado");
     }
+
+
 
 }
