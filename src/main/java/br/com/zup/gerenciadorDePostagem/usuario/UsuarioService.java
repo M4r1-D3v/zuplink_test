@@ -3,6 +3,7 @@ package br.com.zup.gerenciadorDePostagem.usuario;
 import br.com.zup.gerenciadorDePostagem.exceptions.EmailJaCadastradoException;
 import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemUsuariosCadastradosException;
 import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoAutorizadoException;
+import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoCadastradoException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,7 +32,6 @@ public class UsuarioService {
 
         return usuarioRepository.save(usuario);
     }
-
 
     public Usuario atualizarUsuario(String email, Usuario usuario) {
 
@@ -69,13 +69,14 @@ public class UsuarioService {
         if (usuarioCadastrado.isPresent()) {
             return usuarioCadastrado.get();
         } else {
-            throw new NaoExistemUsuariosCadastradosException("Usuario não cadastrado");
+            throw new UsuarioNaoCadastradoException("Usuário não cadastrado");
         }
+
     }
 
     public void validarAutenticidadeUsuario(Usuario usuarioCadastrado, String id) {
         if (!usuarioCadastrado.getId().equals(id)) {
-            throw new UsuarioNaoAutorizadoException("Usuario não autorizado");
+            throw new UsuarioNaoAutorizadoException("Usuário não autorizado");
         }
     }
 
