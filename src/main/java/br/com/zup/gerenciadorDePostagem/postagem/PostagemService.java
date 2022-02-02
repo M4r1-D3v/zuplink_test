@@ -82,6 +82,7 @@ public class PostagemService {
 
     }
 
+
     public List<Postagem> aplicarFiltroDeBusca(Area area, Tipo tipo, Tema tema, Usuario autorPostagem,
                                                LocalDate dataDeCadastro, Integer likes, Integer deslikes) {
         if (area != null) {
@@ -99,7 +100,6 @@ public class PostagemService {
         } else if (deslikes != null) {
             return postagemRepository.deslike(deslikes);
         }
-
         List<Postagem> postagens = (List<Postagem>) postagemRepository.findAll();
 
         if (postagens.isEmpty()) {
