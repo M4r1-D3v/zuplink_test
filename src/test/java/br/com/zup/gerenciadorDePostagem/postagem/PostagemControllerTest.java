@@ -585,4 +585,19 @@ class PostagemControllerTest {
         verify(service, times(1)).curtirPostagem(anyLong(),any());
     }
 
+    @Test
+    @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
+    public void testarRotaParaCurtirPostagemExceptionPostagemNaoCadastrada () throws Exception {
+        when(conversorAutenticacao.converterAutenticacao(any())).thenReturn(usuario);
+        when(modelMapper.map(any(Postagem.class),any())).thenReturn(retornoPostagemDTO);
+        doThrow(PostagemNaoEncontradaException.class).when(service).curtirPostagem(anyLong(),any());
+
+        ResultActions response = mockMvc.perform(patch("/postagem/" + postagem.getId())
+                .contentType(APPLICATION_JSON)).andExpect(status().isNotFound());
+
+
+        assertEquals(404, response.andReturn().getResponse().getStatus());
+        verify(service, times(1)).curtirPostagem(anyLong(),any());
+    }
+
 }
