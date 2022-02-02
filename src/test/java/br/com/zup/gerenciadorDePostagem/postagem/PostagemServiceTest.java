@@ -1,5 +1,7 @@
 package br.com.zup.gerenciadorDePostagem.postagem;
 
+import br.com.zup.gerenciadorDePostagem.curtidas.Like;
+import br.com.zup.gerenciadorDePostagem.curtidas.LikeRepository;
 import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemPostagensCadastradasException;
 import br.com.zup.gerenciadorDePostagem.exceptions.PostagemNaoEncontradaException;
 import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoAutorizadoException;
@@ -39,9 +41,13 @@ class PostagemServiceTest {
     public static final String NAO_EXISTEM_POSTAGENS_CADASTRADAS = "Não existem postagens cadastradas!";
     public static final String POSTAGEM_NAO_CADASTRADA = "Postagem não encontrada";
     public static final String USUÁRIO_NAO_AUTORIZADO = "Usuário não autorizado";
+    public static final long LONG = 1L;
+    public static final String ID_TESTE = "402880e67e97bc73017e97bdd9fa0001";
 
     @MockBean
     private PostagemRepository repository;
+    @MockBean
+    private LikeRepository likeRepository;
 
     @Autowired
     private PostagemService service;
@@ -51,6 +57,7 @@ class PostagemServiceTest {
     private Usuario usuario;
     private Usuario usuarioTeste;
     private Map<String , String> filtro;
+    private Like like;
 
 
     @BeforeEach
@@ -58,8 +65,9 @@ class PostagemServiceTest {
         usuario = new Usuario(ID_USUARIO, NOME, EMAIL, SENHA);
         postagem = new Postagem(ID_POSTAGEM, TITULO, DESCRICAO, LINK, DOCUMENTACAO, JAVA, BACKEND, INT,
                 usuario, DATA_CADASTRO);
-        usuarioTeste = new Usuario("402880e67e97bc73017e97bdd9fa0001", NOME, EMAIL, SENHA);
         filtro = new HashMap<>();
+        usuarioTeste = new Usuario(ID_TESTE, NOME, EMAIL, SENHA);
+        like = new Like(LONG,ID_POSTAGEM,ID_USUARIO);
     }
 
     @Test
@@ -216,6 +224,25 @@ class PostagemServiceTest {
 
         verify(repository, times(1)).findById(anyLong());
         verify(repository, times(0)).save(any(Postagem.class));
+    }
+
+    @Test
+    public void testarCurtirPostagemCaminhoPositivoSalvaLike() throws Exception{
+        when(repository.findById(anyLong())).thenReturn(Optional.ofNullable(postagem));
+        when(likeRepository.jaCurtiu(anyLong(),anyString())).thenReturn(Optional.empty());
+        when(likeRepository.save(any(Like.class))).thenReturn(like);
+        when(repository.save(any(Postagem.class))).thenReturn(postagem);
+
+        Postagem response = service.curtirPostagem(LONG,usuario);
+
+        assertNotNull(response);
+        assertEquals(Postagem.class,response.getClass());
+
+        verify(likeRepository,times(1)).jaCurtiu(anyLong(),anyString());
+        verify(likeRepository,times(1)).save(any());
+        verify(likeRepository,times(0)).deleteById(anyLong());
+        verify(repository,times(1)).save(any());
+
     }
 
 }
