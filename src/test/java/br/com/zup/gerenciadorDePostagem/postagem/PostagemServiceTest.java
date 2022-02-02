@@ -264,4 +264,21 @@ class PostagemServiceTest {
 
     }
 
+    @Test
+    public void testarCurtirPostagemExceptionPostagemNaoEncontrada() throws Exception{
+        when(repository.findById(anyLong())).thenReturn(Optional.empty());
+
+        RuntimeException exception = assertThrows(PostagemNaoEncontradaException.class,
+                () -> {service.curtirPostagem(LONG,usuario);});
+
+        assertEquals(PostagemNaoEncontradaException.class, exception.getClass());
+        assertEquals(POSTAGEM_NAO_CADASTRADA,exception.getMessage());
+
+        verify(likeRepository,times(0)).jaCurtiu(anyLong(),anyString());
+        verify(likeRepository,times(0)).save(any());
+        verify(likeRepository,times(0)).deleteById(anyLong());
+        verify(repository,times(0)).save(any());
+
+    }
+
 }
