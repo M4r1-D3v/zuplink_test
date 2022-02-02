@@ -33,16 +33,13 @@ public class UsuarioService {
         return usuarioRepository.save(usuario);
     }
 
+    public Usuario atualizarUsuario(String email, Usuario usuario) {
 
-    public Usuario atualizarUsuario(String id, Usuario usuarioAtualizado) {
-        Optional<Usuario> usuarioOptional = usuarioRepository.findById(id);
-        if (usuarioOptional.isEmpty()) {
-            throw new UsuarioNaoCadastradoException("O usuário não existe, favor Cadastrar");
-        }
-        Usuario usuarioParaAtualizar = usuarioOptional.get();
-        usuarioParaAtualizar.setEmail(usuarioAtualizado.getEmail());
-        usuarioParaAtualizar.setSenha(usuarioAtualizado.getSenha());
-        usuarioParaAtualizar.setNome(usuarioAtualizado.getNome());
+        Usuario usuarioParaAtualizar = verificarUsuario(email);
+
+        usuarioParaAtualizar.setEmail(usuario.getEmail());
+        usuarioParaAtualizar.setSenha(usuario.getSenha());
+        usuarioParaAtualizar.setNome(usuario.getNome());
 
         usuarioRepository.save(usuarioParaAtualizar);
 
@@ -56,22 +53,31 @@ public class UsuarioService {
         if (usuarios.isEmpty()) {
             throw new NaoExistemUsuariosCadastradosException("Não há usuários cadastrados");
         }
+
         return usuarios;
     }
 
     public void deletarUsuario(String email, String idUsuario) {
-        Optional<Usuario> usuarioExiste = usuarioRepository.findByEmail(email);
+        Usuario usuario = verificarUsuario(email);
+        validarAutenticidadeUsuario(usuario, idUsuario);
+        usuarioRepository.deleteById(usuario.getId());
+    }
 
-        if (usuarioExiste.isPresent()) {
-            if (idUsuario.equals(usuarioExiste.get().getId())){
-                usuarioRepository.deleteById(usuarioExiste.get().getId());
-            }else{
-                throw new UsuarioNaoAutorizadoException("Usuário não autorizado");
-            }
-        }else {
-            throw new UsuarioNaoCadastradoException("Usuário não encontrado");
+    private Usuario verificarUsuario(String email) {
+        Optional<Usuario> usuarioCadastrado = usuarioRepository.findByEmail(email);
+
+        if (usuarioCadastrado.isPresent()) {
+            return usuarioCadastrado.get();
+        } else {
+            throw new UsuarioNaoCadastradoException("Usuário não cadastrado");
         }
 
+    }
+
+    public void validarAutenticidadeUsuario(Usuario usuarioCadastrado, String id) {
+        if (!usuarioCadastrado.getId().equals(id)) {
+            throw new UsuarioNaoAutorizadoException("Usuário não autorizado");
+        }
     }
 
 }
