@@ -36,7 +36,7 @@ public class UsuarioController {
     }
 
     @PutMapping
-    public void atualizarUsuario(@RequestBody UsuarioDto usuarioDto, Authentication authentication) {
+    public void atualizarUsuario(@RequestBody @Valid UsuarioDto usuarioDto, Authentication authentication) {
 
         Usuario usuario = conversorAutenticacao.converterAutenticacao(authentication);
         usuarioService.atualizarUsuario(usuario.getId(), modelMapper.map(usuarioDto, Usuario.class));

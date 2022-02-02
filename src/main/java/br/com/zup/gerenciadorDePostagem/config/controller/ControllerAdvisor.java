@@ -60,7 +60,7 @@ public class ControllerAdvisor {
     }
 
     @ExceptionHandler(UsuarioNaoCadastradoException.class)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public MensagemDeErro manipularExcecaoUsuarioNaoCadastrado(UsuarioNaoCadastradoException exception) {
         return new MensagemDeErro(exception.getMessage());
     }
