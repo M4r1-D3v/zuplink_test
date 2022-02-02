@@ -11,7 +11,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static br.com.zup.gerenciadorDePostagem.enums.Area.BACKEND;
@@ -20,8 +22,8 @@ import static br.com.zup.gerenciadorDePostagem.enums.Tipo.DOCUMENTACAO;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-
 @SpringBootTest
+
 class PostagemServiceTest {
 
     public static final long ID_POSTAGEM = 1L;
@@ -48,6 +50,7 @@ class PostagemServiceTest {
     private Postagem postagem;
     private Usuario usuario;
     private Usuario usuarioTeste;
+    private Map<String , String> filtro;
 
 
     @BeforeEach
@@ -56,6 +59,7 @@ class PostagemServiceTest {
         postagem = new Postagem(ID_POSTAGEM, TITULO, DESCRICAO, LINK, DOCUMENTACAO, JAVA, BACKEND, INT, INT,
                 usuario, DATA_CADASTRO);
         usuarioTeste = new Usuario("402880e67e97bc73017e97bdd9fa0001", NOME, EMAIL, SENHA);
+        filtro = new HashMap<>();
     }
 
     @Test
@@ -87,7 +91,7 @@ class PostagemServiceTest {
     public void testarExibirPostagensCaminhoPositivo() {
         when(repository.findAll()).thenReturn(List.of(postagem));
 
-        List<Postagem> response = service.exibirPostagens(any());
+        List<Postagem> response = service.exibirPostagens(filtro);
 
         assertNotNull(response);
         assertEquals(Postagem.class, response.get(INT).getClass());
@@ -114,7 +118,8 @@ class PostagemServiceTest {
         when(repository.findAll()).thenReturn(List.of());
 
         RuntimeException exception = assertThrows(NaoExistemPostagensCadastradasException.class,
-                ()->{service.exibirPostagens(any());});
+                ()->{service.exibirPostagens(filtro);});
+
 
         assertEquals(NaoExistemPostagensCadastradasException.class, exception.getClass());
         assertEquals(NAO_EXISTEM_POSTAGENS_CADASTRADAS, exception.getMessage());
