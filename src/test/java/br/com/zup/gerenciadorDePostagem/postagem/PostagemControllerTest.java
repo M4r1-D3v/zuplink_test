@@ -289,7 +289,7 @@ class PostagemControllerTest {
 
     @Test
     public void testarRotaParaExibirPostagensCadastradasCaminhoPositivo() throws Exception {
-        when(service.exibirPostagens()).thenReturn(List.of(postagem));
+        when(service.exibirPostagens(any())).thenReturn(List.of(postagem));
 
         ResultActions response = mockMvc.perform(get("/postagem")
                         .contentType(APPLICATION_JSON)).andExpect(status().isOk())
@@ -301,20 +301,20 @@ class PostagemControllerTest {
                 });
 
         assertEquals(200, response.andReturn().getResponse().getStatus());
-        verify(service, times(1)).exibirPostagens();
+        verify(service, times(1)).exibirPostagens(any());
 
     }
 
     @Test
     public void testarRotaParaExibirPostagensNaoExistemPostagemCadastradas() throws Exception {
-        doThrow(NaoExistemPostagensCadastradasException.class).when(service).exibirPostagens();
+        doThrow(NaoExistemPostagensCadastradasException.class).when(service).exibirPostagens(any());
 
         ResultActions response = mockMvc.perform(get("/postagem")
                 .contentType(APPLICATION_JSON)).andExpect(status().isNotFound());
 
 
         assertEquals(404, response.andReturn().getResponse().getStatus());
-        verify(service, times(1)).exibirPostagens();
+        verify(service, times(1)).exibirPostagens(any());
 
     }
 

@@ -87,7 +87,7 @@ class PostagemServiceTest {
     public void testarExibirPostagensCaminhoPositivo() {
         when(repository.findAll()).thenReturn(List.of(postagem));
 
-        List<Postagem> response = service.exibirPostagens();
+        List<Postagem> response = service.exibirPostagens(any());
 
         assertNotNull(response);
         assertEquals(Postagem.class, response.get(INT).getClass());
@@ -114,7 +114,7 @@ class PostagemServiceTest {
         when(repository.findAll()).thenReturn(List.of());
 
         RuntimeException exception = assertThrows(NaoExistemPostagensCadastradasException.class,
-                ()->{service.exibirPostagens();});
+                ()->{service.exibirPostagens(any());});
 
         assertEquals(NaoExistemPostagensCadastradasException.class, exception.getClass());
         assertEquals(NAO_EXISTEM_POSTAGENS_CADASTRADAS, exception.getMessage());

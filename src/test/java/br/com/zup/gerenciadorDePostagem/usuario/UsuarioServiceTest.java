@@ -31,11 +31,11 @@ class UsuarioServiceTest {
     public static final String SENHA = "1234";
     public static final String SENHA_CRIPTOGRAFADA = "$2a$10$/76T1TrDeFsblWwigaMkqukGYpzNk0ZbslAIaQs3NqP0Ta.fkc6lS";
     public static final String EMAIL_JA_CADASTRADO = "Email já cadastrado";
-    public static final String USUARIO_NAO_CADASTRADO = "O usuário não existe, favor Cadastrar";
+    public static final String USUARIO_NAO_CADASTRADO = "Usuário não cadastrado";
     public static final int INDEX = 0;
     public static final String NAO_HA_USUARIOS_CADASTRADOS = "Não há usuários cadastrados";
     public static final String USUARIO_NAO_AUTORIZADO = "Usuário não autorizado";
-    public static final String USUARIO_NAO_ENCONTRADO = "Usuário não encontrado";
+
 
     @MockBean
     private UsuarioRepository usuarioRepository;
@@ -91,10 +91,10 @@ class UsuarioServiceTest {
 
     @Test
     public void testarAtualizarUsuarioCaminhoPositivo() {
-        when(usuarioRepository.findById(anyString())).thenReturn(ofNullable(usuario));
+        when(usuarioRepository.findByEmail(anyString())).thenReturn(ofNullable(usuario));
         when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuario);
 
-        Usuario response = usuarioService.atualizarUsuario(ID_USUARIO, usuario);
+        Usuario response = usuarioService.atualizarUsuario(EMAIL, usuario);
 
         assertNotNull(response);
         assertEquals(Usuario.class, response.getClass());
@@ -104,23 +104,23 @@ class UsuarioServiceTest {
         assertEquals(EMAIL, response.getEmail());
         assertEquals(SENHA, response.getSenha());
 
-        verify(usuarioRepository, times(1)).findById(anyString());
+        verify(usuarioRepository, times(1)).findByEmail(anyString());
         verify(usuarioRepository, times(1)).save(any(Usuario.class));
 
     }
 
     @Test
     public void testarAtualizarUsuarioExceptionUsuarioNaoCadastrado() {
-        when(usuarioRepository.findById(anyString())).thenReturn(empty());
+        when(usuarioRepository.findByEmail(anyString())).thenReturn(empty());
         when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuario);
 
         RuntimeException exception = assertThrows(UsuarioNaoCadastradoException.class,
-                () -> {usuarioService.atualizarUsuario(ID_USUARIO,usuario);});
+                () -> {usuarioService.atualizarUsuario(EMAIL,usuario);});
 
         assertEquals(UsuarioNaoCadastradoException.class, exception.getClass());
         assertEquals(USUARIO_NAO_CADASTRADO, exception.getMessage());
 
-        verify(usuarioRepository, times(1)).findById(anyString());
+        verify(usuarioRepository, times(1)).findByEmail(anyString());
         verify(usuarioRepository, times(0)).save(any(Usuario.class));
 
     }
@@ -193,7 +193,7 @@ class UsuarioServiceTest {
                 () -> {usuarioService.deletarUsuario(EMAIL,ID_USUARIO);});
 
         assertEquals(UsuarioNaoCadastradoException.class, exception.getClass());
-        assertEquals(USUARIO_NAO_ENCONTRADO, exception.getMessage());
+        assertEquals(USUARIO_NAO_CADASTRADO, exception.getMessage());
 
         verify(usuarioRepository, times(1)).findByEmail(anyString());
         verify(usuarioRepository, times(0)).deleteById(anyString());
