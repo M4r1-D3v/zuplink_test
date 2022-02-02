@@ -3,7 +3,6 @@ package br.com.zup.gerenciadorDePostagem.usuario;
 import br.com.zup.gerenciadorDePostagem.exceptions.EmailJaCadastradoException;
 import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemUsuariosCadastradosException;
 import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoAutorizadoException;
-import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoCadastradoException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -34,15 +33,13 @@ public class UsuarioService {
     }
 
 
-    public Usuario atualizarUsuario(String id, Usuario usuarioAtualizado) {
-        Optional<Usuario> usuarioOptional = usuarioRepository.findById(id);
-        if (usuarioOptional.isEmpty()) {
-            throw new UsuarioNaoCadastradoException("O usuário não existe, favor Cadastrar");
-        }
-        Usuario usuarioParaAtualizar = usuarioOptional.get();
-        usuarioParaAtualizar.setEmail(usuarioAtualizado.getEmail());
-        usuarioParaAtualizar.setSenha(usuarioAtualizado.getSenha());
-        usuarioParaAtualizar.setNome(usuarioAtualizado.getNome());
+    public Usuario atualizarUsuario(String email, Usuario usuario) {
+
+        Usuario usuarioParaAtualizar = verificarUsuario(email);
+
+        usuarioParaAtualizar.setEmail(usuario.getEmail());
+        usuarioParaAtualizar.setSenha(usuario.getSenha());
+        usuarioParaAtualizar.setNome(usuario.getNome());
 
         usuarioRepository.save(usuarioParaAtualizar);
 
@@ -56,12 +53,13 @@ public class UsuarioService {
         if (usuarios.isEmpty()) {
             throw new NaoExistemUsuariosCadastradosException("Não há usuários cadastrados");
         }
+
         return usuarios;
     }
 
     public void deletarUsuario(String email, String idUsuario) {
-        Usuario usuario = verificarUsuario(email, idUsuario);
-
+        Usuario usuario = verificarUsuario(email);
+        validarAutenticidadeUsuario(usuario, idUsuario);
         usuarioRepository.deleteById(usuario.getId());
     }
 
@@ -75,11 +73,10 @@ public class UsuarioService {
         }
     }
 
-    public void validarAutenticidadeUsuario(Usuario usuarioCadastrado,String id){
-        if (!usuarioCadastrado.getId().equals(id)){
+    public void validarAutenticidadeUsuario(Usuario usuarioCadastrado, String id) {
+        if (!usuarioCadastrado.getId().equals(id)) {
             throw new UsuarioNaoAutorizadoException("Usuario não autorizado");
         }
-
     }
 
 }
