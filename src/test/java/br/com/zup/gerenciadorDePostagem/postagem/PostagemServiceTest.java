@@ -22,8 +22,8 @@ import static br.com.zup.gerenciadorDePostagem.enums.Tipo.DOCUMENTACAO;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-
 @SpringBootTest
+
 class PostagemServiceTest {
 
     public static final long ID_POSTAGEM = 1L;
@@ -119,6 +119,7 @@ class PostagemServiceTest {
 
         RuntimeException exception = assertThrows(NaoExistemPostagensCadastradasException.class,
                 ()->{service.exibirPostagens(filtro);});
+
 
         assertEquals(NaoExistemPostagensCadastradasException.class, exception.getClass());
         assertEquals(NAO_EXISTEM_POSTAGENS_CADASTRADAS, exception.getMessage());
