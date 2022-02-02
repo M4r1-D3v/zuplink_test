@@ -36,7 +36,7 @@ public class ControllerAdvisor {
     }
 
     @ExceptionHandler(NaoExistemPostagensCadastradasException.class)
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public MensagemDeErro manipularExcecaoDePostagensNaoCadastradas(NaoExistemPostagensCadastradasException exception) {
         return new MensagemDeErro(exception.getMessage());
     }
