@@ -56,7 +56,7 @@ class PostagemServiceTest {
     @BeforeEach
     void setUp() {
         usuario = new Usuario(ID_USUARIO, NOME, EMAIL, SENHA);
-        postagem = new Postagem(ID_POSTAGEM, TITULO, DESCRICAO, LINK, DOCUMENTACAO, JAVA, BACKEND, INT, INT,
+        postagem = new Postagem(ID_POSTAGEM, TITULO, DESCRICAO, LINK, DOCUMENTACAO, JAVA, BACKEND, INT,
                 usuario, DATA_CADASTRO);
         usuarioTeste = new Usuario("402880e67e97bc73017e97bdd9fa0001", NOME, EMAIL, SENHA);
         filtro = new HashMap<>();
@@ -79,7 +79,6 @@ class PostagemServiceTest {
         assertEquals(JAVA,response.getTema());
         assertEquals(BACKEND, response.getAreaAtuacao());
         assertEquals(INT,response.getLikes());
-        assertEquals(INT, response.getDeslikes());
         assertEquals(usuario, response.getAutorPostagem());
         assertEquals(DATA_CADASTRO, response.getDataDeCadastro());
 
@@ -105,7 +104,6 @@ class PostagemServiceTest {
         assertEquals(JAVA, response.get(INT).getTema());
         assertEquals(BACKEND, response.get(INT).getAreaAtuacao());
         assertEquals(INT, response.get(INT).getLikes());
-        assertEquals(INT, response.get(INT).getDeslikes());
         assertEquals(usuario, response.get(INT).getAutorPostagem());
         assertEquals(DATA_CADASTRO, response.get(INT).getDataDeCadastro());
 
@@ -143,7 +141,6 @@ class PostagemServiceTest {
         assertEquals(JAVA, response.getTema());
         assertEquals(BACKEND, response.getAreaAtuacao());
         assertEquals(INT, response.getLikes());
-        assertEquals(INT, response.getDeslikes());
         assertEquals(usuario, response.getAutorPostagem());
         assertEquals(DATA_CADASTRO, response.getDataDeCadastro());
 

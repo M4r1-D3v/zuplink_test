@@ -29,7 +29,6 @@ public class PostagemService {
     public Postagem salvarPostagem(Postagem postagem, Usuario usuario) {
 
         postagem.setLikes(0);
-        postagem.setDeslikes(0);
         postagem.setAutorPostagem(usuario);
         postagem.setDataDeCadastro(LocalDate.now());
 
@@ -61,8 +60,6 @@ public class PostagemService {
             return postagemRepository.dataDeCadastro(filtros.get("dataDeCadastro"));
         }else if(filtros.get("likes") != null){
             return postagemRepository.like(Integer.parseInt(filtros.get("likes")));
-        }else if(filtros.get("deslikes") != null){
-            return postagemRepository.deslike(Integer.parseInt(filtros.get("deslikes")));
         }
 
         return listaPostagens;

@@ -83,7 +83,7 @@ class PostagemControllerTest {
         objectMapper = new ObjectMapper();
         usuario = new Usuario(ID_USUARIO, NOME, EMAIL_USUARIO, SENHA);
         postagem = new Postagem(ID_POSTAGEM, TITULO, DESCRICAO, LINK,
-                DOCUMENTACAO, JAVA, BACKEND, INT, INT, usuario, LocalDate.now());
+                DOCUMENTACAO, JAVA, BACKEND, INT, usuario, LocalDate.now());
         postagemDTO = new PostagemDTO(TITULO, DESCRICAO, LINK,
                 DOCUMENTACAO, JAVA, BACKEND);
         atualizarPostagemDTO = new AtualizarPostagemDTO(TITULO, DESCRICAO, DOCUMENTACAO, JAVA, BACKEND);
