@@ -1,17 +1,18 @@
 package br.com.zup.gerenciadorDePostagem.postagem;
 
-import br.com.zup.gerenciadorDePostagem.config.security.UsuarioLogado;
+import br.com.zup.gerenciadorDePostagem.enums.Area;
+import br.com.zup.gerenciadorDePostagem.enums.Tema;
+import br.com.zup.gerenciadorDePostagem.enums.Tipo;
 import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemPostagensCadastradasException;
 import br.com.zup.gerenciadorDePostagem.exceptions.PostagemNaoEncontradaException;
 import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoAutorizadoException;
-import br.com.zup.gerenciadorDePostagem.postagem.dtos.AtualizarPostagemDTO;
 import br.com.zup.gerenciadorDePostagem.usuario.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -31,14 +32,36 @@ public class PostagemService {
         return postagemRepository.save(postagem);
     }
 
-    public List<Postagem> exibirPostagens() {
+    public List<Postagem> exibirPostagens(Map<String,String> filtros) {
+
         List<Postagem> postagens = (List<Postagem>) postagemRepository.findAll();
 
         if (postagens.isEmpty()) {
             throw new NaoExistemPostagensCadastradasException("Não existem postagens cadastradas!");
         }
 
-        return postagens;
+        return aplicarFiltroDeBusca(postagens, filtros);
+    }
+
+    public List<Postagem> aplicarFiltroDeBusca(List<Postagem> listaPostagens,Map<String,String> filtros) {
+
+        if (filtros.get("area") != null){
+            return postagemRepository.area(filtros.get("area"));
+        } if(filtros.get("tipo") != null){
+            return postagemRepository.tipo(filtros.get("tipo"));
+        }else if(filtros.get("tema") != null){
+            return postagemRepository.tema(filtros.get("tema"));
+        }else if(filtros.get("autorPostagem") != null){
+            return postagemRepository.autorPostagem(filtros.get("autorPostagem"));
+        }else if(filtros.get("dataDeCadastro") != null){
+            return postagemRepository.dataDeCadastro(filtros.get("dataDeCadastro"));
+        }else if(filtros.get("likes") != null){
+            return postagemRepository.like(Integer.parseInt(filtros.get("likes")));
+        }else if(filtros.get("deslikes") != null){
+            return postagemRepository.deslike(Integer.parseInt(filtros.get("deslikes")));
+        }
+
+        return listaPostagens;
     }
 
     public Postagem atualizarPostagem(Long idPostagem, Postagem postagemRecebida, Usuario usuarioLogado) {

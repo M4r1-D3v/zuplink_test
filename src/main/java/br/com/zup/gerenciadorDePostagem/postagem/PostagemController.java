@@ -1,7 +1,9 @@
 package br.com.zup.gerenciadorDePostagem.postagem;
 
-
 import br.com.zup.gerenciadorDePostagem.components.ConversorAutenticacao;
+import br.com.zup.gerenciadorDePostagem.enums.Area;
+import br.com.zup.gerenciadorDePostagem.enums.Tema;
+import br.com.zup.gerenciadorDePostagem.enums.Tipo;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.AtualizarPostagemDTO;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagemDTO;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagensCadastradasDTO;
@@ -13,8 +15,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/postagem")
@@ -35,15 +39,16 @@ public class PostagemController {
 
         Usuario usuario = conversorAutenticacao.converterAutenticacao(authentication);
 
-        postagemService.salvarPostagem(modelMapper.map(cadastroPostagemDTO, Postagem.class),usuario);
+        postagemService.salvarPostagem(modelMapper.map(cadastroPostagemDTO, Postagem.class), usuario);
 
     }
 
-   @GetMapping
-    public List<PostagensCadastradasDTO> exibirPostagensCadastradas() {
+    @GetMapping
+    public List<PostagensCadastradasDTO> exibirPostagensCadastradas(@RequestParam(required = false)Map<String,String> filtros) {
+
         List<PostagensCadastradasDTO> postagensCadastradasDTO = new ArrayList<>();
 
-        for (Postagem postagem : postagemService.exibirPostagens()) {
+        for (Postagem postagem : postagemService.exibirPostagens(filtros)) {
             postagensCadastradasDTO.add(modelMapper.map(postagem, PostagensCadastradasDTO.class));
         }
 
