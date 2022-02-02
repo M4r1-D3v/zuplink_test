@@ -245,4 +245,23 @@ class PostagemServiceTest {
 
     }
 
+    @Test
+    public void testarCurtirPostagemCaminhoPositivoDeletaLike() throws Exception{
+        when(repository.findById(anyLong())).thenReturn(Optional.ofNullable(postagem));
+        when(likeRepository.jaCurtiu(anyLong(),anyString())).thenReturn(Optional.ofNullable(like));
+        doNothing().when(likeRepository).deleteById(anyLong());
+        when(repository.save(any(Postagem.class))).thenReturn(postagem);
+
+        Postagem response = service.curtirPostagem(LONG,usuario);
+
+        assertNotNull(response);
+        assertEquals(Postagem.class,response.getClass());
+
+        verify(likeRepository,times(1)).jaCurtiu(anyLong(),anyString());
+        verify(likeRepository,times(0)).save(any());
+        verify(likeRepository,times(1)).deleteById(anyLong());
+        verify(repository,times(1)).save(any());
+
+    }
+
 }
