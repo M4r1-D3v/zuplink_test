@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -31,12 +32,36 @@ public class PostagemService {
         return postagemRepository.save(postagem);
     }
 
-    public List<Postagem> exibirPostagens(Area area, Tipo tipo, Tema tema, Usuario autorPostagem,
-                                          LocalDate dataDeCadastro, Integer likes, Integer deslikes) {
+    public List<Postagem> exibirPostagens(Map<String,String> filtros) {
 
-        List<Postagem> postagem = aplicarFiltroDeBusca(area, tipo, tema, autorPostagem, dataDeCadastro, likes, deslikes);
+        List<Postagem> postagens = (List<Postagem>) postagemRepository.findAll();
 
-        return postagem;
+        if (postagens.isEmpty()) {
+            throw new NaoExistemPostagensCadastradasException("Não existem postagens cadastradas!");
+        }
+
+        return aplicarFiltroDeBusca(postagens, filtros);
+    }
+
+    public List<Postagem> aplicarFiltroDeBusca(List<Postagem> listaPostagens,Map<String,String> filtros) {
+
+        if (filtros.get("area") != null){
+            return postagemRepository.area(filtros.get("area"));
+        } if(filtros.get("tipo") != null){
+            return postagemRepository.tipo(filtros.get("tipo"));
+        }else if(filtros.get("tema") != null){
+            return postagemRepository.tema(filtros.get("tema"));
+        }else if(filtros.get("autorPostagem") != null){
+            return postagemRepository.autorPostagem(filtros.get("autorPostagem"));
+        }else if(filtros.get("dataDeCadastro") != null){
+            return postagemRepository.dataDeCadastro(filtros.get("dataDeCadastro"));
+        }else if(filtros.get("likes") != null){
+            return postagemRepository.like(Integer.parseInt(filtros.get("likes")));
+        }else if(filtros.get("deslikes") != null){
+            return postagemRepository.deslike(Integer.parseInt(filtros.get("deslikes")));
+        }
+
+        return listaPostagens;
     }
 
     public Postagem atualizarPostagem(Long idPostagem, Postagem postagemRecebida, Usuario usuarioLogado) {
@@ -80,33 +105,6 @@ public class PostagemService {
             throw new UsuarioNaoAutorizadoException("Usuário não autorizado");
         }
 
-    }
-
-
-    public List<Postagem> aplicarFiltroDeBusca(Area area, Tipo tipo, Tema tema, Usuario autorPostagem,
-                                               LocalDate dataDeCadastro, Integer likes, Integer deslikes) {
-        if (area != null) {
-            return postagemRepository.findAllByArea(area);
-        } else if (tipo != null) {
-            return postagemRepository.findAllByTipo(tipo);
-        } else if (tema != null) {
-            return postagemRepository.findAllByTema(tema);
-        } else if (autorPostagem != null) {
-            return postagemRepository.findAllByUsuario(autorPostagem);
-        } else if (dataDeCadastro != null) {
-            return postagemRepository.findAllByLocalDate(dataDeCadastro);
-        } else if (likes != null) {
-            return postagemRepository.like(likes);
-        } else if (deslikes != null) {
-            return postagemRepository.deslike(deslikes);
-        }
-        List<Postagem> postagens = (List<Postagem>) postagemRepository.findAll();
-
-        if (postagens.isEmpty()) {
-            throw new NaoExistemPostagensCadastradasException("Não existem postagens cadastradas!");
-        }
-
-        return postagens;
     }
 
 }
