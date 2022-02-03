@@ -8,13 +8,11 @@ import br.com.zup.gerenciadorDePostagem.exceptions.PostagemNaoEncontradaExceptio
 import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoAutorizadoException;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.AtualizarPostagemDTO;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagemDTO;
-import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagensCadastradasDTO;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.RetornoPostagemDTO;
 import br.com.zup.gerenciadorDePostagem.usuario.Usuario;
 import br.com.zup.gerenciadorDePostagem.usuario.dtos.ExibirUsuarioPostagemDTO;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
@@ -22,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -33,7 +30,8 @@ import java.util.List;
 import static br.com.zup.gerenciadorDePostagem.enums.Area.BACKEND;
 import static br.com.zup.gerenciadorDePostagem.enums.Tema.JAVA;
 import static br.com.zup.gerenciadorDePostagem.enums.Tipo.DOCUMENTACAO;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -100,7 +98,7 @@ class PostagemControllerTest {
         atualizarPostagemDTO = new AtualizarPostagemDTO(TITULO, DESCRICAO, DOCUMENTACAO, JAVA, BACKEND);
 
         retornoPostagemDTO = new RetornoPostagemDTO( TITULO, DESCRICAO, LINK,
-                DOCUMENTACAO, JAVA, BACKEND, INT, exibirUsuarioPostagemDTO);
+                INT, DOCUMENTACAO, JAVA, BACKEND, exibirUsuarioPostagemDTO);
 
     }
 
@@ -311,8 +309,8 @@ class PostagemControllerTest {
                 .andExpect(jsonPath("$").isArray());
 
         String jsonResposta = response.andReturn().getResponse().getContentAsString();
-        List<PostagensCadastradasDTO> postagens = objectMapper.readValue(jsonResposta,
-                new TypeReference<List<PostagensCadastradasDTO>>() {
+        List<RetornoPostagemDTO> postagens = objectMapper.readValue(jsonResposta,
+                new TypeReference<List<RetornoPostagemDTO>>() {
                 });
 
         assertEquals(200, response.andReturn().getResponse().getStatus());
