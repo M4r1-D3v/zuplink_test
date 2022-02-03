@@ -212,6 +212,25 @@ class PostagemServiceTest {
     }
 
     @Test
+    public void testarAplicarFiltroPorBuscaPorDataDeCadastro (){
+        filtro.put("dataDeCadastro", "22/02/03");
+        when(repository.dataDeCadastro(filtro.get("dataDeCadastro"))).thenReturn(List.of(postagem));
+
+        List<Postagem> response = service.aplicarFiltroDeBusca(List.of(postagem),filtro);
+
+        assertNotNull(response);
+        assertEquals(Postagem.class, response.get(INT).getClass());
+        assertEquals(1, response.size());
+
+        verify(repository,times(1)).dataDeCadastro(filtro.get("dataDeCadastro"));
+        verify(repository,times(0)).autorPostagem(filtro.get("autorPostagem"));
+        verify(repository,times(0)).tema(filtro.get("tema"));
+        verify(repository,times(0)).tipo(filtro.get("tipo"));
+        verify(repository,times(0)).area(filtro.get("area"));
+        verify(repository,times(0)).like(INT);
+    }
+
+    @Test
     public void testarAtualizarPostagemCaminhoPositivo() {
         when(repository.findById(anyLong())).thenReturn(Optional.ofNullable(postagem));
         when(repository.save(any(Postagem.class))).thenReturn(postagem);
