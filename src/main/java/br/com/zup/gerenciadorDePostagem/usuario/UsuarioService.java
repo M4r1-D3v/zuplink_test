@@ -37,8 +37,10 @@ public class UsuarioService {
 
         Usuario usuarioParaAtualizar = verificarUsuario(email);
 
+        String senhaEscondida = encoder.encode(usuario.getSenha());
+
         usuarioParaAtualizar.setEmail(usuario.getEmail());
-        usuarioParaAtualizar.setSenha(usuario.getSenha());
+        usuarioParaAtualizar.setSenha(senhaEscondida);
         usuarioParaAtualizar.setNome(usuario.getNome());
 
         usuarioRepository.save(usuarioParaAtualizar);
