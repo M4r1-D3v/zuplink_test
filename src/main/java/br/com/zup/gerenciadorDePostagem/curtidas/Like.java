@@ -21,6 +21,7 @@ public class Like {
     private Long id_postagem;
     private String id_usuario;
 
+
     public Like(Long id_postagem, String id_usuario) {
         this.id_postagem = id_postagem;
         this.id_usuario = id_usuario;

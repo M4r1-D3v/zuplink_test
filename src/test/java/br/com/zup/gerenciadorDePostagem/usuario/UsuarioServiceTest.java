@@ -54,6 +54,7 @@ class UsuarioServiceTest {
         usuario = new Usuario(ID_USUARIO, NOME, EMAIL, SENHA);
     }
 
+
     @Test
     public void testarCadastrarUsuarioCaminhoPositivo() {
         when(usuarioRepository.findByEmail(anyString())).thenReturn(Optional.empty());
@@ -88,6 +89,43 @@ class UsuarioServiceTest {
         verify(usuarioRepository, times(0)).save(usuario);
 
     }
+
+
+    @Test
+    public void testarExibirUsuariosCaminhoPositivo() {
+        when(usuarioRepository.findAll()).thenReturn(List.of(usuario));
+
+        List<Usuario> response = usuarioService.exibirUsuarios();
+
+        assertNotNull(response);
+        assertEquals(Usuario.class, response.get(INDEX).getClass());
+        assertEquals(1, response.size());
+
+        assertEquals(ID_USUARIO, response.get(INDEX).getId());
+        assertEquals(NOME, response.get(INDEX).getNome());
+        assertEquals(EMAIL, response.get(INDEX).getEmail());
+        assertEquals(SENHA, response.get(INDEX).getSenha());
+
+        verify(usuarioRepository, times(1)).findAll();
+
+    }
+
+    @Test
+    public void testarExibirUsuariosExceptionNaoExistemUsuariosCadastradas() {
+        when(usuarioRepository.findAll()).thenReturn(List.of());
+
+        RuntimeException exception = assertThrows(NaoExistemUsuariosCadastradosException.class,
+                () -> {
+                    usuarioService.exibirUsuarios();
+                });
+
+        assertEquals(NaoExistemUsuariosCadastradosException.class, exception.getClass());
+        assertEquals(NAO_HA_USUARIOS_CADASTRADOS, exception.getMessage());
+
+        verify(usuarioRepository, times(1)).findAll();
+
+    }
+
 
     @Test
     public void testarAtualizarUsuarioCaminhoPositivo() {
@@ -125,38 +163,6 @@ class UsuarioServiceTest {
 
     }
 
-    @Test
-    public void testarExibirUsuariosCaminhoPositivo() {
-        when(usuarioRepository.findAll()).thenReturn(List.of(usuario));
-
-        List<Usuario> response = usuarioService.exibirUsuarios();
-
-        assertNotNull(response);
-        assertEquals(Usuario.class, response.get(INDEX).getClass());
-        assertEquals(1, response.size());
-
-        assertEquals(ID_USUARIO, response.get(INDEX).getId());
-        assertEquals(NOME, response.get(INDEX).getNome());
-        assertEquals(EMAIL, response.get(INDEX).getEmail());
-        assertEquals(SENHA, response.get(INDEX).getSenha());
-
-        verify(usuarioRepository, times(1)).findAll();
-
-    }
-
-    @Test
-    public void testarExibirUsuariosExceptionNaoExistemUsuariosCadastradas() {
-        when(usuarioRepository.findAll()).thenReturn(List.of());
-
-        RuntimeException exception = assertThrows(NaoExistemUsuariosCadastradosException.class,
-                () -> {usuarioService.exibirUsuarios();});
-
-        assertEquals(NaoExistemUsuariosCadastradosException.class, exception.getClass());
-        assertEquals(NAO_HA_USUARIOS_CADASTRADOS, exception.getMessage());
-
-        verify(usuarioRepository, times(1)).findAll();
-
-    }
 
     @Test
     public void testarDeletarUsuarioCaminhoPositivo() {

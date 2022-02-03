@@ -46,9 +46,11 @@ public class ConfiguracaoDeSeguranca extends WebSecurityConfigurerAdapter {
 
     }
 
+
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(detailsService).passwordEncoder(bCryptPasswordEncoder());
     }
+
 
     @Bean
     CorsConfigurationSource configurarCORS() {
@@ -63,6 +65,7 @@ public class ConfiguracaoDeSeguranca extends WebSecurityConfigurerAdapter {
 
         return cors;
     }
+
 
     @Bean
     BCryptPasswordEncoder bCryptPasswordEncoder() {

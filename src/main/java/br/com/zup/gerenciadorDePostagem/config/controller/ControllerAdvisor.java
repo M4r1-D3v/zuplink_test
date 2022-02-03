@@ -17,6 +17,7 @@ import java.util.List;
 
 @RestControllerAdvice
 public class ControllerAdvisor {
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     public List<MensagemDeErro> manipularErrosDeValidacao(MethodArgumentNotValidException exception) {
@@ -25,6 +26,7 @@ public class ControllerAdvisor {
         for (FieldError fieldError : exception.getFieldErrors()) {
             mensagens.add(new MensagemDeErro(fieldError.getDefaultMessage()));
         }
+
         return mensagens;
     }
 
@@ -35,11 +37,13 @@ public class ControllerAdvisor {
         return new MensagemDeErro(exception.getMessage());
     }
 
+
     @ExceptionHandler(NaoExistemPostagensCadastradasException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public MensagemDeErro manipularExcecaoDePostagensNaoCadastradas(NaoExistemPostagensCadastradasException exception) {
         return new MensagemDeErro(exception.getMessage());
     }
+
 
     @ExceptionHandler(NaoExistemUsuariosCadastradosException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -47,11 +51,13 @@ public class ControllerAdvisor {
         return new MensagemDeErro(exception.getMessage());
     }
 
+
     @ExceptionHandler(PostagemNaoEncontradaException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public MensagemDeErro manipularExcecaoPostagemNaoEncontrada(PostagemNaoEncontradaException exception) {
         return new MensagemDeErro(exception.getMessage());
     }
+
 
     @ExceptionHandler(UsuarioNaoAutorizadoException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
@@ -59,11 +65,13 @@ public class ControllerAdvisor {
         return new MensagemDeErro(exception.getMessage());
     }
 
+
     @ExceptionHandler(UsuarioNaoCadastradoException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public MensagemDeErro manipularExcecaoUsuarioNaoCadastrado(UsuarioNaoCadastradoException exception) {
         return new MensagemDeErro(exception.getMessage());
     }
+
 
     @ExceptionHandler(AcessoNegadoException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
@@ -71,11 +79,13 @@ public class ControllerAdvisor {
         return new MensagemDeErro(exception.getMessage());
     }
 
+
     @ExceptionHandler(TokenInvalidoException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public MensagemDeErro manipularExcecaoTokenInvalido(TokenInvalidoException exception) {
         return new MensagemDeErro(exception.getMessage());
     }
+
 
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -83,8 +93,10 @@ public class ControllerAdvisor {
         return new MensagemDeErro("Algo foi preenchido incorretamente, por favor tente novamente.");
     }
 
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity manipularErroEnums(HttpMessageNotReadableException exception) {
+
         if (exception.getLocalizedMessage().contains("br.com.zup.gerenciadorDePostagem.enuns.Area")) {
             return ResponseEntity.status(422).build();
         }

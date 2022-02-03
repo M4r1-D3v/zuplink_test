@@ -1,9 +1,6 @@
 package br.com.zup.gerenciadorDePostagem.postagem;
 
 import br.com.zup.gerenciadorDePostagem.components.ConversorAutenticacao;
-import br.com.zup.gerenciadorDePostagem.enums.Area;
-import br.com.zup.gerenciadorDePostagem.enums.Tema;
-import br.com.zup.gerenciadorDePostagem.enums.Tipo;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.AtualizarPostagemDTO;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagemDTO;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagensCadastradasDTO;
@@ -38,13 +35,14 @@ public class PostagemController {
                                   Authentication authentication) {
 
         Usuario usuario = conversorAutenticacao.converterAutenticacao(authentication);
-
         postagemService.salvarPostagem(modelMapper.map(cadastroPostagemDTO, Postagem.class), usuario);
 
     }
 
+
     @GetMapping
-    public List<PostagensCadastradasDTO> exibirPostagensCadastradas(@RequestParam(required = false)Map<String,String> filtros) {
+    public List<PostagensCadastradasDTO> exibirPostagensCadastradas(@RequestParam(required = false)
+                                                                            Map<String, String> filtros) {
 
         List<PostagensCadastradasDTO> postagensCadastradasDTO = new ArrayList<>();
 
@@ -55,31 +53,34 @@ public class PostagemController {
         return postagensCadastradasDTO;
     }
 
+
     @PutMapping("/{id}")
     public void editarPostagem(@PathVariable Long id, @RequestBody @Valid AtualizarPostagemDTO atualizarPostagemDTO,
                                Authentication authentication) {
 
         Usuario usuario = conversorAutenticacao.converterAutenticacao(authentication);
-
         Postagem postagemRecebida = modelMapper.map(atualizarPostagemDTO, Postagem.class);
-
         postagemService.atualizarPostagem(id, postagemRecebida, usuario);
 
     }
 
+
     @PatchMapping("/{id}")
-    public RetornoPostagemDTO curtirPostagem(@PathVariable Long id, Authentication authentication){
+    public RetornoPostagemDTO curtirPostagem(@PathVariable Long id, Authentication authentication) {
         Usuario usuario = conversorAutenticacao.converterAutenticacao(authentication);
         Postagem postagem = postagemService.curtirPostagem(id, usuario);
-        return modelMapper.map(postagem,RetornoPostagemDTO.class);
+
+        return modelMapper.map(postagem, RetornoPostagemDTO.class);
     }
+
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void excluirPostagem(@PathVariable Long id, Authentication authentication) {
-        Usuario usuario = conversorAutenticacao.converterAutenticacao(authentication);
 
+        Usuario usuario = conversorAutenticacao.converterAutenticacao(authentication);
         postagemService.deletarPostagem(id, usuario);
+
     }
 
 }
