@@ -50,7 +50,7 @@ public class PostagemService {
 
         if (filtros.get("area") != null){
             return postagemRepository.area(filtros.get("area"));
-        } if(filtros.get("tipo") != null){
+        }else if(filtros.get("tipo") != null){
             return postagemRepository.tipo(filtros.get("tipo"));
         }else if(filtros.get("tema") != null){
             return postagemRepository.tema(filtros.get("tema"));
