@@ -127,6 +127,27 @@ class PostagemServiceTest {
     }
 
     @Test
+    public void testarAplicarFiltroDeBuscaPorArea() {
+        filtro.put("area","backend");
+        when(repository.area(filtro.get("area"))).thenReturn(List.of(postagem));
+
+        List<Postagem> response = service.aplicarFiltroDeBusca(List.of(postagem),filtro);
+
+        assertNotNull(response);
+        assertEquals(Postagem.class, response.get(INT).getClass());
+        assertEquals(1, response.size());
+
+        verify(repository,times(1)).area(filtro.get("area"));
+        verify(repository,times(0)).tipo(filtro.get("tipo"));
+        verify(repository,times(0)).tema(filtro.get("tema"));
+        verify(repository,times(0)).autorPostagem(filtro.get("autorPostagem"));
+        verify(repository,times(0)).dataDeCadastro(filtro.get("dataDeCadastro"));
+        verify(repository,times(0)).like(INT);
+        verify(repository,times(0)).deslike(INT);
+
+    }
+
+    @Test
     public void testarAtualizarPostagemCaminhoPositivo() {
         when(repository.findById(anyLong())).thenReturn(Optional.ofNullable(postagem));
         when(repository.save(any(Postagem.class))).thenReturn(postagem);
