@@ -56,9 +56,9 @@ public class PostagemService {
             return postagemRepository.tema(filtros.get("tema"));
         }else if(filtros.get("autorPostagem") != null){
             return postagemRepository.autorPostagem(filtros.get("autorPostagem"));
-        }else if(filtros.get("dataDeCadastro") != null && filtros.containsValue("DESC")){
+        }else if(filtros.get("dataDeCadastro") != null && filtros.containsValue("desc")){
             return postagemRepository.dataDeCadastroRecente(filtros.get("dataDeCadastro"));
-        }else if(filtros.get("dataDeCadastro") != null && filtros.containsValue("ASC")){
+        }else if(filtros.get("dataDeCadastro") != null && filtros.containsValue("asc")){
             return postagemRepository.dataDeCadastroAntiga(filtros.get("dataDeCadastro"));
         }
 
