@@ -149,7 +149,6 @@ class PostagemServiceTest {
         verify(repository,times(0)).autorPostagem(filtro.get("autorPostagem"));
         verify(repository,times(0)).dataDeCadastroRecente(filtro.get("dataDeCadastro"));
         verify(repository,times(0)).dataDeCadastroAntiga(filtro.get("dataDeCadastro"));
-        verify(repository,times(0)).like(INT);
 
     }
 

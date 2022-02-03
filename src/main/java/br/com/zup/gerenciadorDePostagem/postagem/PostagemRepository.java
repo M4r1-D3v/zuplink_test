@@ -29,10 +29,4 @@ public interface PostagemRepository extends CrudRepository<Postagem, Long> {
     @Query(value = "SELECT * FROM postagens ORDER BY data_de_cadastro ASC", nativeQuery = true)
     List<Postagem> dataDeCadastroAntiga(String dataDeCadastro);
 
-    @Query(value = "SELECT * FROM postagens ORDER BY likes DESC", nativeQuery = true)
-    List<Postagem> like(Integer likes);
-
-    @Query(value = "SELECT * FROM postagens ORDER BY deslikes DESC", nativeQuery = true)
-    List<Postagem> deslike(Integer deslikes);
-
 }

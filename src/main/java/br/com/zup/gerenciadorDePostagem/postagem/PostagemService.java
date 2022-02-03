@@ -60,8 +60,6 @@ public class PostagemService {
             return postagemRepository.dataDeCadastroRecente(filtros.get("dataDeCadastro"));
         }else if(filtros.get("dataDeCadastro") != null && filtros.containsValue("ASC")){
             return postagemRepository.dataDeCadastroAntiga(filtros.get("dataDeCadastro"));
-        } else if(filtros.get("likes") != null){
-            return postagemRepository.like(Integer.parseInt(filtros.get("likes")));
         }
 
         return listaPostagens;
