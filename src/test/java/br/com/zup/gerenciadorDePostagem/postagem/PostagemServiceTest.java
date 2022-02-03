@@ -143,7 +143,6 @@ class PostagemServiceTest {
         verify(repository,times(0)).autorPostagem(filtro.get("autorPostagem"));
         verify(repository,times(0)).dataDeCadastro(filtro.get("dataDeCadastro"));
         verify(repository,times(0)).like(INT);
-        verify(repository,times(0)).deslike(INT);
 
     }
 
