@@ -1,5 +1,7 @@
 package br.com.zup.gerenciadorDePostagem.postagem;
 
+import br.com.zup.gerenciadorDePostagem.curtidas.Like;
+import br.com.zup.gerenciadorDePostagem.curtidas.LikeRepository;
 import br.com.zup.gerenciadorDePostagem.enums.Area;
 import br.com.zup.gerenciadorDePostagem.enums.Tema;
 import br.com.zup.gerenciadorDePostagem.enums.Tipo;
@@ -20,12 +22,13 @@ public class PostagemService {
 
     @Autowired
     private PostagemRepository postagemRepository;
+    @Autowired
+    private LikeRepository likeRepository;
 
 
     public Postagem salvarPostagem(Postagem postagem, Usuario usuario) {
 
         postagem.setLikes(0);
-        postagem.setDeslikes(0);
         postagem.setAutorPostagem(usuario);
         postagem.setDataDeCadastro(LocalDate.now());
 
@@ -57,8 +60,6 @@ public class PostagemService {
             return postagemRepository.dataDeCadastro(filtros.get("dataDeCadastro"));
         }else if(filtros.get("likes") != null){
             return postagemRepository.like(Integer.parseInt(filtros.get("likes")));
-        }else if(filtros.get("deslikes") != null){
-            return postagemRepository.deslike(Integer.parseInt(filtros.get("deslikes")));
         }
 
         return listaPostagens;
@@ -80,6 +81,22 @@ public class PostagemService {
 
     }
 
+    public Postagem curtirPostagem(Long idPostagem, Usuario usuario) {
+        Postagem postagem = verificarPostagem(idPostagem);
+        Optional<Like> optionalLike = likeRepository.jaCurtiu(idPostagem,usuario.getId());
+
+        if (optionalLike.isEmpty()){
+            postagem.setLikes(postagem.getLikes()+1);
+            Like like = new Like(idPostagem,usuario.getId());
+            likeRepository.save(like);
+        }else {
+            postagem.setLikes(postagem.getLikes()-1);
+            likeRepository.deleteById(optionalLike.get().getId());
+        }
+
+        return postagemRepository.save(postagem);
+    }
+
     public void deletarPostagem(Long idPostagem, Usuario usuario) {
         Postagem postagem = verificarPostagem(idPostagem);
         validarAutenticidade(usuario, postagem);
@@ -97,7 +114,6 @@ public class PostagemService {
             throw new PostagemNaoEncontradaException("Postagem não encontrada");
         }
     }
-
 
     public void validarAutenticidade(Usuario usuarioLogado, Postagem postagem) {
 

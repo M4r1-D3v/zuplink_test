@@ -9,9 +9,12 @@ import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoAutorizadoException
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.AtualizarPostagemDTO;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagemDTO;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagensCadastradasDTO;
+import br.com.zup.gerenciadorDePostagem.postagem.dtos.RetornoPostagemDTO;
 import br.com.zup.gerenciadorDePostagem.usuario.Usuario;
+import br.com.zup.gerenciadorDePostagem.usuario.dtos.ExibirUsuarioPostagemDTO;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
@@ -19,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -29,7 +33,7 @@ import java.util.List;
 import static br.com.zup.gerenciadorDePostagem.enums.Area.BACKEND;
 import static br.com.zup.gerenciadorDePostagem.enums.Tema.JAVA;
 import static br.com.zup.gerenciadorDePostagem.enums.Tipo.DOCUMENTACAO;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -75,18 +79,29 @@ class PostagemControllerTest {
     private Postagem postagem;
     private PostagemDTO postagemDTO;
     private AtualizarPostagemDTO atualizarPostagemDTO;
+    private RetornoPostagemDTO retornoPostagemDTO;
     private Usuario usuario;
+    private ExibirUsuarioPostagemDTO exibirUsuarioPostagemDTO;
 
 
     @BeforeEach
     public void setUp() {
         objectMapper = new ObjectMapper();
         usuario = new Usuario(ID_USUARIO, NOME, EMAIL_USUARIO, SENHA);
+
+        exibirUsuarioPostagemDTO = new ExibirUsuarioPostagemDTO(NOME);
+
         postagem = new Postagem(ID_POSTAGEM, TITULO, DESCRICAO, LINK,
-                DOCUMENTACAO, JAVA, BACKEND, INT, INT, usuario, LocalDate.now());
+                DOCUMENTACAO, JAVA, BACKEND, INT, usuario, LocalDate.now());
+
         postagemDTO = new PostagemDTO(TITULO, DESCRICAO, LINK,
                 DOCUMENTACAO, JAVA, BACKEND);
+
         atualizarPostagemDTO = new AtualizarPostagemDTO(TITULO, DESCRICAO, DOCUMENTACAO, JAVA, BACKEND);
+
+        retornoPostagemDTO = new RetornoPostagemDTO( TITULO, DESCRICAO, LINK,
+                DOCUMENTACAO, JAVA, BACKEND, INT, exibirUsuarioPostagemDTO);
+
     }
 
 
@@ -549,6 +564,40 @@ class PostagemControllerTest {
         assertEquals(403, response.andReturn().getResponse().getStatus());
         verify(service, times(1)).deletarPostagem(anyLong(), any());
 
+    }
+
+    @Test
+    @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
+    public void testarRotaParaCurtirPostagemCaminhoPositivo () throws Exception {
+        when(conversorAutenticacao.converterAutenticacao(any())).thenReturn(usuario);
+        when(modelMapper.map(any(Postagem.class),any())).thenReturn(retornoPostagemDTO);
+        when(service.curtirPostagem(anyLong(),any(Usuario.class))).thenReturn(postagem);
+
+        ResultActions response = mockMvc.perform(patch("/postagem/" + postagem.getId())
+                .contentType(APPLICATION_JSON)).andExpect(status().isOk());
+
+        String jsonResposta = response.andReturn().getResponse().getContentAsString();
+        RetornoPostagemDTO postagens = objectMapper.readValue(jsonResposta, RetornoPostagemDTO.class);
+
+        assertNotNull(postagens);
+        assertEquals(RetornoPostagemDTO.class,postagens.getClass());
+        assertEquals(200, response.andReturn().getResponse().getStatus());
+        verify(service, times(1)).curtirPostagem(anyLong(),any());
+    }
+
+    @Test
+    @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
+    public void testarRotaParaCurtirPostagemExceptionPostagemNaoCadastrada () throws Exception {
+        when(conversorAutenticacao.converterAutenticacao(any())).thenReturn(usuario);
+        when(modelMapper.map(any(Postagem.class),any())).thenReturn(retornoPostagemDTO);
+        doThrow(PostagemNaoEncontradaException.class).when(service).curtirPostagem(anyLong(),any());
+
+        ResultActions response = mockMvc.perform(patch("/postagem/" + postagem.getId())
+                .contentType(APPLICATION_JSON)).andExpect(status().isNotFound());
+
+
+        assertEquals(404, response.andReturn().getResponse().getStatus());
+        verify(service, times(1)).curtirPostagem(anyLong(),any());
     }
 
 }

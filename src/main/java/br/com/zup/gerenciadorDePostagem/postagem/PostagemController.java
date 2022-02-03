@@ -7,6 +7,7 @@ import br.com.zup.gerenciadorDePostagem.enums.Tipo;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.AtualizarPostagemDTO;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagemDTO;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagensCadastradasDTO;
+import br.com.zup.gerenciadorDePostagem.postagem.dtos.RetornoPostagemDTO;
 import br.com.zup.gerenciadorDePostagem.usuario.Usuario;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -65,6 +65,13 @@ public class PostagemController {
 
         postagemService.atualizarPostagem(id, postagemRecebida, usuario);
 
+    }
+
+    @PatchMapping("/{id}")
+    public RetornoPostagemDTO curtirPostagem(@PathVariable Long id, Authentication authentication){
+        Usuario usuario = conversorAutenticacao.converterAutenticacao(authentication);
+        Postagem postagem = postagemService.curtirPostagem(id, usuario);
+        return modelMapper.map(postagem,RetornoPostagemDTO.class);
     }
 
     @DeleteMapping("/{id}")

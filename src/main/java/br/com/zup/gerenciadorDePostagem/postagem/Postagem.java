@@ -39,7 +39,6 @@ public class Postagem {
     @Enumerated(EnumType.STRING)
     private Area areaAtuacao;
     private Integer likes;
-    private Integer deslikes;
     @ManyToOne(cascade = {CascadeType.MERGE})
     private Usuario autorPostagem;
     @Column(nullable = false)
