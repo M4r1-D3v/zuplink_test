@@ -6,6 +6,7 @@ import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemPostagensCadastrada
 import br.com.zup.gerenciadorDePostagem.exceptions.PostagemNaoEncontradaException;
 import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoAutorizadoException;
 import br.com.zup.gerenciadorDePostagem.usuario.Usuario;
+import br.com.zup.gerenciadorDePostagem.usuario.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,8 @@ public class PostagemService {
     private PostagemRepository postagemRepository;
     @Autowired
     private LikeRepository likeRepository;
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
 
     public Postagem salvarPostagem(Postagem postagem, Usuario usuario) {
@@ -59,6 +62,9 @@ public class PostagemService {
             return postagemRepository.dataDeCadastroRecente(filtros.get("dataDeCadastro"));
         }else if(filtros.get("dataDeCadastro") != null && filtros.containsValue("asc")){
             return postagemRepository.dataDeCadastroAntiga(filtros.get("dataDeCadastro"));
+        } else if(filtros.get("email") != null){
+            Optional<Usuario> usuario =  usuarioRepository.findByEmail(filtros.get("email"));
+            return postagemRepository.likesUsuario(usuario.get().getId());
         }
 
         return listaPostagens;
