@@ -40,7 +40,7 @@ public class PostagemController {
 
 
     @GetMapping
-    public List<PostagensCadastradasDTO> exibirPostagensCadastradas(@RequestParam(required = false)
+    public List<RetornoPostagemDTO> exibirPostagensCadastradas(@RequestParam(required = false)
                                                                             Map<String, String> filtros) {
 
         List<RetornoPostagemDTO> postagensCadastradasDTO = new ArrayList<>();
