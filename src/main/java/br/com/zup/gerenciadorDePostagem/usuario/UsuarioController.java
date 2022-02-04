@@ -40,7 +40,7 @@ public class UsuarioController {
     public void atualizarUsuario(@RequestBody @Valid UsuarioDto usuarioDto, Authentication authentication) {
 
         Usuario usuario = conversorAutenticacao.converterAutenticacao(authentication);
-        usuarioService.atualizarUsuario(usuario.getId(), modelMapper.map(usuarioDto, Usuario.class));
+        usuarioService.atualizarUsuario(usuario.getEmail(), modelMapper.map(usuarioDto, Usuario.class));
 
     }
 

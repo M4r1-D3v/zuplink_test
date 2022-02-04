@@ -3,7 +3,6 @@ package br.com.zup.gerenciadorDePostagem.postagem;
 import br.com.zup.gerenciadorDePostagem.components.ConversorAutenticacao;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.AtualizarPostagemDTO;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagemDTO;
-import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagensCadastradasDTO;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.RetornoPostagemDTO;
 import br.com.zup.gerenciadorDePostagem.usuario.Usuario;
 import org.modelmapper.ModelMapper;
@@ -44,10 +43,10 @@ public class PostagemController {
     public List<PostagensCadastradasDTO> exibirPostagensCadastradas(@RequestParam(required = false)
                                                                             Map<String, String> filtros) {
 
-        List<PostagensCadastradasDTO> postagensCadastradasDTO = new ArrayList<>();
+        List<RetornoPostagemDTO> postagensCadastradasDTO = new ArrayList<>();
 
         for (Postagem postagem : postagemService.exibirPostagens(filtros)) {
-            postagensCadastradasDTO.add(modelMapper.map(postagem, PostagensCadastradasDTO.class));
+            postagensCadastradasDTO.add(modelMapper.map(postagem, RetornoPostagemDTO.class));
         }
 
         return postagensCadastradasDTO;

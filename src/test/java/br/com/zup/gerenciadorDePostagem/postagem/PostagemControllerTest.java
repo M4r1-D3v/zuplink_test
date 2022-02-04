@@ -8,7 +8,6 @@ import br.com.zup.gerenciadorDePostagem.exceptions.PostagemNaoEncontradaExceptio
 import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoAutorizadoException;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.AtualizarPostagemDTO;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagemDTO;
-import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagensCadastradasDTO;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.RetornoPostagemDTO;
 import br.com.zup.gerenciadorDePostagem.usuario.Usuario;
 import br.com.zup.gerenciadorDePostagem.usuario.dtos.ExibirUsuarioPostagemDTO;
@@ -99,7 +98,7 @@ class PostagemControllerTest {
         atualizarPostagemDTO = new AtualizarPostagemDTO(TITULO, DESCRICAO, DOCUMENTACAO, JAVA, BACKEND);
 
         retornoPostagemDTO = new RetornoPostagemDTO( TITULO, DESCRICAO, LINK,
-                DOCUMENTACAO, JAVA, BACKEND, INT, exibirUsuarioPostagemDTO);
+                INT, DOCUMENTACAO, JAVA, BACKEND, exibirUsuarioPostagemDTO);
 
     }
 
@@ -311,8 +310,8 @@ class PostagemControllerTest {
                 .andExpect(jsonPath("$").isArray());
 
         String jsonResposta = response.andReturn().getResponse().getContentAsString();
-        List<PostagensCadastradasDTO> postagens = objectMapper.readValue(jsonResposta,
-                new TypeReference<List<PostagensCadastradasDTO>>() {
+        List<RetornoPostagemDTO> postagens = objectMapper.readValue(jsonResposta,
+                new TypeReference<List<RetornoPostagemDTO>>() {
                 });
 
         assertEquals(200, response.andReturn().getResponse().getStatus());

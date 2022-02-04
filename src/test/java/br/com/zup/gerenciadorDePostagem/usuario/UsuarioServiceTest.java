@@ -131,6 +131,7 @@ class UsuarioServiceTest {
     public void testarAtualizarUsuarioCaminhoPositivo() {
         when(usuarioRepository.findByEmail(anyString())).thenReturn(ofNullable(usuario));
         when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuario);
+        when(encoder.encode(anyString())).thenReturn(SENHA_CRIPTOGRAFADA);
 
         Usuario response = usuarioService.atualizarUsuario(EMAIL, usuario);
 
@@ -140,7 +141,7 @@ class UsuarioServiceTest {
         assertEquals(ID_USUARIO, response.getId());
         assertEquals(NOME, response.getNome());
         assertEquals(EMAIL, response.getEmail());
-        assertEquals(SENHA, response.getSenha());
+        assertEquals(SENHA_CRIPTOGRAFADA, response.getSenha());
 
         verify(usuarioRepository, times(1)).findByEmail(anyString());
         verify(usuarioRepository, times(1)).save(any(Usuario.class));
