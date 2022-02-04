@@ -1,7 +1,6 @@
 package br.com.zup.gerenciadorDePostagem.usuario;
 
 import br.com.zup.gerenciadorDePostagem.components.ConversorAutenticacao;
-import br.com.zup.gerenciadorDePostagem.config.security.UsuarioLogado;
 import br.com.zup.gerenciadorDePostagem.usuario.dtos.UsuarioDto;
 import br.com.zup.gerenciadorDePostagem.usuario.dtos.UsuarioSaidaDTO;
 import org.modelmapper.ModelMapper;
@@ -26,6 +25,7 @@ public class UsuarioController {
     @Autowired
     private ConversorAutenticacao conversorAutenticacao;
 
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void cadastrarUsuario(@RequestBody @Valid UsuarioDto usuarioDTO) {
@@ -35,6 +35,7 @@ public class UsuarioController {
 
     }
 
+
     @PutMapping
     public void atualizarUsuario(@RequestBody @Valid UsuarioDto usuarioDto, Authentication authentication) {
 
@@ -43,8 +44,10 @@ public class UsuarioController {
 
     }
 
+
     @GetMapping
     public List<UsuarioSaidaDTO> exibirUsuariosCadastrados() {
+
         List<UsuarioSaidaDTO> listaUsuariosSaidaDTO = new ArrayList<>();
 
         for (Usuario usuario : usuarioService.exibirUsuarios()) {
@@ -55,9 +58,10 @@ public class UsuarioController {
         return listaUsuariosSaidaDTO;
     }
 
+
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deletarUsuario (@RequestParam String email, Authentication authentication){
+    public void deletarUsuario(@RequestParam String email, Authentication authentication) {
 
         Usuario usuario = conversorAutenticacao.converterAutenticacao(authentication);
         usuarioService.deletarUsuario(email, usuario.getId());

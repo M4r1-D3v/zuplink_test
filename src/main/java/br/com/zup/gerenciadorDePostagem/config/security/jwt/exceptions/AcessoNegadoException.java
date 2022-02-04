@@ -1,5 +1,5 @@
 package br.com.zup.gerenciadorDePostagem.config.security.jwt.exceptions;
 
-public class AcessoNegadoException extends RuntimeException{
+public class AcessoNegadoException extends RuntimeException {
 
 }

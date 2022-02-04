@@ -2,9 +2,6 @@ package br.com.zup.gerenciadorDePostagem.postagem;
 
 import br.com.zup.gerenciadorDePostagem.curtidas.Like;
 import br.com.zup.gerenciadorDePostagem.curtidas.LikeRepository;
-import br.com.zup.gerenciadorDePostagem.enums.Area;
-import br.com.zup.gerenciadorDePostagem.enums.Tema;
-import br.com.zup.gerenciadorDePostagem.enums.Tipo;
 import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemPostagensCadastradasException;
 import br.com.zup.gerenciadorDePostagem.exceptions.PostagemNaoEncontradaException;
 import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoAutorizadoException;
@@ -35,7 +32,8 @@ public class PostagemService {
         return postagemRepository.save(postagem);
     }
 
-    public List<Postagem> exibirPostagens(Map<String,String> filtros) {
+
+    public List<Postagem> exibirPostagens(Map<String, String> filtros) {
 
         List<Postagem> postagens = (List<Postagem>) postagemRepository.findAll();
 
@@ -46,15 +44,16 @@ public class PostagemService {
         return aplicarFiltroDeBusca(postagens, filtros);
     }
 
-    public List<Postagem> aplicarFiltroDeBusca(List<Postagem> listaPostagens,Map<String,String> filtros) {
 
-        if (filtros.get("area") != null){
+    public List<Postagem> aplicarFiltroDeBusca(List<Postagem> listaPostagens, Map<String, String> filtros) {
+
+        if (filtros.get("area") != null) {
             return postagemRepository.area(filtros.get("area"));
-        }else if(filtros.get("tipo") != null){
+        } else if (filtros.get("tipo") != null) {
             return postagemRepository.tipo(filtros.get("tipo"));
-        }else if(filtros.get("tema") != null){
+        } else if (filtros.get("tema") != null) {
             return postagemRepository.tema(filtros.get("tema"));
-        }else if(filtros.get("autorPostagem") != null){
+        } else if (filtros.get("autorPostagem") != null) {
             return postagemRepository.autorPostagem(filtros.get("autorPostagem"));
         }else if(filtros.get("dataDeCadastro") != null && filtros.containsValue("desc")){
             return postagemRepository.dataDeCadastroRecente(filtros.get("dataDeCadastro"));
@@ -65,10 +64,11 @@ public class PostagemService {
         return listaPostagens;
     }
 
+
     public Postagem atualizarPostagem(Long idPostagem, Postagem postagemRecebida, Usuario usuarioLogado) {
 
         Postagem postagemAtualizada = verificarPostagem(idPostagem);
-        validarAutenticidade(usuarioLogado,postagemAtualizada);
+        validarAutenticidade(usuarioLogado, postagemAtualizada);
 
         postagemAtualizada.setTitulo(postagemRecebida.getTitulo());
         postagemAtualizada.setDescricao(postagemRecebida.getDescricao());
@@ -81,21 +81,23 @@ public class PostagemService {
 
     }
 
+
     public Postagem curtirPostagem(Long idPostagem, Usuario usuario) {
         Postagem postagem = verificarPostagem(idPostagem);
-        Optional<Like> optionalLike = likeRepository.jaCurtiu(idPostagem,usuario.getId());
+        Optional<Like> optionalLike = likeRepository.jaCurtiu(idPostagem, usuario.getId());
 
-        if (optionalLike.isEmpty()){
-            postagem.setLikes(postagem.getLikes()+1);
-            Like like = new Like(idPostagem,usuario.getId());
+        if (optionalLike.isEmpty()) {
+            postagem.setLikes(postagem.getLikes() + 1);
+            Like like = new Like(idPostagem, usuario.getId());
             likeRepository.save(like);
-        }else {
-            postagem.setLikes(postagem.getLikes()-1);
+        } else {
+            postagem.setLikes(postagem.getLikes() - 1);
             likeRepository.deleteById(optionalLike.get().getId());
         }
 
         return postagemRepository.save(postagem);
     }
+
 
     public void deletarPostagem(Long idPostagem, Usuario usuario) {
         Postagem postagem = verificarPostagem(idPostagem);
@@ -104,6 +106,7 @@ public class PostagemService {
         postagemRepository.deleteById(postagem.getId());
 
     }
+
 
     public Postagem verificarPostagem(Long idPostagem) {
         Optional<Postagem> postagemCadastrada = postagemRepository.findById(idPostagem);
@@ -114,6 +117,7 @@ public class PostagemService {
             throw new PostagemNaoEncontradaException("Postagem não encontrada");
         }
     }
+
 
     public void validarAutenticidade(Usuario usuarioLogado, Postagem postagem) {
 

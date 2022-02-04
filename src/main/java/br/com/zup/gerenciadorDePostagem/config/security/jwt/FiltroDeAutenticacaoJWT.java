@@ -22,47 +22,51 @@ public class FiltroDeAutenticacaoJWT extends UsernamePasswordAuthenticationFilte
     private JWTComponent jwtComponent;
     private AuthenticationManager authenticationManager;
 
+
     public FiltroDeAutenticacaoJWT(JWTComponent jwtComponent, AuthenticationManager authenticationManager) {
         this.jwtComponent = jwtComponent;
         this.authenticationManager = authenticationManager;
     }
 
+
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
+            throws AuthenticationException {
+
         ObjectMapper objectMapper = new ObjectMapper();
 
-        try{
-            LoginDto login =  objectMapper.readValue(request.getInputStream(), LoginDto.class);
+        try {
+
+            LoginDto login = objectMapper.readValue(request.getInputStream(), LoginDto.class);
 
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                     login.getEmail(), login.getSenha(), new ArrayList<>()
             );
 
             Authentication autenticacao = authenticationManager.authenticate(authToken);
+
             return autenticacao;
-        }catch (IOException e){
+
+        } catch (IOException e) {
             throw new AcessoNegadoException();
         }
 
-
     }
 
+
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+                                            FilterChain chain, Authentication authResult)
+            throws IOException, ServletException {
+
         UsuarioLogado usuarioLogado = (UsuarioLogado) authResult.getPrincipal();
         String username = usuarioLogado.getUsername();
         String id = usuarioLogado.getId();
 
         String token = jwtComponent.gerarToken(username, id);
 
-        response.setHeader("Access-Control-Expose-Headers","Authorization");
-        response.addHeader("Authorization", "Token "+token);
+        response.setHeader("Access-Control-Expose-Headers", "Authorization");
+        response.addHeader("Authorization", "Token " + token);
     }
-
-
-
-
-
-
 
 }

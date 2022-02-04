@@ -47,6 +47,7 @@ public class FiltroAutorizacaoJWT extends BasicAuthenticationFilter {
         return new UsernamePasswordAuthenticationToken(usuarioLogado, null, usuarioLogado.getAuthorities());
     }
 
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {

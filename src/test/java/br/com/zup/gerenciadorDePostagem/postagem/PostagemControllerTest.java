@@ -300,6 +300,7 @@ class PostagemControllerTest {
 
     }
 
+
     @Test
     public void testarRotaParaExibirPostagensCadastradasCaminhoPositivo() throws Exception {
         when(service.exibirPostagens(any())).thenReturn(List.of(postagem));
@@ -330,6 +331,7 @@ class PostagemControllerTest {
         verify(service, times(1)).exibirPostagens(any());
 
     }
+
 
     @Test
     @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
@@ -520,6 +522,42 @@ class PostagemControllerTest {
 
     }
 
+
+    @Test
+    @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
+    public void testarRotaParaCurtirPostagemCaminhoPositivo () throws Exception {
+        when(conversorAutenticacao.converterAutenticacao(any())).thenReturn(usuario);
+        when(modelMapper.map(any(Postagem.class),any())).thenReturn(retornoPostagemDTO);
+        when(service.curtirPostagem(anyLong(),any(Usuario.class))).thenReturn(postagem);
+
+        ResultActions response = mockMvc.perform(patch("/postagem/" + postagem.getId())
+                .contentType(APPLICATION_JSON)).andExpect(status().isOk());
+
+        String jsonResposta = response.andReturn().getResponse().getContentAsString();
+        RetornoPostagemDTO postagens = objectMapper.readValue(jsonResposta, RetornoPostagemDTO.class);
+
+        assertNotNull(postagens);
+        assertEquals(RetornoPostagemDTO.class,postagens.getClass());
+        assertEquals(200, response.andReturn().getResponse().getStatus());
+        verify(service, times(1)).curtirPostagem(anyLong(),any());
+    }
+
+    @Test
+    @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
+    public void testarRotaParaCurtirPostagemExceptionPostagemNaoCadastrada () throws Exception {
+        when(conversorAutenticacao.converterAutenticacao(any())).thenReturn(usuario);
+        when(modelMapper.map(any(Postagem.class),any())).thenReturn(retornoPostagemDTO);
+        doThrow(PostagemNaoEncontradaException.class).when(service).curtirPostagem(anyLong(),any());
+
+        ResultActions response = mockMvc.perform(patch("/postagem/" + postagem.getId())
+                .contentType(APPLICATION_JSON)).andExpect(status().isNotFound());
+
+
+        assertEquals(404, response.andReturn().getResponse().getStatus());
+        verify(service, times(1)).curtirPostagem(anyLong(),any());
+    }
+
+
     @Test
     @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
     public void testarRotaParaExcluirPostagemCaminhoPositivo() throws Exception {
@@ -562,40 +600,6 @@ class PostagemControllerTest {
         assertEquals(403, response.andReturn().getResponse().getStatus());
         verify(service, times(1)).deletarPostagem(anyLong(), any());
 
-    }
-
-    @Test
-    @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
-    public void testarRotaParaCurtirPostagemCaminhoPositivo () throws Exception {
-        when(conversorAutenticacao.converterAutenticacao(any())).thenReturn(usuario);
-        when(modelMapper.map(any(Postagem.class),any())).thenReturn(retornoPostagemDTO);
-        when(service.curtirPostagem(anyLong(),any(Usuario.class))).thenReturn(postagem);
-
-        ResultActions response = mockMvc.perform(patch("/postagem/" + postagem.getId())
-                .contentType(APPLICATION_JSON)).andExpect(status().isOk());
-
-        String jsonResposta = response.andReturn().getResponse().getContentAsString();
-        RetornoPostagemDTO postagens = objectMapper.readValue(jsonResposta, RetornoPostagemDTO.class);
-
-        assertNotNull(postagens);
-        assertEquals(RetornoPostagemDTO.class,postagens.getClass());
-        assertEquals(200, response.andReturn().getResponse().getStatus());
-        verify(service, times(1)).curtirPostagem(anyLong(),any());
-    }
-
-    @Test
-    @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
-    public void testarRotaParaCurtirPostagemExceptionPostagemNaoCadastrada () throws Exception {
-        when(conversorAutenticacao.converterAutenticacao(any())).thenReturn(usuario);
-        when(modelMapper.map(any(Postagem.class),any())).thenReturn(retornoPostagemDTO);
-        doThrow(PostagemNaoEncontradaException.class).when(service).curtirPostagem(anyLong(),any());
-
-        ResultActions response = mockMvc.perform(patch("/postagem/" + postagem.getId())
-                .contentType(APPLICATION_JSON)).andExpect(status().isNotFound());
-
-
-        assertEquals(404, response.andReturn().getResponse().getStatus());
-        verify(service, times(1)).curtirPostagem(anyLong(),any());
     }
 
 }

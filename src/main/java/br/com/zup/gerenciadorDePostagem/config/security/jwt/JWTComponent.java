@@ -17,7 +17,9 @@ public class JWTComponent {
     @Value("${jwt.milissegundos}")
     private Long milissegundo;
 
-    public String gerarToken(String username, String id){
+
+    public String gerarToken(String username, String id) {
+
         Date vencimento = new Date(System.currentTimeMillis() + milissegundo);
 
         String token = Jwts.builder().setSubject(username)
@@ -27,29 +29,34 @@ public class JWTComponent {
         return token;
     }
 
+
     public Claims pegarClaims(String token) {
-        try{
+        try {
             return Jwts.parser().setSigningKey(segredo.getBytes()).parseClaimsJws(token).getBody();
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new TokenInvalidoException();
         }
     }
 
-   public boolean tokenValido(String token){
-        try{
+
+    public boolean tokenValido(String token) {
+        try {
+
             Claims claims = pegarClaims(token);
             Date dataAtual = new Date(System.currentTimeMillis());
             String username = claims.getSubject();
             Date vencimentoToken = claims.getExpiration();
 
-            if(username != null && vencimentoToken != null && dataAtual.before(vencimentoToken)){
+            if (username != null && vencimentoToken != null && dataAtual.before(vencimentoToken)) {
                 return true;
-            }else {
+            } else {
                 return false;
             }
-        }catch (TokenInvalidoException e){
+
+        } catch (TokenInvalidoException e) {
             return false;
         }
-   }
+
+    }
 
 }

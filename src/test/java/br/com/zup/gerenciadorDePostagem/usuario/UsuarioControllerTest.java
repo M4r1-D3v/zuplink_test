@@ -61,6 +61,7 @@ public class UsuarioControllerTest {
     private Usuario usuario;
     private UsuarioDto usuarioDto;
 
+
     @BeforeEach
     private void setup() {
         objectMapper = new ObjectMapper();
@@ -77,6 +78,7 @@ public class UsuarioControllerTest {
         usuarioDto.setSenha(SENHA);
 
     }
+
 
     @Test
     public void testarRotaParaCadastroDeUsuarioCaminhoPositivo() throws Exception {
@@ -253,6 +255,40 @@ public class UsuarioControllerTest {
         verify(usuarioService, times(1)).cadastrarUsuario(any());
 
     }
+
+
+    @Test
+    @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
+    public void testarRotaParaExibirUsuariosCadastradasCaminhoPositivo() throws Exception {
+        when(usuarioService.exibirUsuarios()).thenReturn(List.of(usuario));
+
+        ResultActions response = mockMvc.perform(get("/usuario")
+                        .contentType(APPLICATION_JSON)).andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray());
+
+        String jsonResposta = response.andReturn().getResponse().getContentAsString();
+        List<UsuarioSaidaDTO> postagens = objectMapper.readValue(jsonResposta,
+                new TypeReference<List<UsuarioSaidaDTO>>() {
+                });
+
+        assertEquals(200, response.andReturn().getResponse().getStatus());
+        verify(usuarioService, times(1)).exibirUsuarios();
+
+    }
+
+    @Test
+    @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
+    public void testarRotaParaExibirUsuariosCadastradasExceptionNaoExistemUsuariosCadastrados() throws Exception {
+        doThrow(NaoExistemUsuariosCadastradosException.class).when(usuarioService).exibirUsuarios();
+
+        ResultActions response = mockMvc.perform(get("/usuario")
+                .contentType(APPLICATION_JSON)).andExpect(status().isNotFound());
+
+        assertEquals(404, response.andReturn().getResponse().getStatus());
+        verify(usuarioService, times(1)).exibirUsuarios();
+
+    }
+
 
     @Test
     @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
@@ -443,36 +479,6 @@ public class UsuarioControllerTest {
 
     }
 
-    @Test
-    @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
-    public void testarRotaParaExibirUsuariosCadastradasCaminhoPositivo() throws Exception {
-        when(usuarioService.exibirUsuarios()).thenReturn(List.of(usuario));
-
-        ResultActions response = mockMvc.perform(get("/usuario")
-                        .contentType(APPLICATION_JSON)).andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray());
-
-        String jsonResposta = response.andReturn().getResponse().getContentAsString();
-        List<UsuarioSaidaDTO> postagens = objectMapper.readValue(jsonResposta,
-                new TypeReference<List<UsuarioSaidaDTO>>() {});
-
-        assertEquals(200, response.andReturn().getResponse().getStatus());
-        verify(usuarioService, times(1)).exibirUsuarios();
-
-    }
-
-    @Test
-    @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
-    public void testarRotaParaExibirUsuariosCadastradasExceptionNaoExistemUsuariosCadastrados() throws Exception {
-        doThrow(NaoExistemUsuariosCadastradosException.class).when(usuarioService).exibirUsuarios();
-
-        ResultActions response = mockMvc.perform(get("/usuario")
-                .contentType(APPLICATION_JSON)).andExpect(status().isNotFound());
-
-        assertEquals(404, response.andReturn().getResponse().getStatus());
-        verify(usuarioService, times(1)).exibirUsuarios();
-
-    }
 
     @Test
     @WithMockUser(username = EMAIL_USUARIO, password = SENHA)

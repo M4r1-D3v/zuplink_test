@@ -10,6 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ExibirUsuarioPostagemDTO {
+
     private String nome;
 
 }

@@ -21,17 +21,31 @@ public class UsuarioService {
 
 
     public Usuario cadastrarUsuario(Usuario usuario) {
+
         Optional<Usuario> usuarioExistente = usuarioRepository.findByEmail(usuario.getEmail());
-        String senhaEscondida = encoder.encode(usuario.getSenha());
 
         if (usuarioExistente.isPresent()) {
             throw new EmailJaCadastradoException("Email já cadastrado");
         }
 
+        String senhaEscondida = encoder.encode(usuario.getSenha());
         usuario.setSenha(senhaEscondida);
 
         return usuarioRepository.save(usuario);
     }
+
+
+    public List<Usuario> exibirUsuarios() {
+
+        List<Usuario> usuarios = (List<Usuario>) usuarioRepository.findAll();
+
+        if (usuarios.isEmpty()) {
+            throw new NaoExistemUsuariosCadastradosException("Não há usuários cadastrados");
+        }
+
+        return usuarios;
+    }
+
 
     public Usuario atualizarUsuario(String email, Usuario usuario) {
 
@@ -49,23 +63,18 @@ public class UsuarioService {
         return usuarioParaAtualizar;
     }
 
-    public List<Usuario> exibirUsuarios() {
-        List<Usuario> usuarios = (List<Usuario>) usuarioRepository.findAll();
-
-        if (usuarios.isEmpty()) {
-            throw new NaoExistemUsuariosCadastradosException("Não há usuários cadastrados");
-        }
-
-        return usuarios;
-    }
 
     public void deletarUsuario(String email, String idUsuario) {
+
         Usuario usuario = verificarUsuario(email);
         validarAutenticidadeUsuario(usuario, idUsuario);
         usuarioRepository.deleteById(usuario.getId());
+
     }
 
+
     private Usuario verificarUsuario(String email) {
+
         Optional<Usuario> usuarioCadastrado = usuarioRepository.findByEmail(email);
 
         if (usuarioCadastrado.isPresent()) {
@@ -76,10 +85,13 @@ public class UsuarioService {
 
     }
 
+
     public void validarAutenticidadeUsuario(Usuario usuarioCadastrado, String id) {
+
         if (!usuarioCadastrado.getId().equals(id)) {
             throw new UsuarioNaoAutorizadoException("Usuário não autorizado");
         }
+
     }
 
 }
