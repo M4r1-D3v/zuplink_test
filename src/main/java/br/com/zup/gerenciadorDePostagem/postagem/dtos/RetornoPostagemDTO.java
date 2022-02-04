@@ -18,10 +18,10 @@ public class RetornoPostagemDTO {
     private String titulo;
     private String descricao;
     private String link;
+    private Integer likes;
     private Tipo tipo;
     private Tema tema;
     private Area areaAtuacao;
-    private Integer likes;
     private ExibirUsuarioPostagemDTO autorPostagem;
 
 }
