@@ -6,6 +6,7 @@ import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemPostagensCadastrada
 import br.com.zup.gerenciadorDePostagem.exceptions.PostagemNaoEncontradaException;
 import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoAutorizadoException;
 import br.com.zup.gerenciadorDePostagem.usuario.Usuario;
+import br.com.zup.gerenciadorDePostagem.usuario.UsuarioRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,8 @@ class PostagemServiceTest {
     private PostagemRepository repository;
     @MockBean
     private LikeRepository likeRepository;
+    @MockBean
+    private UsuarioRepository usuarioRepository;
 
     @Autowired
     private PostagemService service;
@@ -255,6 +258,26 @@ class PostagemServiceTest {
 
     }
 
+
+    @Test
+    public void testarAplicarFiltroDeBuscaPorLikesUsuario (){
+        filtro.put("email", EMAIL);
+        when(usuarioRepository.findByEmail(anyString())).thenReturn(Optional.ofNullable(usuario));
+        when(repository.likesUsuario(usuario.getId())).thenReturn(List.of(postagem));
+
+        List<Postagem> response = service.aplicarFiltroDeBusca(List.of(postagem),filtro);
+
+        assertNotNull(response);
+        assertEquals(Postagem.class, response.get(INT).getClass());
+        assertEquals(1, response.size());
+
+        verify(repository,times(1)).likesUsuario(usuario.getId());
+        verify(repository,times(0)).dataDeCadastro(filtro.get("dataDeCadastro"));
+        verify(repository,times(0)).autorPostagem(filtro.get("autorPostagem"));
+        verify(repository,times(0)).tema(filtro.get("tema"));
+        verify(repository,times(0)).tipo(filtro.get("tipo"));
+        verify(repository,times(0)).area(filtro.get("area"));
+    }
 
     @Test
     public void testarAtualizarPostagemCaminhoPositivo() {
