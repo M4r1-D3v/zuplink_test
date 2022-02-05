@@ -5,6 +5,8 @@ import br.com.zup.gerenciadorDePostagem.postagem.dtos.AtualizarPostagemDTO;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.PostagemDTO;
 import br.com.zup.gerenciadorDePostagem.postagem.dtos.RetornoPostagemDTO;
 import br.com.zup.gerenciadorDePostagem.usuario.Usuario;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Api(value = "Gerenciamento de links de postagem.")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/postagem")
 public class PostagemController {
@@ -29,6 +33,7 @@ public class PostagemController {
 
 
     @PostMapping
+    @ApiOperation(value="Cadastrar postagem")
     @ResponseStatus(HttpStatus.CREATED)
     public void cadastrarPostagem(@RequestBody @Valid PostagemDTO cadastroPostagemDTO,
                                   Authentication authentication) {
@@ -40,6 +45,7 @@ public class PostagemController {
 
 
     @GetMapping
+    @ApiOperation(value="Buscar postagem")
     public List<RetornoPostagemDTO> exibirPostagensCadastradas(@RequestParam(required = false)
                                                                             Map<String, String> filtros) {
 
@@ -54,6 +60,7 @@ public class PostagemController {
 
 
     @PutMapping("/{id}")
+    @ApiOperation(value="Atualizar postagem")
     public void editarPostagem(@PathVariable Long id, @RequestBody @Valid AtualizarPostagemDTO atualizarPostagemDTO,
                                Authentication authentication) {
 
@@ -65,6 +72,7 @@ public class PostagemController {
 
 
     @PatchMapping("/{id}")
+    @ApiOperation(value="Curtir postagem")
     public RetornoPostagemDTO curtirPostagem(@PathVariable Long id, Authentication authentication) {
         Usuario usuario = conversorAutenticacao.converterAutenticacao(authentication);
         Postagem postagem = postagemService.curtirPostagem(id, usuario);
@@ -74,6 +82,7 @@ public class PostagemController {
 
 
     @DeleteMapping("/{id}")
+    @ApiOperation(value="Deletar postagem")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void excluirPostagem(@PathVariable Long id, Authentication authentication) {
 
