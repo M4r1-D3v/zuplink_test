@@ -4,12 +4,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PostagemRepository extends CrudRepository<Postagem, Long> {
 
     @Override
     @Query(value = "SELECT * FROM postagens ORDER BY likes DESC", nativeQuery = true)
     Iterable<Postagem> findAll();
+
+    Optional<Postagem> findByLink(String link);
 
     @Query(value = "SELECT * FROM postagens WHERE area_atuacao=:area ORDER BY likes DESC", nativeQuery = true)
     List<Postagem> area(String area);
