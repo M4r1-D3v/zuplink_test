@@ -32,4 +32,9 @@ public interface PostagemRepository extends CrudRepository<Postagem, Long> {
     @Query(value = "SELECT * FROM postagens ORDER BY data_de_cadastro ASC", nativeQuery = true)
     List<Postagem> dataDeCadastroAntiga(String dataDeCadastro);
 
+    @Query(value = "SELECT p.id,p.area_atuacao,p.data_de_cadastro,p.descricao,p.likes,p.link,p.tema,p.tipo,p.titulo," +
+            "p.autor_postagem_id FROM postagens p WHERE p.id in " +
+            "(SELECT l.id_postagem FROM likes l WHERE l.id_usuario=:idUsuario)", nativeQuery = true)
+    List<Postagem> likesUsuario (String idUsuario);
+
 }
