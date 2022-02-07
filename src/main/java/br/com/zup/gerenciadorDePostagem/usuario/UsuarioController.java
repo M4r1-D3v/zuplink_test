@@ -3,6 +3,8 @@ package br.com.zup.gerenciadorDePostagem.usuario;
 import br.com.zup.gerenciadorDePostagem.components.ConversorAutenticacao;
 import br.com.zup.gerenciadorDePostagem.usuario.dtos.UsuarioDto;
 import br.com.zup.gerenciadorDePostagem.usuario.dtos.UsuarioSaidaDTO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,7 +15,8 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@Api(value = "Gerenciamento de links de postagem.")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/usuario")
 public class UsuarioController {
@@ -27,6 +30,7 @@ public class UsuarioController {
 
 
     @PostMapping
+    @ApiOperation(value="Cadastrar usuário")
     @ResponseStatus(HttpStatus.CREATED)
     public void cadastrarUsuario(@RequestBody @Valid UsuarioDto usuarioDTO) {
 
@@ -37,6 +41,7 @@ public class UsuarioController {
 
 
     @PutMapping
+    @ApiOperation(value="Atualizar usuário")
     public void atualizarUsuario(@RequestBody @Valid UsuarioDto usuarioDto, Authentication authentication) {
 
         Usuario usuario = conversorAutenticacao.converterAutenticacao(authentication);
@@ -46,6 +51,7 @@ public class UsuarioController {
 
 
     @GetMapping
+    @ApiOperation(value="Exibir usuário")
     public List<UsuarioSaidaDTO> exibirUsuariosCadastrados() {
 
         List<UsuarioSaidaDTO> listaUsuariosSaidaDTO = new ArrayList<>();
@@ -60,6 +66,7 @@ public class UsuarioController {
 
 
     @DeleteMapping
+    @ApiOperation(value="Deletar usuário")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletarUsuario(@RequestParam String email, Authentication authentication) {
 
