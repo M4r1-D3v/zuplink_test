@@ -5,6 +5,7 @@ import br.com.zup.gerenciadorDePostagem.curtidas.LikeRepository;
 import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemPostagensCadastradasException;
 import br.com.zup.gerenciadorDePostagem.exceptions.PostagemNaoEncontradaException;
 import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoAutorizadoException;
+import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoCadastradoException;
 import br.com.zup.gerenciadorDePostagem.usuario.Usuario;
 import br.com.zup.gerenciadorDePostagem.usuario.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +65,10 @@ public class PostagemService {
             return postagemRepository.dataDeCadastroAntiga(filtros.get("dataDeCadastro"));
         } else if(filtros.get("email") != null){
             Optional<Usuario> usuario =  usuarioRepository.findByEmail(filtros.get("email"));
-            return postagemRepository.likesUsuario(usuario.get().getId());
+            if (usuario.isPresent()){
+                return postagemRepository.likesUsuario(usuario.get().getId());
+            }
+            throw  new UsuarioNaoCadastradoException("Usuário não cadastrado");
         }
 
         return listaPostagens;
