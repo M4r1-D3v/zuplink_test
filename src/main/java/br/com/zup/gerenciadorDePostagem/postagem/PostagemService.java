@@ -2,11 +2,13 @@ package br.com.zup.gerenciadorDePostagem.postagem;
 
 import br.com.zup.gerenciadorDePostagem.curtidas.Like;
 import br.com.zup.gerenciadorDePostagem.curtidas.LikeRepository;
+import br.com.zup.gerenciadorDePostagem.exceptions.LinkJaCadastradoException;
 import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemPostagensCadastradasException;
 import br.com.zup.gerenciadorDePostagem.exceptions.PostagemNaoEncontradaException;
 import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoAutorizadoException;
 import br.com.zup.gerenciadorDePostagem.usuario.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate5.support.OpenSessionInterceptor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -24,6 +26,11 @@ public class PostagemService {
 
 
     public Postagem salvarPostagem(Postagem postagem, Usuario usuario) {
+
+        Optional<Postagem> linkExiste = postagemRepository.findByLink(postagem.getLink());
+        if (linkExiste.isPresent()){
+            throw new LinkJaCadastradoException("Link já cadastrado!");
+        }
 
         postagem.setLikes(0);
         postagem.setAutorPostagem(usuario);
