@@ -472,4 +472,14 @@ class PostagemServiceTest {
         verify(repository, times(0)).save(any(Postagem.class));
     }
 
+    @Test
+    public void exibirPostagemPorId (){
+        when(repository.findById(anyLong())).thenReturn(ofNullable(postagem));
+
+        Postagem postagemRetornada = service.exibirPostagemPorId(postagem.getId());
+
+        verify(repository, times(1)).findById(anyLong());
+        assertEquals(postagem, postagemRetornada);
+    }
+
 }
