@@ -158,6 +158,7 @@ class PostagemServiceTest {
         verify(repository,times(0)).autorPostagem(filtro.get("autorPostagem"));
         verify(repository,times(0)).dataDeCadastroRecente(filtro.get("dataDeCadastro"));
         verify(repository,times(0)).dataDeCadastroAntiga(filtro.get("dataDeCadastro"));
+        verify(repository,times(0)).likesUsuario(usuario.getId());
 
     }
 
@@ -178,6 +179,7 @@ class PostagemServiceTest {
         verify(repository,times(0)).autorPostagem(filtro.get("autorPostagem"));
         verify(repository,times(0)).dataDeCadastroRecente(filtro.get("dataDeCadastro"));
         verify(repository,times(0)).dataDeCadastroAntiga(filtro.get("dataDeCadastro"));
+        verify(repository,times(0)).likesUsuario(usuario.getId());
       
     }
 
@@ -198,6 +200,7 @@ class PostagemServiceTest {
         verify(repository,times(0)).autorPostagem(filtro.get("autorPostagem"));
         verify(repository,times(0)).dataDeCadastroRecente(filtro.get("dataDeCadastro"));
         verify(repository,times(0)).dataDeCadastroAntiga(filtro.get("dataDeCadastro"));
+        verify(repository,times(0)).likesUsuario(usuario.getId());
 
     }
 
@@ -218,6 +221,7 @@ class PostagemServiceTest {
         verify(repository,times(0)).area(filtro.get("area"));
         verify(repository,times(0)).dataDeCadastroRecente(filtro.get("dataDeCadastro"));
         verify(repository,times(0)).dataDeCadastroAntiga(filtro.get("dataDeCadastro"));
+        verify(repository,times(0)).likesUsuario(usuario.getId());
 
     }
 
@@ -238,6 +242,8 @@ class PostagemServiceTest {
         verify(repository,times(0)).tipo(filtro.get("tipo"));
         verify(repository,times(0)).area(filtro.get("area"));
         verify(repository,times(0)).dataDeCadastroAntiga(filtro.get("dataDeCadastro"));
+        verify(repository,times(0)).likesUsuario(usuario.getId());
+
     }
 
     @Test
@@ -257,6 +263,7 @@ class PostagemServiceTest {
         verify(repository,times(0)).tema(filtro.get("tema"));
         verify(repository,times(0)).tipo(filtro.get("tipo"));
         verify(repository,times(0)).area(filtro.get("area"));
+        verify(repository,times(0)).likesUsuario(usuario.getId());
 
     }
 
@@ -274,11 +281,13 @@ class PostagemServiceTest {
         assertEquals(1, response.size());
 
         verify(repository,times(1)).likesUsuario(usuario.getId());
-        //verify(repository,times(0)).dataDeCadastro(filtro.get("dataDeCadastro"));
         verify(repository,times(0)).autorPostagem(filtro.get("autorPostagem"));
         verify(repository,times(0)).tema(filtro.get("tema"));
         verify(repository,times(0)).tipo(filtro.get("tipo"));
         verify(repository,times(0)).area(filtro.get("area"));
+        verify(repository,times(0)).dataDeCadastroRecente(filtro.get("dataDeCadastro"));
+        verify(repository,times(0)).dataDeCadastroAntiga(filtro.get("dataDeCadastro"));
+
     }
 
     @Test
@@ -293,11 +302,13 @@ class PostagemServiceTest {
         assertEquals(USUARIO_NAO_CADASTRADO, exception.getMessage());
 
         verify(repository,times(0)).likesUsuario(usuario.getId());
-        //verify(repository,times(0)).dataDeCadastro(filtro.get("dataDeCadastro"));
         verify(repository,times(0)).autorPostagem(filtro.get("autorPostagem"));
         verify(repository,times(0)).tema(filtro.get("tema"));
         verify(repository,times(0)).tipo(filtro.get("tipo"));
         verify(repository,times(0)).area(filtro.get("area"));
+        verify(repository,times(0)).dataDeCadastroRecente(filtro.get("dataDeCadastro"));
+        verify(repository,times(0)).dataDeCadastroAntiga(filtro.get("dataDeCadastro"));
+
     }
 
     @Test
