@@ -91,4 +91,11 @@ public class PostagemController {
 
     }
 
+    @GetMapping("/{idPostagem}")
+    @ResponseStatus(HttpStatus.OK)
+    public RetornoPostagemDTO exibirPostagemPorId(@PathVariable Long idPostagem){
+        Postagem postagem = postagemService.exibirPostagemPorId(idPostagem);
+        return modelMapper.map(postagem, RetornoPostagemDTO.class);
+    }
+
 }

@@ -10,7 +10,6 @@ import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoCadastradoException
 import br.com.zup.gerenciadorDePostagem.usuario.Usuario;
 import br.com.zup.gerenciadorDePostagem.usuario.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate5.support.OpenSessionInterceptor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -144,4 +143,10 @@ public class PostagemService {
 
     }
 
+
+    public Postagem exibirPostagemPorId (Long idPostagem){
+        Postagem postagemExibidaId = verificarPostagem(idPostagem);
+        return postagemExibidaId;
+
+    }
 }
