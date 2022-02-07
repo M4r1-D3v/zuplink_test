@@ -3,6 +3,7 @@ package br.com.zup.gerenciadorDePostagem.config.controller;
 import br.com.zup.gerenciadorDePostagem.config.security.jwt.exceptions.AcessoNegadoException;
 import br.com.zup.gerenciadorDePostagem.config.security.jwt.exceptions.TokenInvalidoException;
 import br.com.zup.gerenciadorDePostagem.exceptions.*;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -83,6 +84,12 @@ public class ControllerAdvisor {
     @ExceptionHandler(TokenInvalidoException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public MensagemDeErro manipularExcecaoTokenInvalido(TokenInvalidoException exception) {
+        return new MensagemDeErro(exception.getMessage());
+    }
+
+    @ExceptionHandler(LinkJaCadastradoException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    public MensagemDeErro manipularExcecaoLinkJaCadastrado(LinkJaCadastradoException exception) {
         return new MensagemDeErro(exception.getMessage());
     }
 
