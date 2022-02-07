@@ -89,8 +89,7 @@ public class UsuarioControllerTest {
 
         ResultActions resultActions = mockMvc.perform(post("/usuario")
                         .contentType(APPLICATION_JSON).content(json))
-                .andExpect(status().is(201)
-                );
+                .andExpect(status().is(201));
 
         assertEquals(201, resultActions.andReturn().getResponse().getStatus());
         verify(usuarioService, times(1)).cadastrarUsuario(any());
