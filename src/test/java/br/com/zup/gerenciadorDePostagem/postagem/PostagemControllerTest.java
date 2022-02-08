@@ -602,4 +602,19 @@ class PostagemControllerTest {
 
     }
 
+    @Test
+    public void testarExibirPostagemPorIdCaminhoPositivo() throws Exception {
+
+        when(service.exibirPostagemPorId(anyLong())).thenReturn(postagem);
+        when(modelMapper.map(any(RetornoPostagemDTO.class),any())).thenReturn(retornoPostagemDTO);
+
+        ResultActions response = mockMvc.perform(get("/postagem/" + postagem.getId())
+                .contentType(APPLICATION_JSON)).andExpect(status().isOk());
+
+        assertEquals(200, response.andReturn().getResponse().getStatus());
+
+        verify(service, times(1)).exibirPostagemPorId(any());
+
+    }
+
 }
