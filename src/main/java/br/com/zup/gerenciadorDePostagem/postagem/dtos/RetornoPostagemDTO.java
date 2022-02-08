@@ -15,6 +15,7 @@ import lombok.Setter;
 @Setter
 public class RetornoPostagemDTO {
 
+    private Long id;
     private String titulo;
     private String descricao;
     private String link;
