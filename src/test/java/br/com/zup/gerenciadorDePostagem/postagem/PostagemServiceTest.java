@@ -132,7 +132,9 @@ class PostagemServiceTest {
         when(repository.findAll()).thenReturn(List.of());
 
         RuntimeException exception = assertThrows(NaoExistemPostagensCadastradasException.class,
-                ()->{service.exibirPostagens(filtro);});
+                () -> {
+                    service.exibirPostagens(filtro);
+                });
 
 
         assertEquals(NaoExistemPostagensCadastradasException.class, exception.getClass());
@@ -152,13 +154,13 @@ class PostagemServiceTest {
         assertEquals(Postagem.class, response.get(INT).getClass());
         assertEquals(1, response.size());
 
-        verify(repository,times(1)).area(filtro.get("area"));
-        verify(repository,times(0)).tipo(filtro.get("tipo"));
-        verify(repository,times(0)).tema(filtro.get("tema"));
-        verify(repository,times(0)).autorPostagem(filtro.get("autorPostagem"));
-        verify(repository,times(0)).dataDeCadastroRecente(filtro.get("dataDeCadastro"));
-        verify(repository,times(0)).dataDeCadastroAntiga(filtro.get("dataDeCadastro"));
-        verify(repository,times(0)).likesUsuario(usuario.getId());
+        verify(repository, times(1)).area(filtro.get("area"));
+        verify(repository, times(0)).tipo(filtro.get("tipo"));
+        verify(repository, times(0)).tema(filtro.get("tema"));
+        verify(repository, times(0)).autorPostagem(filtro.get("autorPostagem"));
+        verify(repository, times(0)).dataDeCadastroRecente(filtro.get("dataDeCadastro"));
+        verify(repository, times(0)).dataDeCadastroAntiga(filtro.get("dataDeCadastro"));
+        verify(repository, times(0)).likesUsuario(usuario.getId());
 
     }
 
@@ -173,14 +175,14 @@ class PostagemServiceTest {
         assertEquals(Postagem.class, response.get(INT).getClass());
         assertEquals(1, response.size());
 
-        verify(repository,times(1)).tipo(filtro.get("tipo"));
-        verify(repository,times(0)).area(filtro.get("area"));
-        verify(repository,times(0)).tema(filtro.get("tema"));
-        verify(repository,times(0)).autorPostagem(filtro.get("autorPostagem"));
-        verify(repository,times(0)).dataDeCadastroRecente(filtro.get("dataDeCadastro"));
-        verify(repository,times(0)).dataDeCadastroAntiga(filtro.get("dataDeCadastro"));
-        verify(repository,times(0)).likesUsuario(usuario.getId());
-      
+        verify(repository, times(1)).tipo(filtro.get("tipo"));
+        verify(repository, times(0)).area(filtro.get("area"));
+        verify(repository, times(0)).tema(filtro.get("tema"));
+        verify(repository, times(0)).autorPostagem(filtro.get("autorPostagem"));
+        verify(repository, times(0)).dataDeCadastroRecente(filtro.get("dataDeCadastro"));
+        verify(repository, times(0)).dataDeCadastroAntiga(filtro.get("dataDeCadastro"));
+        verify(repository, times(0)).likesUsuario(usuario.getId());
+
     }
 
     @Test
@@ -194,13 +196,13 @@ class PostagemServiceTest {
         assertEquals(Postagem.class, response.get(INT).getClass());
         assertEquals(1, response.size());
 
-        verify(repository,times(1)).tema(filtro.get("tema"));
-        verify(repository,times(0)).tipo(filtro.get("tipo"));
-        verify(repository,times(0)).area(filtro.get("area"));
-        verify(repository,times(0)).autorPostagem(filtro.get("autorPostagem"));
-        verify(repository,times(0)).dataDeCadastroRecente(filtro.get("dataDeCadastro"));
-        verify(repository,times(0)).dataDeCadastroAntiga(filtro.get("dataDeCadastro"));
-        verify(repository,times(0)).likesUsuario(usuario.getId());
+        verify(repository, times(1)).tema(filtro.get("tema"));
+        verify(repository, times(0)).tipo(filtro.get("tipo"));
+        verify(repository, times(0)).area(filtro.get("area"));
+        verify(repository, times(0)).autorPostagem(filtro.get("autorPostagem"));
+        verify(repository, times(0)).dataDeCadastroRecente(filtro.get("dataDeCadastro"));
+        verify(repository, times(0)).dataDeCadastroAntiga(filtro.get("dataDeCadastro"));
+        verify(repository, times(0)).likesUsuario(usuario.getId());
 
     }
 
@@ -215,18 +217,18 @@ class PostagemServiceTest {
         assertEquals(Postagem.class, response.get(INT).getClass());
         assertEquals(1, response.size());
 
-        verify(repository,times(1)).autorPostagem(filtro.get("autorPostagem"));
-        verify(repository,times(0)).tema(filtro.get("tema"));
-        verify(repository,times(0)).tipo(filtro.get("tipo"));
-        verify(repository,times(0)).area(filtro.get("area"));
-        verify(repository,times(0)).dataDeCadastroRecente(filtro.get("dataDeCadastro"));
-        verify(repository,times(0)).dataDeCadastroAntiga(filtro.get("dataDeCadastro"));
-        verify(repository,times(0)).likesUsuario(usuario.getId());
+        verify(repository, times(1)).autorPostagem(filtro.get("autorPostagem"));
+        verify(repository, times(0)).tema(filtro.get("tema"));
+        verify(repository, times(0)).tipo(filtro.get("tipo"));
+        verify(repository, times(0)).area(filtro.get("area"));
+        verify(repository, times(0)).dataDeCadastroRecente(filtro.get("dataDeCadastro"));
+        verify(repository, times(0)).dataDeCadastroAntiga(filtro.get("dataDeCadastro"));
+        verify(repository, times(0)).likesUsuario(usuario.getId());
 
     }
 
     @Test
-    public void testarAplicarFiltroPorBuscaPorDataDeCadastroRecente (){
+    public void testarAplicarFiltroPorBuscaPorDataDeCadastroRecente() {
         filtro.put("dataDeCadastro", "desc");
         when(repository.dataDeCadastroRecente(filtro.get("dataDeCadastro"))).thenReturn(List.of(postagem));
 
@@ -236,78 +238,80 @@ class PostagemServiceTest {
         assertEquals(Postagem.class, response.get(INT).getClass());
         assertEquals(1, response.size());
 
-        verify(repository,times(1)).dataDeCadastroRecente(filtro.get("dataDeCadastro"));
-        verify(repository,times(0)).autorPostagem(filtro.get("autorPostagem"));
-        verify(repository,times(0)).tema(filtro.get("tema"));
-        verify(repository,times(0)).tipo(filtro.get("tipo"));
-        verify(repository,times(0)).area(filtro.get("area"));
-        verify(repository,times(0)).dataDeCadastroAntiga(filtro.get("dataDeCadastro"));
-        verify(repository,times(0)).likesUsuario(usuario.getId());
+        verify(repository, times(1)).dataDeCadastroRecente(filtro.get("dataDeCadastro"));
+        verify(repository, times(0)).autorPostagem(filtro.get("autorPostagem"));
+        verify(repository, times(0)).tema(filtro.get("tema"));
+        verify(repository, times(0)).tipo(filtro.get("tipo"));
+        verify(repository, times(0)).area(filtro.get("area"));
+        verify(repository, times(0)).dataDeCadastroAntiga(filtro.get("dataDeCadastro"));
+        verify(repository, times(0)).likesUsuario(usuario.getId());
 
     }
 
     @Test
-    public void testarAplicarFiltroDeBuscaPorDataDeCadastroAntiga (){
+    public void testarAplicarFiltroDeBuscaPorDataDeCadastroAntiga() {
         filtro.put("dataDeCadastro", "asc");
         when(repository.dataDeCadastroAntiga(filtro.get("dataDeCadastro"))).thenReturn(List.of(postagem));
 
-        List<Postagem> response = service.aplicarFiltroDeBusca(List.of(postagem),filtro);
+        List<Postagem> response = service.aplicarFiltroDeBusca(List.of(postagem), filtro);
 
         assertNotNull(response);
         assertEquals(Postagem.class, response.get(INT).getClass());
         assertEquals(1, response.size());
 
-        verify(repository,times(1)).dataDeCadastroAntiga(filtro.get("dataDeCadastro"));
-        verify(repository,times(0)).dataDeCadastroRecente(filtro.get("dataDeCadastro"));
-        verify(repository,times(0)).autorPostagem(filtro.get("autorPostagem"));
-        verify(repository,times(0)).tema(filtro.get("tema"));
-        verify(repository,times(0)).tipo(filtro.get("tipo"));
-        verify(repository,times(0)).area(filtro.get("area"));
-        verify(repository,times(0)).likesUsuario(usuario.getId());
+        verify(repository, times(1)).dataDeCadastroAntiga(filtro.get("dataDeCadastro"));
+        verify(repository, times(0)).dataDeCadastroRecente(filtro.get("dataDeCadastro"));
+        verify(repository, times(0)).autorPostagem(filtro.get("autorPostagem"));
+        verify(repository, times(0)).tema(filtro.get("tema"));
+        verify(repository, times(0)).tipo(filtro.get("tipo"));
+        verify(repository, times(0)).area(filtro.get("area"));
+        verify(repository, times(0)).likesUsuario(usuario.getId());
 
     }
 
 
     @Test
-    public void testarAplicarFiltroDeBuscaPorLikesUsuario (){
+    public void testarAplicarFiltroDeBuscaPorLikesUsuario() {
         filtro.put("email", EMAIL);
         when(usuarioRepository.findByEmail(anyString())).thenReturn(ofNullable(usuario));
         when(repository.likesUsuario(usuario.getId())).thenReturn(List.of(postagem));
 
-        List<Postagem> response = service.aplicarFiltroDeBusca(List.of(postagem),filtro);
+        List<Postagem> response = service.aplicarFiltroDeBusca(List.of(postagem), filtro);
 
         assertNotNull(response);
         assertEquals(Postagem.class, response.get(INT).getClass());
         assertEquals(1, response.size());
 
-        verify(repository,times(1)).likesUsuario(usuario.getId());
-        verify(repository,times(0)).autorPostagem(filtro.get("autorPostagem"));
-        verify(repository,times(0)).tema(filtro.get("tema"));
-        verify(repository,times(0)).tipo(filtro.get("tipo"));
-        verify(repository,times(0)).area(filtro.get("area"));
-        verify(repository,times(0)).dataDeCadastroRecente(filtro.get("dataDeCadastro"));
-        verify(repository,times(0)).dataDeCadastroAntiga(filtro.get("dataDeCadastro"));
+        verify(repository, times(1)).likesUsuario(usuario.getId());
+        verify(repository, times(0)).autorPostagem(filtro.get("autorPostagem"));
+        verify(repository, times(0)).tema(filtro.get("tema"));
+        verify(repository, times(0)).tipo(filtro.get("tipo"));
+        verify(repository, times(0)).area(filtro.get("area"));
+        verify(repository, times(0)).dataDeCadastroRecente(filtro.get("dataDeCadastro"));
+        verify(repository, times(0)).dataDeCadastroAntiga(filtro.get("dataDeCadastro"));
 
     }
 
     @Test
-    public void testarAplicarFiltroDeBuscaPorLikesUsuarioExceptionUsuarioNaoEncontrado (){
+    public void testarAplicarFiltroDeBuscaPorLikesUsuarioExceptionUsuarioNaoEncontrado() {
         filtro.put("email", "xablau");
         when(usuarioRepository.findByEmail(anyString())).thenReturn(empty());
 
         RuntimeException exception = assertThrows(UsuarioNaoCadastradoException.class,
-                ()->{service.aplicarFiltroDeBusca(List.of(postagem),filtro);});
+                () -> {
+                    service.aplicarFiltroDeBusca(List.of(postagem), filtro);
+                });
 
         assertEquals(UsuarioNaoCadastradoException.class, exception.getClass());
         assertEquals(USUARIO_NAO_CADASTRADO, exception.getMessage());
 
-        verify(repository,times(0)).likesUsuario(usuario.getId());
-        verify(repository,times(0)).autorPostagem(filtro.get("autorPostagem"));
-        verify(repository,times(0)).tema(filtro.get("tema"));
-        verify(repository,times(0)).tipo(filtro.get("tipo"));
-        verify(repository,times(0)).area(filtro.get("area"));
-        verify(repository,times(0)).dataDeCadastroRecente(filtro.get("dataDeCadastro"));
-        verify(repository,times(0)).dataDeCadastroAntiga(filtro.get("dataDeCadastro"));
+        verify(repository, times(0)).likesUsuario(usuario.getId());
+        verify(repository, times(0)).autorPostagem(filtro.get("autorPostagem"));
+        verify(repository, times(0)).tema(filtro.get("tema"));
+        verify(repository, times(0)).tipo(filtro.get("tipo"));
+        verify(repository, times(0)).area(filtro.get("area"));
+        verify(repository, times(0)).dataDeCadastroRecente(filtro.get("dataDeCadastro"));
+        verify(repository, times(0)).dataDeCadastroAntiga(filtro.get("dataDeCadastro"));
 
     }
 
@@ -470,6 +474,32 @@ class PostagemServiceTest {
 
         verify(repository, times(1)).findById(anyLong());
         verify(repository, times(0)).save(any(Postagem.class));
+    }
+
+    @Test
+    public void exibirPostagemPorId() {
+        when(repository.findById(anyLong())).thenReturn(ofNullable(postagem));
+
+        Postagem postagemRetornada = service.exibirPostagemPorId(postagem.getId());
+
+        verify(repository, times(1)).findById(anyLong());
+        assertEquals(postagem, postagemRetornada);
+    }
+
+    @Test
+    public void testarExibirPostagemPorIdExceptionPostagemNaoEncontrada() {
+        when(repository.findById(anyLong())).thenReturn(empty());
+
+        RuntimeException exception = assertThrows(PostagemNaoEncontradaException.class,
+                () -> {
+                    service.exibirPostagemPorId(postagem.getId());
+                });
+
+        assertEquals(PostagemNaoEncontradaException.class, exception.getClass());
+        assertEquals(POSTAGEM_NAO_CADASTRADA, exception.getMessage());
+
+        verify(repository, times(1)).findById(anyLong());
+
     }
 
 }
