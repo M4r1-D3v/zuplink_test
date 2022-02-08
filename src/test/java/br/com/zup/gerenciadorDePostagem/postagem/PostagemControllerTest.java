@@ -617,4 +617,17 @@ class PostagemControllerTest {
 
     }
 
+    @Test
+    public void testarExibirPostagemPorIdPostagemNaoCadastrada() throws Exception {
+        doThrow(PostagemNaoEncontradaException.class).when(service).exibirPostagemPorId(anyLong());
+
+        ResultActions response = mockMvc.perform(get("/postagem/" + postagem.getId())
+                .contentType(APPLICATION_JSON)).andExpect(status().isNotFound());
+
+
+        assertEquals(404, response.andReturn().getResponse().getStatus());
+        verify(service, times(1)).exibirPostagemPorId(anyLong());
+
+    }
+
 }
