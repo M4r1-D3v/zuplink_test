@@ -3,6 +3,7 @@ package br.com.zup.gerenciadorDePostagem.postagem;
 import br.com.zup.gerenciadorDePostagem.components.ConversorAutenticacao;
 import br.com.zup.gerenciadorDePostagem.config.security.UsuarioLoginService;
 import br.com.zup.gerenciadorDePostagem.config.security.jwt.JWTComponent;
+import br.com.zup.gerenciadorDePostagem.exceptions.LinkJaCadastradoException;
 import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemPostagensCadastradasException;
 import br.com.zup.gerenciadorDePostagem.exceptions.PostagemNaoEncontradaException;
 import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoAutorizadoException;
@@ -297,6 +298,23 @@ class PostagemControllerTest {
 
         assertEquals(422, response.andReturn().getResponse().getStatus());
         verify(service, times(0)).salvarPostagem(any(Postagem.class), any(Usuario.class));
+
+    }
+
+    @Test
+    @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
+    public void testarRotaParaCadastrarPostagemExceptionLinkJaCadastrado() throws Exception {
+        when(conversorAutenticacao.converterAutenticacao(any(Authentication.class))).thenReturn(usuario);
+        when(modelMapper.map(any(PostagemDTO.class), any())).thenReturn(postagem);
+        doThrow(LinkJaCadastradoException.class).when(service).salvarPostagem(any(Postagem.class),any(Usuario.class));
+
+        String json = objectMapper.writeValueAsString(postagemDTO);
+
+        ResultActions response = mockMvc.perform(post("/postagem").content(json)
+                .contentType(APPLICATION_JSON)).andExpect(status().isUnprocessableEntity());
+
+        assertEquals(422, response.andReturn().getResponse().getStatus());
+        verify(service, times(1)).salvarPostagem(any(Postagem.class), any(Usuario.class));
 
     }
 
