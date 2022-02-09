@@ -2,11 +2,7 @@ package br.com.zup.gerenciadorDePostagem.postagem;
 
 import br.com.zup.gerenciadorDePostagem.curtidas.Like;
 import br.com.zup.gerenciadorDePostagem.curtidas.LikeRepository;
-import br.com.zup.gerenciadorDePostagem.exceptions.LinkJaCadastradoException;
-import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemPostagensCadastradasException;
-import br.com.zup.gerenciadorDePostagem.exceptions.PostagemNaoEncontradaException;
-import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoAutorizadoException;
-import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoCadastradoException;
+import br.com.zup.gerenciadorDePostagem.exceptions.*;
 import br.com.zup.gerenciadorDePostagem.usuario.Usuario;
 import br.com.zup.gerenciadorDePostagem.usuario.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +27,7 @@ public class PostagemService {
     public Postagem salvarPostagem(Postagem postagem, Usuario usuario) {
 
         Optional<Postagem> linkExiste = postagemRepository.findByLink(postagem.getLink());
-        if (linkExiste.isPresent()){
+        if (linkExiste.isPresent()) {
             throw new LinkJaCadastradoException("Link já cadastrado!");
         }
 
@@ -55,6 +51,11 @@ public class PostagemService {
     }
 
 
+    public Postagem exibirPostagemPorId(Long idPostagem) {
+        return verificarPostagem(idPostagem);
+    }
+
+
     public List<Postagem> aplicarFiltroDeBusca(List<Postagem> listaPostagens, Map<String, String> filtros) {
 
         if (filtros.get("area") != null) {
@@ -65,16 +66,16 @@ public class PostagemService {
             return postagemRepository.tema(filtros.get("tema"));
         } else if (filtros.get("autorPostagem") != null) {
             return postagemRepository.autorPostagem(filtros.get("autorPostagem"));
-        }else if(filtros.get("dataDeCadastro") != null && filtros.containsValue("desc")){
+        } else if (filtros.get("dataDeCadastro") != null && filtros.containsValue("desc")) {
             return postagemRepository.dataDeCadastroRecente(filtros.get("dataDeCadastro"));
-        }else if(filtros.get("dataDeCadastro") != null && filtros.containsValue("asc")){
+        } else if (filtros.get("dataDeCadastro") != null && filtros.containsValue("asc")) {
             return postagemRepository.dataDeCadastroAntiga(filtros.get("dataDeCadastro"));
-        } else if(filtros.get("email") != null){
-            Optional<Usuario> usuario =  usuarioRepository.findByEmail(filtros.get("email"));
-            if (usuario.isPresent()){
+        } else if (filtros.get("email") != null) {
+            Optional<Usuario> usuario = usuarioRepository.findByEmail(filtros.get("email"));
+            if (usuario.isPresent()) {
                 return postagemRepository.likesUsuario(usuario.get().getId());
             }
-            throw  new UsuarioNaoCadastradoException("Usuário não cadastrado");
+            throw new UsuarioNaoCadastradoException("Usuário não cadastrado");
         }
 
         return listaPostagens;
@@ -143,10 +144,4 @@ public class PostagemService {
 
     }
 
-
-    public Postagem exibirPostagemPorId (Long idPostagem){
-        Postagem postagemExibidaId = verificarPostagem(idPostagem);
-        return postagemExibidaId;
-
-    }
 }

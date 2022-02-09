@@ -97,7 +97,7 @@ class PostagemControllerTest {
 
         atualizarPostagemDTO = new AtualizarPostagemDTO(TITULO, DESCRICAO, DOCUMENTACAO, JAVA, BACKEND);
 
-        retornoPostagemDTO = new RetornoPostagemDTO( ID_POSTAGEM,TITULO, DESCRICAO, LINK,
+        retornoPostagemDTO = new RetornoPostagemDTO(ID_POSTAGEM, TITULO, DESCRICAO, LINK,
                 INT, DOCUMENTACAO, JAVA, BACKEND, exibirUsuarioPostagemDTO);
 
     }
@@ -311,7 +311,8 @@ class PostagemControllerTest {
 
         String jsonResposta = response.andReturn().getResponse().getContentAsString();
         List<RetornoPostagemDTO> postagens = objectMapper.readValue(jsonResposta,
-                new TypeReference<List<RetornoPostagemDTO>>() {});
+                new TypeReference<List<RetornoPostagemDTO>>() {
+                });
 
         assertEquals(200, response.andReturn().getResponse().getStatus());
         verify(service, times(1)).exibirPostagens(any());
@@ -328,6 +329,34 @@ class PostagemControllerTest {
 
         assertEquals(404, response.andReturn().getResponse().getStatus());
         verify(service, times(1)).exibirPostagens(any());
+
+    }
+
+    @Test
+    public void testarExibirPostagemPorIdCaminhoPositivo() throws Exception {
+
+        when(service.exibirPostagemPorId(anyLong())).thenReturn(postagem);
+        when(modelMapper.map(any(RetornoPostagemDTO.class), any())).thenReturn(retornoPostagemDTO);
+
+        ResultActions response = mockMvc.perform(get("/postagem/" + postagem.getId())
+                .contentType(APPLICATION_JSON)).andExpect(status().isOk());
+
+        assertEquals(200, response.andReturn().getResponse().getStatus());
+
+        verify(service, times(1)).exibirPostagemPorId(any());
+
+    }
+
+    @Test
+    public void testarExibirPostagemPorIdPostagemNaoCadastrada() throws Exception {
+        doThrow(PostagemNaoEncontradaException.class).when(service).exibirPostagemPorId(anyLong());
+
+        ResultActions response = mockMvc.perform(get("/postagem/" + postagem.getId())
+                .contentType(APPLICATION_JSON)).andExpect(status().isNotFound());
+
+
+        assertEquals(404, response.andReturn().getResponse().getStatus());
+        verify(service, times(1)).exibirPostagemPorId(anyLong());
 
     }
 
@@ -524,10 +553,10 @@ class PostagemControllerTest {
 
     @Test
     @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
-    public void testarRotaParaCurtirPostagemCaminhoPositivo () throws Exception {
+    public void testarRotaParaCurtirPostagemCaminhoPositivo() throws Exception {
         when(conversorAutenticacao.converterAutenticacao(any())).thenReturn(usuario);
-        when(modelMapper.map(any(Postagem.class),any())).thenReturn(retornoPostagemDTO);
-        when(service.curtirPostagem(anyLong(),any(Usuario.class))).thenReturn(postagem);
+        when(modelMapper.map(any(Postagem.class), any())).thenReturn(retornoPostagemDTO);
+        when(service.curtirPostagem(anyLong(), any(Usuario.class))).thenReturn(postagem);
 
         ResultActions response = mockMvc.perform(patch("/postagem/" + postagem.getId())
                 .contentType(APPLICATION_JSON)).andExpect(status().isOk());
@@ -536,24 +565,24 @@ class PostagemControllerTest {
         RetornoPostagemDTO postagens = objectMapper.readValue(jsonResposta, RetornoPostagemDTO.class);
 
         assertNotNull(postagens);
-        assertEquals(RetornoPostagemDTO.class,postagens.getClass());
+        assertEquals(RetornoPostagemDTO.class, postagens.getClass());
         assertEquals(200, response.andReturn().getResponse().getStatus());
-        verify(service, times(1)).curtirPostagem(anyLong(),any());
+        verify(service, times(1)).curtirPostagem(anyLong(), any());
     }
 
     @Test
     @WithMockUser(username = EMAIL_USUARIO, password = SENHA)
-    public void testarRotaParaCurtirPostagemExceptionPostagemNaoCadastrada () throws Exception {
+    public void testarRotaParaCurtirPostagemExceptionPostagemNaoCadastrada() throws Exception {
         when(conversorAutenticacao.converterAutenticacao(any())).thenReturn(usuario);
-        when(modelMapper.map(any(Postagem.class),any())).thenReturn(retornoPostagemDTO);
-        doThrow(PostagemNaoEncontradaException.class).when(service).curtirPostagem(anyLong(),any());
+        when(modelMapper.map(any(Postagem.class), any())).thenReturn(retornoPostagemDTO);
+        doThrow(PostagemNaoEncontradaException.class).when(service).curtirPostagem(anyLong(), any());
 
         ResultActions response = mockMvc.perform(patch("/postagem/" + postagem.getId())
                 .contentType(APPLICATION_JSON)).andExpect(status().isNotFound());
 
 
         assertEquals(404, response.andReturn().getResponse().getStatus());
-        verify(service, times(1)).curtirPostagem(anyLong(),any());
+        verify(service, times(1)).curtirPostagem(anyLong(), any());
     }
 
 
@@ -598,34 +627,6 @@ class PostagemControllerTest {
 
         assertEquals(403, response.andReturn().getResponse().getStatus());
         verify(service, times(1)).deletarPostagem(anyLong(), any());
-
-    }
-
-    @Test
-    public void testarExibirPostagemPorIdCaminhoPositivo() throws Exception {
-
-        when(service.exibirPostagemPorId(anyLong())).thenReturn(postagem);
-        when(modelMapper.map(any(RetornoPostagemDTO.class),any())).thenReturn(retornoPostagemDTO);
-
-        ResultActions response = mockMvc.perform(get("/postagem/" + postagem.getId())
-                .contentType(APPLICATION_JSON)).andExpect(status().isOk());
-
-        assertEquals(200, response.andReturn().getResponse().getStatus());
-
-        verify(service, times(1)).exibirPostagemPorId(any());
-
-    }
-
-    @Test
-    public void testarExibirPostagemPorIdPostagemNaoCadastrada() throws Exception {
-        doThrow(PostagemNaoEncontradaException.class).when(service).exibirPostagemPorId(anyLong());
-
-        ResultActions response = mockMvc.perform(get("/postagem/" + postagem.getId())
-                .contentType(APPLICATION_JSON)).andExpect(status().isNotFound());
-
-
-        assertEquals(404, response.andReturn().getResponse().getStatus());
-        verify(service, times(1)).exibirPostagemPorId(anyLong());
 
     }
 
