@@ -2,10 +2,7 @@ package br.com.zup.gerenciadorDePostagem.postagem;
 
 import br.com.zup.gerenciadorDePostagem.curtidas.Like;
 import br.com.zup.gerenciadorDePostagem.curtidas.LikeRepository;
-import br.com.zup.gerenciadorDePostagem.exceptions.NaoExistemPostagensCadastradasException;
-import br.com.zup.gerenciadorDePostagem.exceptions.PostagemNaoEncontradaException;
-import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoAutorizadoException;
-import br.com.zup.gerenciadorDePostagem.exceptions.UsuarioNaoCadastradoException;
+import br.com.zup.gerenciadorDePostagem.exceptions.*;
 import br.com.zup.gerenciadorDePostagem.usuario.Usuario;
 import br.com.zup.gerenciadorDePostagem.usuario.UsuarioRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +15,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static br.com.zup.gerenciadorDePostagem.enums.Area.BACKEND;
 import static br.com.zup.gerenciadorDePostagem.enums.Tema.JAVA;
@@ -79,6 +77,7 @@ class PostagemServiceTest {
 
     @Test
     public void testarSalvarPostagemCaminhoPositivo() {
+        when(repository.findByLink(anyString())).thenReturn(empty());
         when(repository.save(any(Postagem.class))).thenReturn(postagem);
 
         Postagem response = service.salvarPostagem(postagem, usuario);
@@ -98,6 +97,23 @@ class PostagemServiceTest {
         assertEquals(DATA_CADASTRO, response.getDataDeCadastro());
 
         verify(repository, times(1)).save(any(Postagem.class));
+
+    }
+
+    @Test
+    public void testarSalvarPostagemExceptionLinkJaCadastrado() {
+        when(repository.findByLink(anyString())).thenReturn(ofNullable(postagem));
+        when(repository.save(any(Postagem.class))).thenReturn(postagem);
+
+        RuntimeException exception = assertThrows(LinkJaCadastradoException.class,
+                () -> {service.salvarPostagem(postagem, usuario);});
+
+
+        assertEquals(LinkJaCadastradoException.class, exception.getClass());
+        assertEquals("Link já cadastrado!", exception.getMessage());
+
+        verify(repository,times(1)).findByLink(anyString());
+        verify(repository, times(0)).save(any(Postagem.class));
 
     }
 
