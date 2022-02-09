@@ -311,8 +311,7 @@ class PostagemControllerTest {
 
         String jsonResposta = response.andReturn().getResponse().getContentAsString();
         List<RetornoPostagemDTO> postagens = objectMapper.readValue(jsonResposta,
-                new TypeReference<List<RetornoPostagemDTO>>() {
-                });
+                new TypeReference<List<RetornoPostagemDTO>>() {});
 
         assertEquals(200, response.andReturn().getResponse().getStatus());
         verify(service, times(1)).exibirPostagens(any());
