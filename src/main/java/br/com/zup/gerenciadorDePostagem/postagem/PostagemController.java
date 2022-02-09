@@ -33,7 +33,7 @@ public class PostagemController {
 
 
     @PostMapping
-    @ApiOperation(value="Cadastrar postagem")
+    @ApiOperation(value = "Cadastrar postagem")
     @ResponseStatus(HttpStatus.CREATED)
     public void cadastrarPostagem(@RequestBody @Valid PostagemDTO cadastroPostagemDTO,
                                   Authentication authentication) {
@@ -45,9 +45,9 @@ public class PostagemController {
 
 
     @GetMapping
-    @ApiOperation(value="Buscar postagem")
+    @ApiOperation(value = "Buscar postagem")
     public List<RetornoPostagemDTO> exibirPostagensCadastradas(@RequestParam(required = false)
-                                                                            Map<String, String> filtros) {
+                                                                       Map<String, String> filtros) {
 
         List<RetornoPostagemDTO> postagensCadastradasDTO = new ArrayList<>();
 
@@ -59,8 +59,16 @@ public class PostagemController {
     }
 
 
+    @GetMapping("/{idPostagem}")
+    @ResponseStatus(HttpStatus.OK)
+    public RetornoPostagemDTO exibirPostagemPorId(@PathVariable Long idPostagem) {
+        Postagem postagem = postagemService.exibirPostagemPorId(idPostagem);
+        return modelMapper.map(postagem, RetornoPostagemDTO.class);
+    }
+
+
     @PutMapping("/{id}")
-    @ApiOperation(value="Atualizar postagem")
+    @ApiOperation(value = "Atualizar postagem")
     public void editarPostagem(@PathVariable Long id, @RequestBody @Valid AtualizarPostagemDTO atualizarPostagemDTO,
                                Authentication authentication) {
 
@@ -72,7 +80,7 @@ public class PostagemController {
 
 
     @PatchMapping("/{id}")
-    @ApiOperation(value="Curtir postagem")
+    @ApiOperation(value = "Curtir postagem")
     public RetornoPostagemDTO curtirPostagem(@PathVariable Long id, Authentication authentication) {
         Usuario usuario = conversorAutenticacao.converterAutenticacao(authentication);
         Postagem postagem = postagemService.curtirPostagem(id, usuario);
@@ -82,20 +90,13 @@ public class PostagemController {
 
 
     @DeleteMapping("/{id}")
-    @ApiOperation(value="Deletar postagem")
+    @ApiOperation(value = "Deletar postagem")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void excluirPostagem(@PathVariable Long id, Authentication authentication) {
 
         Usuario usuario = conversorAutenticacao.converterAutenticacao(authentication);
         postagemService.deletarPostagem(id, usuario);
 
-    }
-
-    @GetMapping("/{idPostagem}")
-    @ResponseStatus(HttpStatus.OK)
-    public RetornoPostagemDTO exibirPostagemPorId(@PathVariable Long idPostagem){
-        Postagem postagem = postagemService.exibirPostagemPorId(idPostagem);
-        return modelMapper.map(postagem, RetornoPostagemDTO.class);
     }
 
 }

@@ -36,6 +36,7 @@ public class ConfiguracaoDeSeguranca extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/usuario").permitAll()
+                .antMatchers(HttpMethod.GET, "/postagem").permitAll()
                 .antMatchers(HttpMethod.GET, "/postagem/{\\d+}").permitAll()
                 .antMatchers("/v2/api-docs", "/swagger-resources/configuration/ui", "/swagger-resources",
                         "/swagger-resources/configuration/security", "/swagger-ui/**", "/webjars/**").permitAll()
