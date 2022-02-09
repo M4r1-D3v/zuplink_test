@@ -97,7 +97,7 @@ class PostagemControllerTest {
 
         atualizarPostagemDTO = new AtualizarPostagemDTO(TITULO, DESCRICAO, DOCUMENTACAO, JAVA, BACKEND);
 
-        retornoPostagemDTO = new RetornoPostagemDTO( TITULO, DESCRICAO, LINK,
+        retornoPostagemDTO = new RetornoPostagemDTO( ID_POSTAGEM,TITULO, DESCRICAO, LINK,
                 INT, DOCUMENTACAO, JAVA, BACKEND, exibirUsuarioPostagemDTO);
 
     }
